@@ -8,6 +8,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="lib" path="C:/Users/barel/git/Blib_ProRepo/BlibServer_G23/extr/mysql-connector-java-8.0.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
