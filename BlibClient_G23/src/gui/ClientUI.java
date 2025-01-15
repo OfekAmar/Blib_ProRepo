@@ -20,6 +20,7 @@ public class ClientUI extends Application {
 		primaryStage.setScene(new Scene(root, 300, 300));
 		primaryStage.show();
 	}
+	//hello im here ofek
 
 	public static void main(String[] args) {
 		launch(args);
