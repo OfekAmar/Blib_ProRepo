@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	fx:controller="gui.BorrowBookController"
+	style="-fx-background-color: #f4f4f4;">
+	<top>
+		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+			<Label text="Borrow Book"
+				style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+		</VBox>
+	</top>
+
+	<center>
+		<GridPane alignment="CENTER" hgap="10" vgap="10"
+			style="-fx-padding: 20;">
+			<HBox alignment="CENTER" spacing="10" GridPane.columnIndex="0"
+				GridPane.rowIndex="2" GridPane.columnSpan="3">
+				<Button text="Scan Subscriber" fx:id="scanSubscriberButton"
+					onAction="#onScanSubscriber" />
+				<Button text="Scan Book" fx:id="scanBookButton"
+					onAction="#onScanBook" />
+			</HBox>
+			<Label text="Subscriber Name / ID:" GridPane.columnIndex="0"
+				GridPane.rowIndex="0" />
+			<TextField fx:id="subscriberField"
+				promptText="Enter subscriber name / ID" GridPane.columnIndex="1"
+				GridPane.rowIndex="0" />
+			<Button text="Enter" fx:id="enterSubscriberButton"
+				onAction="#onEnterSubscriber" GridPane.columnIndex="2"
+				GridPane.rowIndex="0" />
+
+			<Label text="Book Name / Code:" GridPane.columnIndex="0"
+				GridPane.rowIndex="1" />
+			<TextField fx:id="bookField"
+				promptText="Enter book name / code" GridPane.columnIndex="1"
+				GridPane.rowIndex="1" />
+			<Button text="Enter" fx:id="enterBookButton"
+				onAction="#onEnterBook" GridPane.columnIndex="2"
+				GridPane.rowIndex="1" />
+
+			<Label text="Due Date:" GridPane.columnIndex="0"
+				GridPane.rowIndex="3" />
+			<DatePicker fx:id="datePicker" GridPane.columnIndex="1"
+				GridPane.rowIndex="3" />
+		</GridPane>
+	</center>
+
+	<bottom>
+		<HBox alignment="CENTER_LEFT" spacing="10"
+			style="-fx-padding: 10;">
+			<Button text="Back to Main" fx:id="backButton"
+				onAction="#onBackToMain" />
+		</HBox>
+	</bottom>
+</BorderPane>

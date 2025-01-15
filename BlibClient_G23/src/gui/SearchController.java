@@ -49,10 +49,10 @@ public class SearchController {
 		String searchTerm = searchField.getText();
 
 		if (searchTerm == null || searchTerm.isEmpty()) {
-			showAlert("Error", "Please enter a search term.");
+			ScreenLoader.showAlert("Error", "Please enter a search term.");
 		} else {
 			// Implement your search logic here
-			showAlert("Search", "Searching for: " + searchTerm + " by " + searchBy);
+			ScreenLoader.showAlert("Search", "Searching for: " + searchTerm + " by " + searchBy);
 		}
 	}
 
@@ -66,13 +66,5 @@ public class SearchController {
 		});
 		// this is pop - up alert in case needed !
 		// showAlert("Info", "Going back to the previous screen.");
-	}
-
-	private void showAlert(String title, String content) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(content);
-		alert.showAndWait();
 	}
 }

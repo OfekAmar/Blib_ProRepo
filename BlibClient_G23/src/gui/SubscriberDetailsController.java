@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import logic.ScreenLoader;
 import logic.Subscriber;
 
 ////the class is the controller for the SubscriberDetails.fxml and make the connection between the logic and the UI
@@ -25,6 +26,9 @@ public class SubscriberDetailsController {
 
 	@FXML
 	private TextField emailField;
+
+	@FXML
+	private TextField passwordField;
 
 	@FXML
 	private Button closeButton;
@@ -54,6 +58,7 @@ public class SubscriberDetailsController {
 		nameField.setText(sub.getName());
 		phoneField.setText(sub.getPhone());
 		emailField.setText(sub.getEmail());
+		passwordField.setText(sub.getPassword());
 
 	}
 
@@ -81,7 +86,6 @@ public class SubscriberDetailsController {
 
 	@FXML
 	public void onCloseClick() {
-		Stage currentStage = (Stage) closeButton.getScene().getWindow();
-		currentStage.close();
+		ScreenLoader.closeWindow(closeButton);
 	}
 }
