@@ -21,13 +21,18 @@
 	<center>
 		<VBox alignment="CENTER" spacing="20">
 			<HBox alignment="CENTER" spacing="20">
-				<Button text="Order Book" fx:id="orderBookButton" />
-				<Button text="Search Book" fx:id="searchBookButton" />
-				<Button text="Extend Loan" fx:id="extendLoanButton" />
+				<Button text="Order Book" fx:id="orderBookButton"
+					onAction="#onOrderBookClick" />
+				<Button text="Search Book" fx:id="searchBookButton"
+					onAction="#onSearchBookClick" />
+				<Button text="Extend Borrow" fx:id="extendBorrowButton"
+					onAction="#onExtendBorrowClick" />
 			</HBox>
 			<HBox alignment="CENTER" spacing="20">
-				<Button text="My Profile" fx:id="myProfileButton" />
-				<Button text="View History" fx:id="viewHistoryButton" />
+				<Button text="My Profile" fx:id="myProfileButton"
+					onAction="#onViewProfileClick" />
+				<Button text="View History" fx:id="viewHistoryButton"
+					onAction="#onHistoryClick" />
 			</HBox>
 		</VBox>
 	</center>
@@ -35,7 +40,7 @@
 	<bottom>
 		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
-			<Button text="Exit" fx:id="exitButton" />
+			<Button text="Exit" fx:id="exitButton" onAction="#handleExit" />
 		</HBox>
 	</bottom>
 </BorderPane>
