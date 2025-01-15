@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import logic.ScreenLoader;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 
@@ -49,6 +50,11 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onSearchBookClick(ActionEvent event) {
+		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
+			if (controller instanceof SearchController) {
+				((SearchController) controller).setStage(new Stage());
+			}
+		});
 		showAlert("Search Book", "You clicked on 'Search Book'.");
 	}
 
