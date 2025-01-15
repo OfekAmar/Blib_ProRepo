@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	style="-fx-background-color: #f4f4f4;"
+	fx:controller="gui.SearchController">
+	<top>
+		<Label text="Search Book"
+			style="-fx-font-size: 20px; -fx-font-weight: bold;"
+			BorderPane.alignment="CENTER" />
+	</top>
+
+	<center>
+		<GridPane alignment="CENTER" hgap="10" vgap="10">
+			<padding>
+				<Insets top="20" right="20" bottom="20" left="20" />
+			</padding>
+
+			<!-- Drop-down and Search Bar -->
+			<Label text="Search by:" GridPane.columnIndex="0"
+				GridPane.rowIndex="0" />
+			<ComboBox fx:id="searchByComboBox" GridPane.columnIndex="1"
+				GridPane.rowIndex="0" />
+
+			<TextField fx:id="searchField"
+				promptText="Enter search term" GridPane.columnIndex="2"
+				GridPane.rowIndex="0" />
+
+			<!-- Search Button -->
+			<Button text="Search" fx:id="searchButton"
+				GridPane.columnIndex="1" GridPane.rowIndex="1"
+				GridPane.columnSpan="2" GridPane.halignment="CENTER"
+				onAction="#onSearchBookClick" />
+		</GridPane>
+	</center>
+
+	<bottom>
+		<HBox alignment="CENTER_LEFT" spacing="10"
+			style="-fx-padding: 10;">
+			<Button text="Back" fx:id="backButton" onAction="#handleBack" />
+		</HBox>
+	</bottom>
+</BorderPane>
