@@ -5,7 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
-import javafx.scene.control.Alert;
 import logic.ScreenLoader;
 
 public class LibrarianMainController {
@@ -35,42 +34,40 @@ public class LibrarianMainController {
 
 	@FXML
 	private void onManageSubscriberClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Login Screen", event, controller -> {
+		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Subscriber Managemnt", event, controller -> {
 			if (controller instanceof ManagmentSubscriberController) {
-				((ManagmentSubscriberController) controller).setStage(new Stage());
+				((ManagmentSubscriberController) controller).setStage(stage);
 			}
 		});
 	}
 
 	@FXML
 	private void onBorrowBookClick(ActionEvent event) {
-		showAlert("Borrow Book", "You clicked on 'Borrow Book'.");
+		ScreenLoader.openScreen("/gui/BorrowBookScreen.fxml", "Subscriber Managemnt", event, controller -> {
+			if (controller instanceof BorrowBookController) {
+				((BorrowBookController) controller).setStage(stage);
+			}
+		});
+
 	}
 
 	@FXML
 	private void onReturnBookClick(ActionEvent event) {
-		showAlert("Return Book", "You clicked on 'Return Book'.");
+		ScreenLoader.showAlert("Return Book", "You clicked on 'Return Book'.");
 	}
 
 	@FXML
 	private void onReportsClick(ActionEvent event) {
-		showAlert("Reports", "You clicked on 'Reports'.");
+		ScreenLoader.showAlert("Reports", "You clicked on 'Reports'.");
 	}
 
 	@FXML
 	private void onLogoutClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
 			if (controller instanceof LoginController) {
-				((LoginController) controller).setStage(new Stage());
+				((LoginController) controller).setStage(stage);
 			}
 		});
 	}
 
-	private void showAlert(String title, String content) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(content);
-		alert.showAndWait();
-	}
 }

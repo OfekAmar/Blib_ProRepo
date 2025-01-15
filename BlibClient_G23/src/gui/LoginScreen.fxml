@@ -5,38 +5,43 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.VBox?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1"
-	xmlns="http://javafx.com/javafx/8.0.171" alignment="CENTER" hgap="10"
-	vgap="10" style="-fx-background-color: #f4f4f4;"
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/8.0.171" alignment="CENTER"
+	style="-fx-background-color: #f4f4f4;"
 	fx:controller="gui.LoginController">
-	<padding>
-		<Insets top="20" right="20" bottom="20" left="20" />
-	</padding>
+	<Label text="Welcome to Blib System!  :)"
+		style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+	<GridPane alignment="CENTER" hgap="10" vgap="10">
+		<padding>
+			<Insets top="20" right="20" bottom="20" left="20" />
+		</padding>
 
-	<!-- Username Label and TextField -->
-	<Label text="Username:" GridPane.columnIndex="0"
-		GridPane.rowIndex="0" />
-	<TextField fx:id="usernameField" promptText="Enter username"
-		GridPane.columnIndex="1" GridPane.rowIndex="0" />
+		<!-- Username Label and TextField -->
+		<Label text="Username:" GridPane.columnIndex="0"
+			GridPane.rowIndex="0" />
+		<TextField fx:id="usernameField" promptText="Enter username"
+			GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-	<!-- Password Label and PasswordField -->
-	<Label text="Password:" GridPane.columnIndex="0"
-		GridPane.rowIndex="1" />
-	<PasswordField fx:id="passwordField"
-		promptText="Enter password" GridPane.columnIndex="1"
-		GridPane.rowIndex="1" />
+		<!-- Password Label and PasswordField -->
+		<Label text="Password:" GridPane.columnIndex="0"
+			GridPane.rowIndex="1" />
+		<PasswordField fx:id="passwordField"
+			promptText="Enter password" GridPane.columnIndex="1"
+			GridPane.rowIndex="1" />
 
-	<!-- Buttons -->
-	<Button text="Login" fx:id="loginButton"
-		onAction="#onLoginClick" GridPane.columnIndex="0"
-		GridPane.rowIndex="2" GridPane.columnSpan="2"
-		GridPane.halignment="CENTER" />
-	<Button text="Continue as Guest" fx:id="guestButton"
-		onAction="#onGuestLoginClick" GridPane.columnIndex="0"
-		GridPane.rowIndex="3" GridPane.columnSpan="2"
-		GridPane.halignment="CENTER" />
-	<Button text="Exit" fx:id="exitButton" onAction="#handleExit"
-		GridPane.columnIndex="0" GridPane.rowIndex="4" GridPane.columnSpan="2"
-		GridPane.halignment="CENTER" />
-</GridPane>
+		<!-- Buttons -->
+		<Button text="Login" fx:id="loginButton"
+			onAction="#onLoginClick" GridPane.columnIndex="0"
+			GridPane.rowIndex="2" GridPane.columnSpan="2"
+			GridPane.halignment="CENTER" />
+		<Button text="Continue as Guest" fx:id="guestButton"
+			onAction="#onGuestLoginClick" GridPane.columnIndex="0"
+			GridPane.rowIndex="3" GridPane.columnSpan="2"
+			GridPane.halignment="CENTER" />
+		<Button text="Exit" fx:id="exitButton" onAction="#handleExit"
+			GridPane.columnIndex="0" GridPane.rowIndex="4"
+			GridPane.columnSpan="2" GridPane.halignment="CENTER" />
+	</GridPane>
+</VBox>

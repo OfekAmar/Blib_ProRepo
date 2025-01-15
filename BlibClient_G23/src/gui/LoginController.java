@@ -30,7 +30,11 @@ public class LoginController {
 	@FXML
 	private void onLoginClick(ActionEvent event) {
 		if (isLibrarian) {
-			ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, null);
+			ScreenLoader.openScreenWithSize("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, controller -> {
+				if (controller instanceof LibrarianMainController) {
+					((LibrarianMainController) controller).setStage(new Stage());
+				}
+			}, 250, 350);
 		} else {
 			ScreenLoader.openScreen("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
 				if (controller instanceof SubscriberMainController) {

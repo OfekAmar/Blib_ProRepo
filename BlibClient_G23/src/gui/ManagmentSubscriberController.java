@@ -5,7 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
 import javafx.event.ActionEvent;
 import logic.ScreenLoader;
 import logic.Subscriber;
@@ -50,7 +49,7 @@ public class ManagmentSubscriberController {
 	private void onSearchSubscriberClick(ActionEvent event) {
 		String subscriberName = searchField.getText();
 		if (subscriberName.isEmpty()) {
-			showAlert("Error", "Please enter a subscriber name to search.");
+			ScreenLoader.showAlert("Error", "Please enter a subscriber name to search.");
 		} else {
 			// Implement search logic here
 			subscriberDetailsField.setText("Details of subscriber: " + subscriberName);
@@ -61,7 +60,7 @@ public class ManagmentSubscriberController {
 	@FXML
 	private void onDeleteSubscriberClick(ActionEvent event) {
 		// Implement delete logic here
-		showAlert("Delete Subscriber", "Subscriber deleted successfully.");
+		ScreenLoader.showAlert("Delete Subscriber", "Subscriber deleted successfully.");
 		subscriberDetailsField.clear();
 	}
 
@@ -77,36 +76,33 @@ public class ManagmentSubscriberController {
 				}
 			});
 		} else {
-			showAlert("Error", "No such subscriber exist or you didnt searched for one ! ");
+			ScreenLoader.showAlert("Error", "No such subscriber exist or you didnt searched for one ! ");
 		}
 	}
 
 	@FXML
 	private void onAddSubscriberClick(ActionEvent event) {
 		// Implement add subscriber logic here
-		showAlert("Add Subscriber", "Adding a new subscriber.");
+		ScreenLoader.openPopUpScreen("/gui/NewSubscriberScreen.fxml", "Add New Subscriber", event, controller -> {
+			if (controller instanceof NewSubscriberController) {
+				((NewSubscriberController) controller).setStage(new Stage());
+			}
+		});
 	}
 
 	@FXML
 	private void onScanCardClick(ActionEvent event) {
 		// Implement scan card logic here
-		showAlert("Scan Card", "Scanning subscriber card.");
+		ScreenLoader.showAlert("Scan Card", "Scanning subscriber card.");
 	}
 
 	@FXML
 	private void onBackClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Login Screen", event, controller -> {
+		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
 			if (controller instanceof LibrarianMainController) {
 				((LibrarianMainController) controller).setStage(new Stage());
 			}
 		});
 	}
 
-	private void showAlert(String title, String content) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle(title);
-		alert.setHeaderText(null);
-		alert.setContentText(content);
-		alert.showAndWait();
-	}
 }
