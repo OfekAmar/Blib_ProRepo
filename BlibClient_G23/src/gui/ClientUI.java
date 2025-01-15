@@ -15,7 +15,7 @@ public class ClientUI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// FMXL loading stage, load the FXML file that have the UI(design) 
-		Parent root = FXMLLoader.load(getClass().getResource("ClientConnect.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("LoginScreen.fxml"));
 		primaryStage.setTitle("Client Connect Application");
 		primaryStage.setScene(new Scene(root, 300, 300));
 		primaryStage.show();
