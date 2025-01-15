@@ -27,9 +27,19 @@ public class LibrarianMainController {
 	@FXML
 	private Button logoutButton;
 
+	private Stage stage;
+
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+
 	@FXML
 	private void onManageSubscriberClick(ActionEvent event) {
-		showAlert("Manage Users", "You clicked on 'Manage Users'.");
+		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Login Screen", event, controller -> {
+			if (controller instanceof ManagmentSubscriberController) {
+				((ManagmentSubscriberController) controller).setStage(new Stage());
+			}
+		});
 	}
 
 	@FXML

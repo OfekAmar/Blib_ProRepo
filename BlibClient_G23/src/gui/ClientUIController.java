@@ -116,7 +116,7 @@ public class ClientUIController {
 				// get the controller and transfer the details
 				SubscriberDetailsController controller = loader.getController();
 				controller.setStage(stage, client);
-				controller.setDetails(details);
+				// controller.setDetails(details);
 
 				// start the GUI window
 				stage.show();
