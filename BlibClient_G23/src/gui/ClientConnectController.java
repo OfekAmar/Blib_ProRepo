@@ -33,9 +33,10 @@ public class ClientConnectController {
 		}
 
 		try {
-
+			
+			
 			// initialize and connect to the server
-			client = new ClientMain(host, Integer.parseInt(port));// using the TextField values
+			this.client =new ClientMain(host, Integer.parseInt(port));// using the TextField values
 			client.openConnection();
 			System.out.println("Connected to server at " + host + ":" + port);
 
