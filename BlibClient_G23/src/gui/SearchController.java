@@ -1,6 +1,7 @@
 package gui;
 
 import javafx.fxml.FXML;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -12,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import logic.ScreenLoader;
 
 public class SearchController {
 
@@ -56,28 +58,10 @@ public class SearchController {
 
 	@FXML
 	private void handleBack(ActionEvent event) {
-		Platform.runLater(() -> {
-			try {
-				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-				// load the FXML
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("LoginScreen.fxml"));
-				Parent root = loader.load();
-
-				// create new stage
-				Stage stage = new Stage();
-				stage.setTitle("Search Book");
-				stage.setScene(new Scene(root));
-
-				LoginController controller = loader.getController();
-				controller.setStage(stage);
-
-				// start the GUI window
-				stage.show();
-
-				currentStage.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
+			if (controller instanceof LoginController) {
+				((LoginController) controller).setStage(new Stage());
 			}
 		});
 		// this is pop - up alert in case needed !
