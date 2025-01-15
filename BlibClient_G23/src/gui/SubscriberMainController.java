@@ -19,7 +19,7 @@ public class SubscriberMainController {
 	private Button searchBookButton;
 
 	@FXML
-	private Button extendLoanButton;
+	private Button extendBorrowButton;
 
 	@FXML
 	private Button myProfileButton;
@@ -43,27 +43,27 @@ public class SubscriberMainController {
 	}
 
 	@FXML
-	private void handleOrderBook(ActionEvent event) {
+	private void onOrderBookClick(ActionEvent event) {
 		showAlert("Order Book", "You clicked on 'Order Book'.");
 	}
 
 	@FXML
-	private void handleSearchBook(ActionEvent event) {
+	private void onSearchBookClick(ActionEvent event) {
 		showAlert("Search Book", "You clicked on 'Search Book'.");
 	}
 
 	@FXML
-	private void handleExtendLoan(ActionEvent event) {
+	private void onExtendBorrowClick(ActionEvent event) {
 		showAlert("Extend Loan", "You clicked on 'Extend Loan'.");
 	}
 
 	@FXML
-	private void handleMyProfile(ActionEvent event) {
+	private void onViewProfileClick(ActionEvent event) {
 		showAlert("My Profile", "You clicked on 'My Profile'.");
 	}
 
 	@FXML
-	private void handleViewHistory(ActionEvent event) {
+	private void onHistoryClick(ActionEvent event) {
 		showAlert("View History", "You clicked on 'View History'.");
 	}
 

@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import logic.ScreenLoader;
 
 public class LoginController {
 
@@ -20,7 +21,6 @@ public class LoginController {
 	private PasswordField passwordField;
 
 	private Stage stage;
-	private FXMLLoader loader;
 	private boolean isLibrarian = false;
 
 	public void setStage(Stage stage) {
@@ -29,62 +29,22 @@ public class LoginController {
 
 	@FXML
 	private void onLoginClick(ActionEvent event) {
-		Platform.runLater(() -> {
-			try {
-				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-				if (isLibrarian) {
-					loader = new FXMLLoader(getClass().getResource("LibrarianMainScreen.fxml"));
-
-					Parent root = loader.load();
-					Stage stage = new Stage();
-					stage.setTitle("Librarian Screen");
-					stage.setScene(new Scene(root));
-					// SearchController controller = loader.getController();
-					// controller.setStage(stage);
-					stage.show();
-				} else {
-					loader = new FXMLLoader(getClass().getResource("SubscriberMainScreen.fxml"));
-					Parent root = loader.load();
-					Stage stage = new Stage();
-					stage.setTitle("Subscriber Screen");
-					stage.setScene(new Scene(root));
-					SubscriberMainController controller = loader.getController();
-					controller.setStage(stage);
-					controller.setSubscriberName("Ofek"); // need to be changed
-					stage.show();
+		if (isLibrarian) {
+			ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, null);
+		} else {
+			ScreenLoader.openScreen("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
+				if (controller instanceof SubscriberMainController) {
+					((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
 				}
-
-				currentStage.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
+			});
+		}
 	}
 
 	@FXML
 	private void onGuestLoginClick(ActionEvent event) {
-		Platform.runLater(() -> {
-			try {
-				Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-				// load the FXML
-				loader = new FXMLLoader(getClass().getResource("SearchBookScreen.fxml"));
-				Parent root = loader.load();
-
-				// create new stage
-				Stage stage = new Stage();
-				stage.setTitle("Search Book");
-				stage.setScene(new Scene(root));
-
-				SearchController controller = loader.getController();
-				controller.setStage(stage);
-
-				// start the GUI window
-				stage.show();
-
-				currentStage.close();
-			} catch (Exception e) {
-				e.printStackTrace();
+		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
+			if (controller instanceof SearchController) {
+				((SearchController) controller).setStage(new Stage());
 			}
 		});
 	}
