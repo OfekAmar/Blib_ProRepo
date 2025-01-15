@@ -5,6 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
+import logic.Subscriber;
+
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 
@@ -33,6 +35,7 @@ public class SubscriberMainController {
 
 	private String subscriberName;
 	private Stage stage;
+	private Subscriber sub = new Subscriber(0, "name example", "phone example", "active", "email example", "password");
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -40,7 +43,7 @@ public class SubscriberMainController {
 
 	public void setSubscriberName(String subscriberName) {
 		this.subscriberName = subscriberName;
-		welcomeLabel.setText("Hello, " + subscriberName + "!");
+		welcomeLabel.setText("Hello, " + sub.getName() + "!");
 	}
 
 	@FXML
@@ -65,7 +68,14 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onViewProfileClick(ActionEvent event) {
-		showAlert("My Profile", "You clicked on 'My Profile'.");
+		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
+			if (controller instanceof SubscriberDetailsController) {
+				((SubscriberDetailsController) controller).setStage(new Stage(), null);
+				// !!!! suppose to be setStage(new Stage(), ClientMain Client) !!!!!!! need to
+				// adapt later on
+				((SubscriberDetailsController) controller).setSubscriber(sub);
+			}
+		});
 	}
 
 	@FXML
