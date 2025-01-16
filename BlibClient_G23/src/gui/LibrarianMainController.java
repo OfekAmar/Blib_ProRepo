@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
+import logic.Book;
 import logic.ScreenLoader;
 
 public class LibrarianMainController {
@@ -43,22 +44,30 @@ public class LibrarianMainController {
 
 	@FXML
 	private void onBorrowBookClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/BorrowBookScreen.fxml", "Subscriber Managemnt", event, controller -> {
+		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
 			}
-		});
+		}, 500, 300);
 
 	}
 
 	@FXML
 	private void onReturnBookClick(ActionEvent event) {
-		ScreenLoader.showAlert("Return Book", "You clicked on 'Return Book'.");
+		ScreenLoader.openScreenWithSize("/gui/ReturnBookScreen.fxml", "Return Book", event, controller -> {
+			if (controller instanceof ReturnBookController) {
+				((ReturnBookController) controller).setStage(stage);
+			}
+		}, 400, 300);
 	}
 
 	@FXML
 	private void onReportsClick(ActionEvent event) {
-		ScreenLoader.showAlert("Reports", "You clicked on 'Reports'.");
+		ScreenLoader.openScreen("/gui/ReportsScreen.fxml", "Reports Screen", event, controller -> {
+			if (controller instanceof ReportsController) {
+				((ReportsController) controller).setStage(stage);
+			}
+		});
 	}
 
 	@FXML

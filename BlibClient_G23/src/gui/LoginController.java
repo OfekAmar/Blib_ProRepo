@@ -21,7 +21,7 @@ public class LoginController {
 	private PasswordField passwordField;
 
 	private Stage stage;
-	private boolean isLibrarian = true;
+	private boolean isLibrarian = false;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;

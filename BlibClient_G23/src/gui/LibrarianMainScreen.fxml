@@ -27,7 +27,7 @@
 			<Button text="Borrow Book" fx:id="borrowBookButton"
 				onAction="#onBorrowBookClick" />
 			<Button text="Return Book" fx:id="returnBookButton"
-				onAction="#onReportsClick" />
+				onAction="#onReturnBookClick" />
 			<Button text="Reports" fx:id="reportsButton"
 				onAction="#onReportsClick" />
 		</VBox>

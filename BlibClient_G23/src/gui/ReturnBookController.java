@@ -1,20 +1,18 @@
 package gui;
 
+import java.time.LocalDate;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-
-import java.time.LocalDate;
 
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
-
+import logic.Book;
 import logic.ScreenLoader;
 
-public class BorrowBookController {
-
+public class ReturnBookController {
 	@FXML
 	private TextField subscriberField;
 
@@ -35,8 +33,6 @@ public class BorrowBookController {
 
 	@FXML
 	private Button backButton;
-	@FXML
-	private DatePicker datePicker;
 
 	private Stage stage;
 
@@ -85,16 +81,6 @@ public class BorrowBookController {
 				((LibrarianMainController) controller).setStage(new Stage());
 			}
 		});
-	}
-
-	@FXML
-	private void onDateSelected(ActionEvent event) {
-		LocalDate selectedDate = datePicker.getValue();
-		if (selectedDate != null) {
-			ScreenLoader.showAlert("Date Selected", "You selected: " + selectedDate.toString());
-		} else {
-			ScreenLoader.showAlert("Error", "Please select a valid date.");
-		}
 	}
 
 }
