@@ -54,10 +54,7 @@ public class NewSubscriberController {
 
 	@FXML
 	private void onCancelClick(ActionEvent event) {
-		closeWindow();
-	}
-
-	private void closeWindow() {
 		ScreenLoader.closeWindow(cancelButton);
 	}
+
 }

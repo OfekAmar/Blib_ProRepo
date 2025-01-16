@@ -19,6 +19,9 @@ public class SubscriberDetailsController {
 	private Label idLabel;
 
 	@FXML
+	private Label statusLabel;
+
+	@FXML
 	private TextField nameField;
 
 	@FXML
@@ -55,6 +58,7 @@ public class SubscriberDetailsController {
 		// changed to support the Subscriber Class
 		// String[] parts = details.split(",");
 		idLabel.setText(Integer.toString(sub.getId()));
+		statusLabel.setText(sub.getStatus());
 		nameField.setText(sub.getName());
 		phoneField.setText(sub.getPhone());
 		emailField.setText(sub.getEmail());

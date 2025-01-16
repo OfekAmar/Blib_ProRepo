@@ -11,7 +11,7 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/8.0.171"
-	fx:controller="gui.BorrowBookController"
+	fx:controller="gui.ReturnBookController"
 	style="-fx-background-color: #f4f4f4;">
 	<top>
 		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
@@ -49,11 +49,6 @@
 			<Button text="Enter" fx:id="enterBookButton"
 				onAction="#onEnterBook" GridPane.columnIndex="2"
 				GridPane.rowIndex="1" />
-
-			<Label text="Due Date:" GridPane.columnIndex="0"
-				GridPane.rowIndex="3" />
-			<DatePicker fx:id="datePicker" GridPane.columnIndex="1"
-				GridPane.rowIndex="3" />
 		</GridPane>
 	</center>
 
