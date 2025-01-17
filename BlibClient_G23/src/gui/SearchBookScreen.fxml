@@ -46,6 +46,8 @@
 		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
 			<Button text="Back" fx:id="backButton" onAction="#handleBack" />
+			<Button text="Close" fx:id="closeButton"
+				onAction="#handleClose" />
 		</HBox>
 	</bottom>
 </BorderPane>

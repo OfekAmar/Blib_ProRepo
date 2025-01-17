@@ -11,7 +11,6 @@ public class Book {
 	
 	
 	public Book(String title, String id, String author, String subject, int totalCopies, int reservedCopies) {
-		super();
 		this.title = title;
 		this.id = id;
 		this.author = author;

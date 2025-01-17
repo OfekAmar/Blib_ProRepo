@@ -36,11 +36,12 @@ public class LoginController {
 				}
 			}, 250, 350);
 		} else {
-			ScreenLoader.openScreen("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
-				if (controller instanceof SubscriberMainController) {
-					((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
-				}
-			});
+			ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
+					controller -> {
+						if (controller instanceof SubscriberMainController) {
+							((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
+						}
+					}, 400, 250);
 		}
 	}
 

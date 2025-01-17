@@ -46,6 +46,10 @@ public class SubscriberMainController {
 		welcomeLabel.setText("Hello, " + sub.getName() + "!");
 	}
 
+	public void setSubscriber(Subscriber s) {
+		this.sub = s;
+	}
+
 	@FXML
 	private void onOrderBookClick(ActionEvent event) {
 		ScreenLoader.showAlert("Order Book", "You clicked on 'Order Book'.");
@@ -53,9 +57,10 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onSearchBookClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
+		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof SearchController) {
-				((SearchController) controller).setStage(new Stage());
+				((SearchController) controller).setStage(stage);
+				((SearchController) controller).setLoggedIn(true);
 			}
 		});
 	}
@@ -82,6 +87,7 @@ public class SubscriberMainController {
 		ScreenLoader.openScreen("/gui/HistoryScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof HistoryController) {
 				((HistoryController) controller).setStage(stage);
+				((HistoryController) controller).setSubscriber(sub);
 			}
 		});
 	}

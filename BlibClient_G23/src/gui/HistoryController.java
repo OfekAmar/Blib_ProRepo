@@ -78,10 +78,11 @@ public class HistoryController {
 
 	@FXML
 	private void onBackToMainClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
+		ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
 			if (controller instanceof SubscriberMainController) {
 				((SubscriberMainController) controller).setSubscriberName(sub.getName());
+				((SubscriberMainController) controller).setSubscriber(sub);
 			}
-		});
+		}, 400, 250);
 	}
 }

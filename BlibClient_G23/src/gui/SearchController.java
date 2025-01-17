@@ -13,7 +13,10 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import logic.Book;
+import logic.CopyOfBook;
 import logic.ScreenLoader;
+import logic.CopyOfBook;
 
 public class SearchController {
 
@@ -28,16 +31,36 @@ public class SearchController {
 
 	@FXML
 	private Button backButton;
+	@FXML
+	private Button closeButton;
 
 	private Stage stage;
-	private boolean loggedIn;
+	private boolean loggedIn = false;
+	private Book b = null;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	public void setLoggedIn(boolean l) {
+		this.loggedIn = l;
+		updateButtonsVisibility();
+	}
+
+	private void updateButtonsVisibility() {
+		if (loggedIn) {
+			closeButton.setVisible(true);
+			backButton.setVisible(false);
+			backButton.setManaged(false);
+		} else {
+			closeButton.setVisible(false);
+			backButton.setVisible(true);
+		}
+	}
+
 	@FXML
 	public void initialize() {
+		updateButtonsVisibility();
 		// Initialize the ComboBox with search options
 		searchByComboBox.getItems().addAll("Title", "Subject", "Free Text");
 		searchByComboBox.setValue("Title"); // Set default value
@@ -49,10 +72,20 @@ public class SearchController {
 		String searchTerm = searchField.getText();
 
 		if (searchTerm == null || searchTerm.isEmpty()) {
-			ScreenLoader.showAlert("Error", "Please enter a search term.");
+			ScreenLoader.showAlert("Error", "Please fill all the fields of search");
 		} else {
 			// Implement your search logic here
-			ScreenLoader.showAlert("Search", "Searching for: " + searchTerm + " by " + searchBy);
+			if (b != null) {
+				if (b.getTotalCopies() - b.getTotalCopies() < 1) {
+					ScreenLoader.showAlert("No copies found",
+							"There is no available copy of the book to borrow /n Order the book by his ID: "
+									+ b.getId());
+				} else if (b instanceof CopyOfBook) {
+					ScreenLoader.showAlert("Copy Found", "The book is located in " + ((CopyOfBook) b).getLocation());
+				}
+			} else {
+				ScreenLoader.showAlert("Error", "There is no such book in the library database !\n please try again");
+			}
 		}
 	}
 
@@ -67,4 +100,10 @@ public class SearchController {
 		// this is pop - up alert in case needed !
 		// showAlert("Info", "Going back to the previous screen.");
 	}
+
+	@FXML
+	private void handleClose(ActionEvent event) {
+		ScreenLoader.closeWindow(closeButton);
+	}
+
 }
