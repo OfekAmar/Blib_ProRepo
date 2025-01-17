@@ -34,7 +34,11 @@ public class BorrowBookController {
 	private Button scanBookButton;
 
 	@FXML
+	private Button acceptButton;
+
+	@FXML
 	private Button backButton;
+
 	@FXML
 	private DatePicker datePicker;
 
@@ -50,7 +54,8 @@ public class BorrowBookController {
 		if (subscriberInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
 		} else {
-			// Implement logic to handle subscriber information
+			// need to verify in database that therre is subscriber like entered
+			// delete the show alert afte the implemention !!!
 			ScreenLoader.showAlert("Success", "Subscriber information submitted: " + subscriberInfo);
 		}
 	}
@@ -61,20 +66,38 @@ public class BorrowBookController {
 		if (bookInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
 		} else {
-			// Implement logic to handle book information
+			// need to verify that there is copy of the book enterd to borrow
+			// delete the show alert afte the implemention !!!
 			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
 		}
 	}
 
 	@FXML
+	private void onAcceptClick(ActionEvent event) {
+		// check for date selected
+		LocalDate selectedDate = datePicker.getValue();
+		if (selectedDate != null) {
+			ScreenLoader.showAlert("Date Selected", "You selected: " + selectedDate.toString());
+		} else {
+			ScreenLoader.showAlert("Error", "Please select a valid date.");
+		}
+		// implement the logic of borrow book
+		// remove copy from database add borrow record and goes on....
+		// the details of book name and subscriber are in the variables subscriberInfo
+		// variables subscriberInfo and bookInfo
+		// the due date to borrow is in the variable selectedDate
+
+	}
+
+	@FXML
 	private void onScanSubscriber(ActionEvent event) {
-		// Implement logic to scan subscriber card
+		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Subscriber", "Scanning subscriber card...");
 	}
 
 	@FXML
 	private void onScanBook(ActionEvent event) {
-		// Implement logic to scan book
+		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Book", "Scanning book...");
 	}
 
@@ -85,16 +108,6 @@ public class BorrowBookController {
 				((LibrarianMainController) controller).setStage(new Stage());
 			}
 		});
-	}
-
-	@FXML
-	private void onDateSelected(ActionEvent event) {
-		LocalDate selectedDate = datePicker.getValue();
-		if (selectedDate != null) {
-			ScreenLoader.showAlert("Date Selected", "You selected: " + selectedDate.toString());
-		} else {
-			ScreenLoader.showAlert("Error", "Please select a valid date.");
-		}
 	}
 
 }

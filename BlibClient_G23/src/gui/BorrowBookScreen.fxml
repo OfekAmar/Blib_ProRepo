@@ -54,6 +54,10 @@
 				GridPane.rowIndex="3" />
 			<DatePicker fx:id="datePicker" GridPane.columnIndex="1"
 				GridPane.rowIndex="3" />
+
+			<Button text="Accept Borrow" fx:id="acceptButton"
+				onAction="#onAcceptClick" GridPane.columnIndex="1"
+				GridPane.rowIndex="4" GridPane.halignment="CENTER" />
 		</GridPane>
 	</center>
 

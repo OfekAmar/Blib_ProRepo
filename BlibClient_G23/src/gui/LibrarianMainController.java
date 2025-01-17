@@ -26,6 +26,8 @@ public class LibrarianMainController {
 
 	@FXML
 	private Button logoutButton;
+	@FXML
+	private Button exitButton;
 
 	private Stage stage;
 
@@ -48,7 +50,7 @@ public class LibrarianMainController {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
 			}
-		}, 500, 300);
+		}, 500, 350);
 
 	}
 
@@ -77,6 +79,11 @@ public class LibrarianMainController {
 				((LoginController) controller).setStage(stage);
 			}
 		});
+	}
+
+	@FXML
+	private void onExitClick(ActionEvent event) {
+		ScreenLoader.closeWindow(exitButton);
 	}
 
 }

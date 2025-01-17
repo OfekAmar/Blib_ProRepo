@@ -15,7 +15,7 @@
 	style="-fx-background-color: #f4f4f4;">
 	<top>
 		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
-			<Label text="Borrow Book"
+			<Label text="Return Book"
 				style="-fx-font-size: 20px; -fx-font-weight: bold;" />
 			<HBox alignment="CENTER" spacing="10" GridPane.columnIndex="0"
 				GridPane.rowIndex="2" GridPane.columnSpan="3">
@@ -49,6 +49,9 @@
 			<Button text="Enter" fx:id="enterBookButton"
 				onAction="#onEnterBook" GridPane.columnIndex="2"
 				GridPane.rowIndex="1" />
+			<Button text="Accept Return" fx:id="returnButton"
+				onAction="#onReturnClick" GridPane.columnIndex="1"
+				GridPane.rowIndex="2" GridPane.halignment="CENTER" />
 		</GridPane>
 	</center>
 

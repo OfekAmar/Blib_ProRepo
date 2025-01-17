@@ -36,6 +36,7 @@
 	<bottom>
 		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
+			<Button text="Exit" fx:id="exitButton" onAction="#onExitClick" />
 			<Button text="Logout" fx:id="logoutButton"
 				onAction="#onLogoutClick" />
 		</HBox>
