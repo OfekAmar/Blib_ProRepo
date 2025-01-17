@@ -1,20 +1,16 @@
 package logic;
 
-public class CopyOfBook {
-	private String bookID;
+public class CopyOfBook extends Book {
 	private String copyID;
 	private String location;
 	private String status;
-	public CopyOfBook(String bookID, String copyID, String location, String status) {
-		super();
-		this.bookID = bookID;
+
+	public CopyOfBook(String title, String id, String author, String subject, int totalCopies, int reservedCopies,
+			String copyID, String location, String status) {
+		super(title, id, author, subject, totalCopies, reservedCopies);
 		this.copyID = copyID;
 		this.location = location;
 		this.status = status;
-	}
-	
-	public String getBookID() {
-		return bookID;
 	}
 
 	public String getCopyID() {
@@ -32,13 +28,9 @@ public class CopyOfBook {
 	public String getLocation() {
 		return location;
 	}
+
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	
-	
-	
-	
 
 }
