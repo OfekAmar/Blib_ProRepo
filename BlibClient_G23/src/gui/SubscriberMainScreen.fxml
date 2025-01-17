@@ -41,6 +41,8 @@
 		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
 			<Button text="Exit" fx:id="exitButton" onAction="#handleExit" />
+			<Button text="Log Out" fx:id="logoutButton"
+				onAction="#handleLogout" />
 		</HBox>
 	</bottom>
 </BorderPane>

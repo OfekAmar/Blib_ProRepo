@@ -32,6 +32,8 @@ public class SubscriberMainController {
 
 	@FXML
 	private Button exitButton;
+	@FXML
+	private Button logoutButton;
 
 	private String subscriberName;
 	private Stage stage;
@@ -52,7 +54,12 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onOrderBookClick(ActionEvent event) {
-		ScreenLoader.showAlert("Order Book", "You clicked on 'Order Book'.");
+		ScreenLoader.openPopUpScreen("/gui/OrderBookScreen.fxml", "Book Order", event, controller -> {
+			if (controller instanceof OrderBookController) {
+				((OrderBookController) controller).setStage(stage);
+				((OrderBookController) controller).setSubscriber(sub);
+			}
+		});
 	}
 
 	@FXML
@@ -67,7 +74,12 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onExtendBorrowClick(ActionEvent event) {
-		ScreenLoader.showAlert("Extend Loan", "You clicked on 'Extend Loan'.");
+		ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
+			if (controller instanceof ExtendBorrowController) {
+				((ExtendBorrowController) controller).setStage(stage);
+				((ExtendBorrowController) controller).setSubscriber(sub);
+			}
+		});
 	}
 
 	@FXML
@@ -84,10 +96,20 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onHistoryClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/HistoryScreen.fxml", "Search Book", event, controller -> {
+		ScreenLoader.openPopUpScreen("/gui/HistoryScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof HistoryController) {
 				((HistoryController) controller).setStage(stage);
 				((HistoryController) controller).setSubscriber(sub);
+			}
+		});
+	}
+
+	@FXML
+	private void handleLogout(ActionEvent event) {
+		this.sub = null;
+		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
+			if (controller instanceof LoginController) {
+				((LoginController) controller).setStage(stage);
 			}
 		});
 	}
