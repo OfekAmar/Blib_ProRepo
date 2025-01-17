@@ -79,7 +79,11 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onHistoryClick(ActionEvent event) {
-		ScreenLoader.showAlert("View History", "You clicked on 'View History'.");
+		ScreenLoader.openScreen("/gui/HistoryScreen.fxml", "Search Book", event, controller -> {
+			if (controller instanceof HistoryController) {
+				((HistoryController) controller).setStage(stage);
+			}
+		});
 	}
 
 	@FXML
