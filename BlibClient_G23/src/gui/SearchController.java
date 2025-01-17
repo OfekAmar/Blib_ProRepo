@@ -78,7 +78,7 @@ public class SearchController {
 			if (b != null) {
 				if (b.getTotalCopies() - b.getTotalCopies() < 1) {
 					ScreenLoader.showAlert("No copies found",
-							"There is no available copy of the book to borrow /n Order the book by his ID: "
+							"There is no available copy of the book to borrow /n Please order the book by his ID: "
 									+ b.getId());
 				} else if (b instanceof CopyOfBook) {
 					ScreenLoader.showAlert("Copy Found", "The book is located in " + ((CopyOfBook) b).getLocation());

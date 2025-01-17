@@ -28,7 +28,7 @@ public class HistoryController {
 	private TableColumn<ObservableList<String>, String> returnDateColumn;
 
 	@FXML
-	private Button backButton;
+	private Button closeButton;
 
 	private final ObservableList<ObservableList<String>> historyEntries = FXCollections.observableArrayList();
 
@@ -78,11 +78,6 @@ public class HistoryController {
 
 	@FXML
 	private void onBackToMainClick(ActionEvent event) {
-		ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
-			if (controller instanceof SubscriberMainController) {
-				((SubscriberMainController) controller).setSubscriberName(sub.getName());
-				((SubscriberMainController) controller).setSubscriber(sub);
-			}
-		}, 400, 250);
+		ScreenLoader.closeWindow(closeButton);
 	}
 }
