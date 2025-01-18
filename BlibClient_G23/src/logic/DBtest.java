@@ -1,47 +1,53 @@
 package logic;
 
+import java.time.LocalDate;
+
 import client.ClientMain;
 
 public class DBtest {
-    public static void main(String[] args) {
-        ClientMain clientMain = new ClientMain("localhost", 5555);
-
+	public static void main(String[] args) {
         try {
+            ClientMain clientMain = new ClientMain("localhost", 5555);
             clientMain.openConnection();
 
             BookController bookController = new BookController(clientMain);
+            TimeController timeController = new TimeController();
+            SubscriberController subscriberController = new SubscriberController(clientMain);
+            BorrowController borrowController = new BorrowController(bookController, timeController, subscriberController, clientMain);
 
-            System.out.println("Testing addBook...");
-            String bookCode = "11111";
-            String bookCode2 = "4565";
-            String author = "BarElrom214532";
-            String title = "chat25434";
-            String subject = "Programming3";
-            String description = "abcd.4";
-            bookController.addBook(bookCode, author, title, subject, description);
-            System.out.println("Book added successfully: " + title);
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("1", "2", "1", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("1", "1", "4", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("2", "1", "6", LocalDate.of(2025, 1, 25));
+            
+         // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("5", "1", "4", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("4", "1", "4", LocalDate.of(2025, 1, 25));
+           
+            // Test extending a borrow
+            System.out.println("\nTesting extendBorrow...");
+            borrowController.extendBorrow("2");
+            
+            // Test extending a borrow
+            System.out.println("\nTesting extendBorrow...");
+            borrowController.extendBorrow("1");
 
-            System.out.println("\nTesting checkBookAvailability...");
-            String checkBookCode = "456";
-            bookController.checkBookAvailability(checkBookCode);
-            System.out.println("Check availability request sent for book code: " + checkBookCode);
-
-            System.out.println("\nTesting getBookDetails...");
-            String detailsBookCode = "456";
-            bookController.getBookDetails(detailsBookCode);
-            System.out.println("Get details request sent for book code: " + detailsBookCode);
-
-            System.out.println("\nTesting deleteBook...");
-            bookController.deleteBook(bookCode2);
-            System.out.println("Delete request sent for book code: " + bookCode2);
-
-            System.out.println("\nClosing connection...");
             clientMain.closeConnection();
-            System.out.println("Connection closed.");
-
         } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 }
+
+            
