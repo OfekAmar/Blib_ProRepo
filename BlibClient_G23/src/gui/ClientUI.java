@@ -14,12 +14,13 @@ public class ClientUI extends Application {
 	// primaryStage - presents the main "stage" (GUI window) of the application
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// FMXL loading stage, load the FXML file that have the UI(design) 
-		Parent root = FXMLLoader.load(getClass().getResource("ClientConnect.fxml"));
+		// FMXL loading stage, load the FXML file that have the UI(design)
+		Parent root = FXMLLoader.load(getClass().getResource("LoginScreen.fxml"));
 		primaryStage.setTitle("Client Connect Application");
-		primaryStage.setScene(new Scene(root, 300, 300));
+		primaryStage.setScene(new Scene(root, 350, 350));
 		primaryStage.show();
 	}
+	// hello im here ofek
 
 	public static void main(String[] args) {
 		launch(args);

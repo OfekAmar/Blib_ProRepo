@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+	xmlns="http://javafx.com/javafx/8.0.171"
+	fx:controller="gui.HistoryController"
+	style="-fx-background-color: #f4f4f4;">
+	<top>
+		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+			<Label text="My History"
+				style="-fx-font-size: 20px; -fx-font-weight: bold;" />
+		</VBox>
+	</top>
+
+	<center>
+		<TableView fx:id="historyTable">
+			<columns>
+				<TableColumn text="Book Title" fx:id="bookTitleColumn" />
+				<TableColumn text="Borrow Date" fx:id="borrowDateColumn" />
+				<TableColumn text="Return Date" fx:id="returnDateColumn" />
+			</columns>
+		</TableView>
+	</center>
+
+	<bottom>
+		<HBox alignment="CENTER_LEFT" spacing="10"
+			style="-fx-padding: 10;">
+			<Button text="Close" fx:id="closeButton"
+				onAction="#onBackToMainClick" />
+		</HBox>
+	</bottom>
+</BorderPane>

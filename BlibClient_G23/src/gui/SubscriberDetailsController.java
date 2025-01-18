@@ -1,15 +1,25 @@
 package gui;
 
+import java.awt.Desktop.Action;
+import java.awt.event.ActionEvent;
+
 import client.ClientMain;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import logic.ScreenLoader;
+import logic.Subscriber;
 
 ////the class is the controller for the SubscriberDetails.fxml and make the connection between the logic and the UI
 public class SubscriberDetailsController {
 	@FXML
 	private Label idLabel;
+
+	@FXML
+	private Label statusLabel;
 
 	@FXML
 	private TextField nameField;
@@ -20,9 +30,16 @@ public class SubscriberDetailsController {
 	@FXML
 	private TextField emailField;
 
+	@FXML
+	private TextField passwordField;
+
+	@FXML
+	private Button closeButton;
+
 	private Stage stage;
-	private String subscriberId;
 	private ClientMain client;
+	private Subscriber sub;
+	private String subscriberId;
 
 	// initialize stage to further operations
 	public void setStage(Stage stage, ClientMain client) {
@@ -30,18 +47,22 @@ public class SubscriberDetailsController {
 		this.client = client;
 	}
 
+	public void setSubscriber(Subscriber s) {
+		sub = s;
+		setDetails();
+	}
+
 	// the method uses the data recived by the server in order to present it in the
 	// GUI so the user can use the data
-	public void setDetails(String details) {
-		// string split by , into TextFields
-		String[] parts = details.split(",");
-		if (parts.length >= 4) {
-			subscriberId = parts[0];
-			idLabel.setText(parts[0]);
-			nameField.setText(parts[1]);
-			phoneField.setText(parts[2]);
-			emailField.setText(parts[3]);
-		}
+	public void setDetails() {
+		// changed to support the Subscriber Class
+		// String[] parts = details.split(",");
+		idLabel.setText(Integer.toString(sub.getId()));
+		statusLabel.setText(sub.getStatus());
+		nameField.setText(sub.getName());
+		phoneField.setText(sub.getPhone());
+		emailField.setText(sub.getEmail());
+		passwordField.setText(sub.getPassword());
 
 	}
 
@@ -65,5 +86,10 @@ public class SubscriberDetailsController {
 		if (stage != null) {
 			stage.close();
 		}
+	}
+
+	@FXML
+	public void onCloseClick() {
+		ScreenLoader.closeWindow(closeButton);
 	}
 }
