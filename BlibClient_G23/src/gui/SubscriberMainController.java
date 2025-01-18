@@ -65,9 +65,9 @@ public class SubscriberMainController {
 	@FXML
 	private void onSearchBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
-			if (controller instanceof SearchController) {
-				((SearchController) controller).setStage(stage);
-				((SearchController) controller).setLoggedIn(true);
+			if (controller instanceof SearchBookController) {
+				((SearchBookController) controller).setStage(stage);
+				((SearchBookController) controller).setLoggedIn(true);
 			}
 		});
 	}

@@ -48,8 +48,8 @@ public class LoginController {
 	@FXML
 	private void onGuestLoginClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
-			if (controller instanceof SearchController) {
-				((SearchController) controller).setStage(new Stage());
+			if (controller instanceof SearchBookController) {
+				((SearchBookController) controller).setStage(new Stage());
 			}
 		});
 	}
