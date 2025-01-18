@@ -79,13 +79,13 @@ public class ReturnBookController {
 
 	@FXML
 	private void onScanSubscriber(ActionEvent event) {
-		// Implement logic to scan subscriber card
+		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Subscriber", "Scanning subscriber card...");
 	}
 
 	@FXML
 	private void onScanBook(ActionEvent event) {
-		// Implement logic to scan book
+		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Book", "Scanning book...");
 	}
 

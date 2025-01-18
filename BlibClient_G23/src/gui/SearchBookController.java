@@ -18,7 +18,7 @@ import logic.CopyOfBook;
 import logic.ScreenLoader;
 import logic.CopyOfBook;
 
-public class SearchController {
+public class SearchBookController {
 
 	@FXML
 	private ComboBox<String> searchByComboBox;
