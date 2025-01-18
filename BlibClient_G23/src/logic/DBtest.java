@@ -1,33 +1,53 @@
 package logic;
 
+import java.time.LocalDate;
+
 import client.ClientMain;
 
 public class DBtest {
 	public static void main(String[] args) {
-	    ClientMain clientMain = new ClientMain("localhost", 5555);
+        try {
+            ClientMain clientMain = new ClientMain("localhost", 5555);
+            clientMain.openConnection();
 
-	    try {
-	        clientMain.openConnection();
+            BookController bookController = new BookController(clientMain);
+            TimeController timeController = new TimeController();
+            SubscriberController subscriberController = new SubscriberController(clientMain);
+            BorrowController borrowController = new BorrowController(bookController, timeController, subscriberController, clientMain);
 
-	        BookController bookController = new BookController(clientMain);
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("1", "2", "1", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("1", "1", "4", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("2", "1", "6", LocalDate.of(2025, 1, 25));
+            
+         // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("5", "1", "4", LocalDate.of(2025, 1, 25));
+            
+            // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("4", "1", "4", LocalDate.of(2025, 1, 25));
+           
+            // Test extending a borrow
+            System.out.println("\nTesting extendBorrow...");
+            borrowController.extendBorrow("2");
+            
+            // Test extending a borrow
+            System.out.println("\nTesting extendBorrow...");
+            borrowController.extendBorrow("1");
 
-	        System.out.println("Testing addBook...");
-	        bookController.addBook("33333", "BarElrom212", "chat2", "Programming3", "abcd.4");
-
-	        System.out.println("\nTesting checkBookAvailability...");
-	        bookController.checkBookAvailability("22222");
-
-	        System.out.println("\nTesting deleteBook...");
-	        bookController.deleteBook("22222");
-
-	        System.out.println("\nClosing connection...");
-	        clientMain.closeConnection();
-	        
-	    } catch (Exception e) {
-	        System.err.println("Error: " + e.getMessage());
-	        e.printStackTrace();
-	    }
-	}
+            clientMain.closeConnection();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
             

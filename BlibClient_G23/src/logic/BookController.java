@@ -24,6 +24,12 @@ public class BookController {
         sendSynchronizedMessage(msg);
         Thread.sleep(1000);
     }
+    
+    public synchronized void updateCopyStatus(String bookCode, String copyId, String status) throws InterruptedException {
+        String msg = "UPDATE_COPY_STATUS," + bookCode + "," + copyId + "," + status;
+        sendSynchronizedMessage(msg);
+        Thread.sleep(1000);
+    }
 
     public void checkBookAvailability(String bookCode) throws InterruptedException {
         String msg = "CHECK_BOOK_AVAILABILITY," + bookCode;
