@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ListView?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/8.0.171"
@@ -29,17 +30,22 @@
 				GridPane.rowIndex="0" />
 			<ComboBox fx:id="searchByComboBox" GridPane.columnIndex="1"
 				GridPane.rowIndex="0" />
-
 			<TextField fx:id="searchField"
 				promptText="Enter search term" GridPane.columnIndex="2"
 				GridPane.rowIndex="0" />
 
+			<!-- ListView positioned between Search Button and TextField/ComboBox -->
+			<ListView fx:id="searchResultList" prefHeight="200"
+				prefWidth="300" GridPane.columnIndex="0" GridPane.rowIndex="1"
+				GridPane.columnSpan="3" />
+
 			<!-- Search Button -->
 			<Button text="Search" fx:id="searchButton"
-				GridPane.columnIndex="1" GridPane.rowIndex="1"
-				GridPane.columnSpan="2" GridPane.halignment="CENTER"
+				GridPane.columnIndex="1" GridPane.rowIndex="2"
+				GridPane.columnSpan="3" GridPane.halignment="CENTER"
 				onAction="#onSearchBookClick" />
 		</GridPane>
+
 	</center>
 
 	<bottom>

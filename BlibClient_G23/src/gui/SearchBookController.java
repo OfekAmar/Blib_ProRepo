@@ -5,7 +5,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
 import java.awt.TextArea;
@@ -43,11 +46,16 @@ public class SearchBookController {
 
 	@FXML
 	private TextArea resultsArea;
+	@FXML
+	private ListView<String> searchResultList;
 
+	private ObservableList<String> obslist;
 	private Stage stage;
 	private boolean loggedIn = false;
 	private Book b = null;
 	private ClientMain c;
+	private boolean searchbuttonflag = true;
+	private List<Book> books;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -74,9 +82,20 @@ public class SearchBookController {
 		}
 	}
 
+	private void updateListVisibility(boolean b) {
+		if (b) {
+			searchResultList.setVisible(true);
+			searchResultList.setManaged(true);
+		} else {
+			searchResultList.setVisible(false);
+			searchResultList.setManaged(false);
+		}
+	}
+
 	@FXML
 	public void initialize() {
 		updateButtonsVisibility();
+		updateListVisibility(false);
 		// Initialize the ComboBox with search options
 		searchByComboBox.getItems().addAll("Title", "Subject", "Free Text");
 		searchByComboBox.setValue("Title"); // Set default value
@@ -103,33 +122,53 @@ public class SearchBookController {
 
 			// Assuming integration with SearchBookLogic
 			SearchBookLogic searchLogic = new SearchBookLogic(c);
+			if (!searchbuttonflag) {
+				int selectedIndex = searchResultList.getSelectionModel().getSelectedIndex();
+				String titlesearch = books.get(selectedIndex).getTitle();
+				ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(titlesearch));
+			} else {
+				switch (searchBy) {
+				case "Title":
+					ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(searchTerm));
+					break;
 
-			switch (searchBy) {
-			case "Title":
-				ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(searchTerm));
-				// searchLogic.searchBookByTitle(searchTerm);
-				break;
+				case "Subject":
+					books = searchLogic.searchBookBySubject(searchTerm);
+					if (books == null || books.isEmpty()) {
+						ScreenLoader.showAlert("Info", "No books found for the search criteria");
+					} else {
+						searchbuttonflag = false;
+						obslist = FXCollections.observableArrayList();
+						searchResultList.setItems(obslist);
+						for (Book b : books) {
+							obslist.add(b.getTitle() + " By: " + b.getAuthor());
+						}
+						updateListVisibility(true);
+						Stage stage2 = (Stage) ((Node) event.getSource()).getScene().getWindow();
+						stage2.setHeight(400);
+					}
+					break;
+				case "Free Text":
+					books = searchLogic.searchBookByFreeText(searchTerm);
+					if (books == null || books.isEmpty()) {
+						ScreenLoader.showAlert("Info", "No books found for the search criteria");
+					} else {
+						searchbuttonflag = false;
+						obslist = FXCollections.observableArrayList();
+						searchResultList.setItems(obslist);
+						for (Book b : books) {
+							obslist.add(b.getTitle() + " By: " + b.getAuthor());
+						}
+						updateListVisibility(true);
+						Stage stage2 = (Stage) ((Node) event.getSource()).getScene().getWindow();
+						stage2.setHeight(400);
+					}
+					break;
 
-			case "Subject":
-				List<Book> books = searchLogic.searchBookBySubject(searchTerm);
-				if (books == null || books.isEmpty()) {
-					ScreenLoader.showAlert("Info", "No books found for the search criteria");
-				} else {
-					System.out.println("Books found: " + books);
+				default:
+					ScreenLoader.showAlert("Error", "Unknown search category: " + searchBy);
+					break;
 				}
-				break;
-			case "Free Text":
-				books = searchLogic.searchBookByFreeText(searchTerm);
-				if (books == null || books.isEmpty()) {
-					ScreenLoader.showAlert("Info", "No books found for the search criteria");
-				} else {
-					System.out.println("Books found: " + books);
-				}
-				break;
-
-			default:
-				ScreenLoader.showAlert("Error", "Unknown search category: " + searchBy);
-				break;
 			}
 
 		} catch (Exception e) {
