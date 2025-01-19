@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.List;
 
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -55,7 +56,28 @@ public class ServerMain extends AbstractServer {
                             client.sendToClient("ERROR: Invalid DELETE_BOOK format.");
                         }
                         break;
-
+                    case "SEARCH_BOOK_BY_TITLE":
+                    	if(parts.length==2) {
+                    		String title=parts[1];
+                    		String result = dbConnector.searchBookByTitle(title);
+                    		
+                    		client.sendToClient(result);
+                    		
+                    	}else {
+                    		client.sendToClient("ERROR: Invalid SEARCH_BOOK_BY_TITLE format.");
+                    	}
+                    	break;
+                    case "SEARCH_BOOK_BY_SUBJECT":
+                    	if(parts.length==2) {
+                    		String subject=parts[1];
+                    		List<Book> result=dbConnector.searchBookBySubject(subject);
+                    		System.out.println(result);
+                    		client.sendToClient(result);
+                    	}
+                    	else {
+                    		client.sendToClient("ERROR: Invalid SEARCH_BOOK_BY_SUBJECT format.");
+                    	}
+                    	break;
                     case "CHECK_BOOK_AVAILABILITY":
                         if (parts.length == 2) {
                             String bookCode = parts[1];
