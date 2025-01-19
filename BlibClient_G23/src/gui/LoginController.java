@@ -1,5 +1,6 @@
 package gui;
 
+import client.ClientMain;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,10 +22,15 @@ public class LoginController {
 	private PasswordField passwordField;
 
 	private Stage stage;
+	private ClientMain c;
 	private boolean isLibrarian = true;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+
+	public void setClient(ClientMain c) {
+		this.c = c;
 	}
 
 	@FXML
@@ -50,6 +56,8 @@ public class LoginController {
 		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof SearchBookController) {
 				((SearchBookController) controller).setStage(new Stage());
+				((SearchBookController) controller).setClient(c);
+
 			}
 		});
 	}

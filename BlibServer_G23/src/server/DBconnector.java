@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import logic.Book;
+
 public class DBconnector {
 	private Connection dbConnection;
 
@@ -88,7 +90,7 @@ public class DBconnector {
 		if (rs.next()) {
 			bookCodeResult = rs.getInt(1);
 		} else {
-			return null; // No book found with the given title
+			return "No book found with the givern title"; // No book found with the given title
 		}
 		query = "SELECT location FROM copyofbook WHERE book_code=? AND status=?";
 		ps = dbConnection.prepareStatement(query);
@@ -96,9 +98,12 @@ public class DBconnector {
 		ps.setString(2, "exists");
 		rs = ps.executeQuery();
 		if (rs.next()) {
-			return rs.getString(1); // Return the location of the book
+			return "The book is available for borrowing \n The book location is: " + rs.getString(1); // Return the
+																										// location
+																										// of the book
 		} else {
-			return earliestReturnDate(bookCodeResult); // No copy of the book found
+			return "The book is not available for borrowing \n Earliest return date is: "
+					+ earliestReturnDate(bookCodeResult) + "\nYou can order the book by his book id :" + bookCodeResult;
 		}
 	}
 
@@ -110,18 +115,17 @@ public class DBconnector {
 		ps.setString(1, subject);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			b = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), rs.getString("subject"),rs.getString("description"),
-					rs.getInt("amount_of_copies"));
+			b = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), rs.getString("subject"),
+					rs.getString("description"), rs.getInt("amount_of_copies"));
 			bookList.add(b);
 		}
-		System.out.println(bookList);
 		return bookList;
 	}
-	
+
 	public List<Book> searchBookByFreeText(String freeText) throws SQLException {
 		List<Book> bookList = new ArrayList<Book>();
 		Book b;
-		freeText='%'+freeText+'%';
+		freeText = '%' + freeText + '%';
 		String query = "SELECT * FROM book WHERE title LIKE ? OR author LIKE ? OR description LIKE ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, freeText);
@@ -129,10 +133,11 @@ public class DBconnector {
 		ps.setString(3, freeText);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			b = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), rs.getString("subject"),rs.getString("description"),
-					rs.getInt("amount_of_copies"));
+			b = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), rs.getString("subject"),
+					rs.getString("description"), rs.getInt("amount_of_copies"));
 			bookList.add(b);
 		}
+
 		return bookList;
 	}
 
