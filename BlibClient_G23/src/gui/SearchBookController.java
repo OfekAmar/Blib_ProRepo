@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.awt.TextArea;
 import java.util.List;
 
+import client.ClientMain;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -20,6 +21,7 @@ import javafx.scene.control.Alert;
 import logic.Book;
 import logic.CopyOfBook;
 import logic.ScreenLoader;
+import logic.SearchBookLogic;
 import logic.CopyOfBook;
 
 public class SearchBookController {
@@ -35,24 +37,30 @@ public class SearchBookController {
 
 	@FXML
 	private Button backButton;
-	
+
 	@FXML
 	private Button closeButton;
-	
+
 	@FXML
 	private TextArea resultsArea;
 
 	private Stage stage;
 	private boolean loggedIn = false;
 	private Book b = null;
+	private ClientMain c;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+
 	}
 
 	public void setLoggedIn(boolean l) {
 		this.loggedIn = l;
 		updateButtonsVisibility();
+	}
+
+	public void setClient(ClientMain c) {
+		this.c = c;
 	}
 
 	private void updateButtonsVisibility() {
@@ -83,39 +91,50 @@ public class SearchBookController {
 			ScreenLoader.showAlert("Error", "Please fill all the fields of search");
 			return;
 		}
-		
-		SearchBookLogic searchBookLogic=new SearchBookLogic();
-		Book book=searchBookLogic.searchBook(searchTerm,searchBy);
-		if(book.getAvailbaleCopies()>0) {
-		}
-		List<CopyOfBook> booksCopies=searchBookLogic.searchBook(searchTerm,searchBy);
-		
-		if(booksCopies.isEmpty()) {
-			ScreenLoader.showAlert("Error", "There is no such book in the library database !\n please try again");
-		}
-		else {
-			StringBuilder results=new StringBuilder();
-			for(CopyOfBook bookCopy:booksCopies) {
-				results.append("Title: ").append(bookCopy.getTitle()).append("\nAuthor: ").append(bookCopy.getAuthor()).append("\nSubject: ").append(bookCopy.getSubject());
-				
-				if(book.getAvalibaleCopies()>0) {
-					results.append("\nShelf Location: ").append(bookCopy.get)
-				}
+
+		try {
+			// Validate search criteria
+			if (searchBy == null || searchBy.isEmpty()) {
+				ScreenLoader.showAlert("Error", "Please select a search category");
+				return;
 			}
-		} 
-		else {
-			// Implement your search logic here
-			if (b != null) {
-				if (b.getTotalCopies() - b.getTotalCopies() < 1) {
-					ScreenLoader.showAlert("No copies found",
-							"There is no available copy of the book to borrow /n Please order the book by his ID: "
-									+ b.getId());
-				} else if (b instanceof CopyOfBook) {
-					ScreenLoader.showAlert("Copy Found", "The book is located in " + ((CopyOfBook) b).getLocation());
+
+			System.out.println("Searching for books with criteria: " + searchBy + ", Term: " + searchTerm);
+
+			// Assuming integration with SearchBookLogic
+			SearchBookLogic searchLogic = new SearchBookLogic(c);
+
+			switch (searchBy) {
+			case "Title":
+				ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(searchTerm));
+				// searchLogic.searchBookByTitle(searchTerm);
+				break;
+
+			case "Subject":
+				List<Book> books = searchLogic.searchBookBySubject(searchTerm);
+				if (books == null || books.isEmpty()) {
+					ScreenLoader.showAlert("Info", "No books found for the search criteria");
+				} else {
+					System.out.println("Books found: " + books);
 				}
-			} else {
-				ScreenLoader.showAlert("Error", "There is no such book in the library database !\n please try again");
+				break;
+			case "Free Text":
+				books = searchLogic.searchBookByFreeText(searchTerm);
+				if (books == null || books.isEmpty()) {
+					ScreenLoader.showAlert("Info", "No books found for the search criteria");
+				} else {
+					System.out.println("Books found: " + books);
+				}
+				break;
+
+			default:
+				ScreenLoader.showAlert("Error", "Unknown search category: " + searchBy);
+				break;
 			}
+
+		} catch (Exception e) {
+			System.err.println("Error during book search: " + e.getMessage());
+			ScreenLoader.showAlert("Error", "An error occurred during the search. Please try again later.");
 		}
 	}
 

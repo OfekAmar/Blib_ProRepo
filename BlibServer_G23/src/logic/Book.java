@@ -1,4 +1,4 @@
-package server;
+package logic;
 
 import java.io.Serializable;
 
