@@ -7,6 +7,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+
+import java.awt.TextArea;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
@@ -31,8 +35,12 @@ public class SearchBookController {
 
 	@FXML
 	private Button backButton;
+	
 	@FXML
 	private Button closeButton;
+	
+	@FXML
+	private TextArea resultsArea;
 
 	private Stage stage;
 	private boolean loggedIn = false;
@@ -73,7 +81,29 @@ public class SearchBookController {
 
 		if (searchTerm == null || searchTerm.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please fill all the fields of search");
-		} else {
+			return;
+		}
+		
+		SearchBookLogic searchBookLogic=new SearchBookLogic();
+		Book book=searchBookLogic.searchBook(searchTerm,searchBy);
+		if(book.getAvailbaleCopies()>0) {
+		}
+		List<CopyOfBook> booksCopies=searchBookLogic.searchBook(searchTerm,searchBy);
+		
+		if(booksCopies.isEmpty()) {
+			ScreenLoader.showAlert("Error", "There is no such book in the library database !\n please try again");
+		}
+		else {
+			StringBuilder results=new StringBuilder();
+			for(CopyOfBook bookCopy:booksCopies) {
+				results.append("Title: ").append(bookCopy.getTitle()).append("\nAuthor: ").append(bookCopy.getAuthor()).append("\nSubject: ").append(bookCopy.getSubject());
+				
+				if(book.getAvalibaleCopies()>0) {
+					results.append("\nShelf Location: ").append(bookCopy.get)
+				}
+			}
+		} 
+		else {
 			// Implement your search logic here
 			if (b != null) {
 				if (b.getTotalCopies() - b.getTotalCopies() < 1) {

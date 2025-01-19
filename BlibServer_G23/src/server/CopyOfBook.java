@@ -1,4 +1,4 @@
-package logic;
+package server;
 
 public class CopyOfBook extends Book {
 	private static final long serialVersionUID=2L;
