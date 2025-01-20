@@ -40,7 +40,7 @@ public class LoginController {
 				if (controller instanceof LibrarianMainController) {
 					((LibrarianMainController) controller).setStage(new Stage());
 				}
-			}, 250, 350);
+			}, 250, 400);
 		} else {
 			ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
 					controller -> {

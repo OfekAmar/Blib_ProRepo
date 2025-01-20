@@ -20,6 +20,8 @@ public class LibrarianMainController {
 
 	@FXML
 	private Button returnBookButton;
+	@FXML
+	private Button readerCardButton;
 
 	@FXML
 	private Button reportsButton;
@@ -40,6 +42,16 @@ public class LibrarianMainController {
 		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Subscriber Managemnt", event, controller -> {
 			if (controller instanceof ManagmentSubscriberController) {
 				((ManagmentSubscriberController) controller).setStage(stage);
+			}
+		});
+	}
+
+	@FXML
+	private void onReaderCardClick(ActionEvent event) {
+		ScreenLoader.openScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof ReaderCardController) {
+				((ReaderCardController) controller).setStage(stage);
+				((ReaderCardController) controller).setLibrarian(true);
 			}
 		});
 	}

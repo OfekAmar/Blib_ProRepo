@@ -28,6 +28,9 @@ public class SubscriberMainController {
 	private Button myProfileButton;
 
 	@FXML
+	private Button readerCardButton;
+
+	@FXML
 	private Button viewHistoryButton;
 
 	@FXML
@@ -68,6 +71,16 @@ public class SubscriberMainController {
 			if (controller instanceof SearchBookController) {
 				((SearchBookController) controller).setStage(stage);
 				((SearchBookController) controller).setLoggedIn(true);
+			}
+		});
+	}
+
+	@FXML
+	private void onReaderCardClick(ActionEvent event) {
+		ScreenLoader.openPopUpScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof ReaderCardController) {
+				((ReaderCardController) controller).setStage(stage);
+				((ReaderCardController) controller).setSubscriber(sub);
 			}
 		});
 	}
