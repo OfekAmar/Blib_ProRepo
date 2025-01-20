@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import logic.Book;
+import logic.Record;
 
 public class DBconnector {
 	private Connection dbConnection;
@@ -157,7 +158,7 @@ public class DBconnector {
 		}
 	}
 
-	public ArrayList<String> ReaderCardByID(int subscriberID) throws SQLException {
+	public ArrayList<String> BorrowHistoryByID(int subscriberID) throws SQLException {
 		List<String> borrowdList = new ArrayList<String>();
 		String query = "SELECT b.book_code, bk.title, b.borrow_date, b.return_max_date " + "FROM borrow b "
 				+ "JOIN book bk ON b.book_code = bk.book_code " + "WHERE b.sub_id = ?";
@@ -170,6 +171,20 @@ public class DBconnector {
 			borrowdList.add(s);
 		}
 		return (ArrayList<String>) borrowdList;
+	}
+
+	public List<Record> AllRecordByID(int subscriberID) throws SQLException {
+		List<Record> records = new ArrayList<Record>();
+		String query = "SELECT * FROM record WHERE subscriber_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, subscriberID);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Record r = new Record(rs.getInt("record_id"), rs.getString("record_type"), rs.getInt("subscriber_id"),
+					rs.getDate("record_date").toString(), rs.getInt("book_code"));
+			records.add(r);
+		}
+		return records;
 	}
 
 }

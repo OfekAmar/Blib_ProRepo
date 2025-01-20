@@ -31,9 +31,9 @@
 			<HBox alignment="CENTER" spacing="20">
 				<Button text="My Profile" fx:id="myProfileButton"
 					onAction="#onViewProfileClick" />
-				<Button text="My Reader Card" fx:id="readerCardButton"
-					onAction="#onReaderCardClick" />
-				<Button text="View History" fx:id="viewHistoryButton"
+				<Button text="My Borrow History" fx:id="borrowHistoryButton"
+					onAction="#borrowHistoryClick" />
+				<Button text="My History" fx:id="viewHistoryButton"
 					onAction="#onHistoryClick" />
 			</HBox>
 		</VBox>
