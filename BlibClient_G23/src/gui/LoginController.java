@@ -42,12 +42,13 @@ public class LoginController {
 					((LibrarianMainController) controller).setStage(new Stage());
 					((LibrarianMainController) controller).setClient(c);
 				}
-			}, 250, 350);
+			}, 250, 400);
 		} else {
 			ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
 					controller -> {
 						if (controller instanceof SubscriberMainController) {
 							((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
+							((SubscriberMainController) controller).setClient(c);
 						}
 					}, 400, 250);
 		}

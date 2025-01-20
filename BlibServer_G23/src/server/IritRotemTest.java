@@ -15,6 +15,7 @@ public class IritRotemTest {
 		// System.out.println(db.earliestReturnDate(3));
 		// System.out.println(db.searchBookBySubject("Fantasy"));
 		// System.out.println(db.searchBookByFreeText("A tale"));
-		System.out.println(db.ReaderCardByID(1));
+		// System.out.println(db.ReaderCardByID(1));
+		System.out.println(db.AllRecordByID(1));
 	}
 }

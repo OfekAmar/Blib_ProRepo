@@ -1,22 +1,24 @@
 package gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import client.ClientMain;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.SubscriberController;
 
-public class ReaderCardController {
+import java.util.List;
+
+import client.ClientMain;
+
+import java.util.ArrayList;
+
+public class BorrowHistoryController {
 
 	@FXML
 	private TextField searchField;
@@ -33,7 +35,6 @@ public class ReaderCardController {
 	private Button editButton;
 
 	private ObservableList<String> obslist;
-	private boolean isLibrarian = false;
 	private Subscriber sub;
 	private List<String> subscribers; // Example list of subscribers (replace with database integration)
 	private Stage stage;
@@ -44,12 +45,9 @@ public class ReaderCardController {
 		this.stage = stage;
 	}
 
-	public void setLibrarian(boolean b) {
-		isLibrarian = b;
-	}
-
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
+		backButton.setText("close");
 	}
 
 	public void setClientMain(ClientMain c) {
@@ -91,36 +89,12 @@ public class ReaderCardController {
 	}
 
 	@FXML
-	private void onSearchClick(ActionEvent event) {
-		String searchTerm = searchField.getText();
-
-		if (searchTerm == null || searchTerm.trim().isEmpty()) {
-			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
-			return;
-		}
-
-		// need to implement search for subscriber
-		// and after the result to use setSubscriber with the result
-		// meanwhile alternative !
-		int ids = Integer.valueOf(searchTerm);
-		Subscriber s = new Subscriber(ids, "xx", "xx", "xx", "xx", "xx");
-		setSubscriber(s);
-		updateList();
-
-	}
-
-	@FXML
 	private void onEditClick(ActionEvent event) {
 
 	}
 
 	@FXML
 	private void onBackClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
-			if (controller instanceof LibrarianMainController) {
-				((LibrarianMainController) controller).setStage(new Stage());
-			}
-		});
-
+		ScreenLoader.closeWindow(backButton);
 	}
 }

@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
 import logic.Subscriber;
-
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 
@@ -28,7 +28,7 @@ public class SubscriberMainController {
 	private Button myProfileButton;
 
 	@FXML
-	private Button readerCardButton;
+	private Button borrowHistoryButton;
 
 	@FXML
 	private Button viewHistoryButton;
@@ -40,7 +40,12 @@ public class SubscriberMainController {
 
 	private String subscriberName;
 	private Stage stage;
-	private Subscriber sub = new Subscriber(0, "name example", "phone example", "active", "email example", "password");
+	private Subscriber sub = new Subscriber(1, "name example", "phone example", "active", "email example", "password");
+	private ClientMain c;
+
+	public void setClient(ClientMain c) {
+		this.c = c;
+	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -70,19 +75,21 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof SearchBookController) {
 				((SearchBookController) controller).setStage(stage);
+				((SearchBookController) controller).setClient(c);
 				((SearchBookController) controller).setLoggedIn(true);
 			}
 		});
 	}
 
 	@FXML
-	private void onReaderCardClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
-			if (controller instanceof ReaderCardController) {
-				((ReaderCardController) controller).setStage(stage);
-				((ReaderCardController) controller).setSubscriber(sub);
+	private void borrowHistoryClick(ActionEvent event) {
+		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof BorrowHistoryController) {
+				((BorrowHistoryController) controller).setStage(stage);
+				((BorrowHistoryController) controller).setClientAndSubscrber(sub, c);
+
 			}
-		});
+		}, 450, 300);
 	}
 
 	@FXML

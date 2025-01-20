@@ -55,12 +55,13 @@ public class LibrarianMainController {
 
 	@FXML
 	private void onReaderCardClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
 				((ReaderCardController) controller).setStage(stage);
+				((ReaderCardController) controller).setClientMain(c);
 				((ReaderCardController) controller).setLibrarian(true);
 			}
-		});
+		}, 450, 300);
 	}
 
 	@FXML
