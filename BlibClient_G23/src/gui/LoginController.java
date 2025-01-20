@@ -1,3 +1,4 @@
+
 package gui;
 
 import client.ClientMain;
@@ -39,8 +40,9 @@ public class LoginController {
 			ScreenLoader.openScreenWithSize("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, controller -> {
 				if (controller instanceof LibrarianMainController) {
 					((LibrarianMainController) controller).setStage(new Stage());
+					((LibrarianMainController) controller).setClient(c);
 				}
-			}, 250, 400);
+			}, 250, 350);
 		} else {
 			ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
 					controller -> {
