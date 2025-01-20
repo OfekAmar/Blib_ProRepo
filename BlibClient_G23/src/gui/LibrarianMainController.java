@@ -1,3 +1,4 @@
+
 package gui;
 
 import javafx.fxml.FXML;
@@ -21,6 +22,8 @@ public class LibrarianMainController {
 
 	@FXML
 	private Button returnBookButton;
+	@FXML
+	private Button readerCardButton;
 
 	@FXML
 	private Button reportsButton;
@@ -31,14 +34,14 @@ public class LibrarianMainController {
 	private Button exitButton;
 
 	private Stage stage;
+	private ClientMain c;
+
+	public void setClient(ClientMain c) {
+		this.c = c;
+	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
-	}
-	private ClientMain c;
-	
-	public void setClient(ClientMain c) {
-		this.c = c;
 	}
 
 	@FXML
@@ -51,11 +54,20 @@ public class LibrarianMainController {
 	}
 
 	@FXML
+	private void onReaderCardClick(ActionEvent event) {
+		ScreenLoader.openScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof ReaderCardController) {
+				((ReaderCardController) controller).setStage(stage);
+				((ReaderCardController) controller).setLibrarian(true);
+			}
+		});
+	}
+
+	@FXML
 	private void onBorrowBookClick(ActionEvent event) {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
-				((BorrowBookController) controller).setClient(c);
 			}
 		}, 500, 350);
 
