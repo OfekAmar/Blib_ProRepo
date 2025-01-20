@@ -164,6 +164,7 @@ public class ServerMain extends AbstractServer {
 								client.sendToClient("ERROR: Subscriber not found.");
 							}
 						}
+						
 					} else {
 						client.sendToClient("ERROR: Invalid CHECK_SUBSCRIBER_STATUS format.");
 					}

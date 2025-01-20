@@ -15,9 +15,13 @@ public class DBtest {
             SubscriberController subscriberController = new SubscriberController(clientMain);
             BorrowController borrowController = new BorrowController(bookController, timeController, subscriberController, clientMain);
 
+           // Test BorrowController functionality
+            System.out.println("\nTesting processBorrow...");
+            borrowController.processBorrow("1", "2", "6", LocalDate.of(2025, 1, 25));
+            
             // Test BorrowController functionality
             System.out.println("\nTesting processBorrow...");
-            borrowController.processBorrow("1", "2", "1", LocalDate.of(2025, 1, 25));
+            borrowController.processBorrow("1", "2", "7", LocalDate.of(2025, 1, 25));
             
             // Test BorrowController functionality
             System.out.println("\nTesting processBorrow...");

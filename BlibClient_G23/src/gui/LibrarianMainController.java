@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.Book;
 import logic.ScreenLoader;
@@ -34,6 +35,11 @@ public class LibrarianMainController {
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
+	private ClientMain c;
+	
+	public void setClient(ClientMain c) {
+		this.c = c;
+	}
 
 	@FXML
 	private void onManageSubscriberClick(ActionEvent event) {
@@ -49,6 +55,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
+				((BorrowBookController) controller).setClient(c);
 			}
 		}, 500, 350);
 
