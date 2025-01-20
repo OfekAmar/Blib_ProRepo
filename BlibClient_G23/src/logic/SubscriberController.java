@@ -1,11 +1,14 @@
 package logic;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import client.ClientMain;
 
 public class SubscriberController {
     private final ClientMain client;
+    private Object response;
+    private CountDownLatch latch;
 
     public SubscriberController(ClientMain client) {
         this.client = client;
@@ -27,10 +30,18 @@ public class SubscriberController {
         
     }
 
-    public void checkSubscriberStatus(String subscriberId) throws InterruptedException {
+    public synchronized String checkSubscriberStatus(String subscriberId) throws InterruptedException {
         String msg = "CHECK_SUBSCRIBER_STATUS," + subscriberId;
-        sendSynchronizedMessage(msg);
-        TimeUnit.MILLISECONDS.sleep(500);
+        latch = new CountDownLatch(1);
+        client.setMessageHandler((Object serverResponse) -> {
+			this.response = serverResponse; // Save the server's response
+			latch.countDown(); // Release the latch
+        });
+        
+        client.sendMessageToServer(msg);
+        latch.await();
+		return (String) (response);
+
     }
 
     public void freezeSubscriber(String subscriberId) throws InterruptedException {

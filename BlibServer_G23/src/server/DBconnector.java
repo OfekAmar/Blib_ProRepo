@@ -7,11 +7,12 @@ import java.util.List;
 import logic.Book;
 
 public class DBconnector {
-    private Connection dbConnection;
+	private Connection dbConnection;
 
-    public DBconnector() {
-        connectToDatabase();
-    }
+	public DBconnector() {
+		connectToDatabase();
+	}
+
 
     private void connectToDatabase() {
         try {
@@ -23,12 +24,14 @@ public class DBconnector {
         }
     }
 
-    public Connection getDbConnection() {
-        if (dbConnection == null) {
-            throw new IllegalStateException("Database connection is not initialized.");
-        }
-        return dbConnection;
-    }
+
+	public Connection getDbConnection() {
+		if (dbConnection == null) {
+			throw new IllegalStateException("Database connection is not initialized.");
+		}
+		return dbConnection;
+	}
+
 
     // Read subscribers
     public String readSubscribers() throws SQLException {
@@ -43,6 +46,8 @@ public class DBconnector {
         }
         return result.toString();
     }
+
+
 
     // Show subscriber by ID
     public String showSubscriber(int id) throws SQLException {
@@ -59,6 +64,8 @@ public class DBconnector {
         return result.toString();
     }
 
+
+
     // Update subscriber information
     public void updateSubscriber(int id, String name, String email, String phoneNumber) throws SQLException {
         String query = "UPDATE subscriber SET sub_name = ?, email_address = ?, phone_num = ? WHERE sub_id = ?";
@@ -70,12 +77,15 @@ public class DBconnector {
         pstmt.executeUpdate();
     }
 
+
+
     // Execute a general query
     public ResultSet executeQuery(String query) throws SQLException {
         Statement statement = dbConnection.createStatement();
         return statement.executeQuery(query);
     }
 
+	
     // Execute a general update query
     public int updateQuery(String query) throws SQLException {
         Statement statement = dbConnection.createStatement();
@@ -83,6 +93,13 @@ public class DBconnector {
         System.out.println("Update Query Executed: " + query + " | Rows Affected: " + rowsAffected);
         return rowsAffected;
     }
+
+	
+
+	
+
+	
+
 
     // Search book by title
     public String searchBookByTitle(String title) throws SQLException {

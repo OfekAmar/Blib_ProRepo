@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Book implements Serializable{
 	private static final long serialVersionUID=1L;
 
+	
 	private String title;
 	private int id;
 	private String author;
@@ -12,9 +13,9 @@ public class Book implements Serializable{
 	private String description;
 	private int totalCopies;
 
-
-
-
+	
+	
+	
 	public Book(String title, int id, String author, String subject,String description, int totalCopies) {
 		this.title = title;
 		this.id = id;
@@ -55,12 +56,13 @@ public class Book implements Serializable{
 		this.totalCopies = totalCopies;
 	}
 
-
+	
 	@Override
 	public String toString() {
 		return "Book title=" + title + ", id=" + id + ", author=" + author + ", subject=" + subject + "Book description=" + description+"\n";
+	
+	
 	}
 
-
-
 }
+

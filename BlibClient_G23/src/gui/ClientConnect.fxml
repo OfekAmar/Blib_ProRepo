@@ -16,5 +16,6 @@
 		style="-fx-font-size: 18px;" />
 	<TextField fx:id="portField" promptText="Enter Server Port" />
 	<TextField fx:id="hostField" promptText="Enter Host Name" />
-	<Button text="Connect" onAction="#connectToServer" />
+	<Button text="Connect" fx:id="loginButton"
+		onAction="#connectToServer" />
 </VBox>

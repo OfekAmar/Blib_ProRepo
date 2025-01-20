@@ -8,10 +8,12 @@ import javafx.scene.control.Alert;
 
 import java.time.LocalDate;
 
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
-
+import logic.BorrowController;
 import logic.ScreenLoader;
+import logic.SubscriberController;
 
 public class BorrowBookController {
 
@@ -21,11 +23,6 @@ public class BorrowBookController {
 	@FXML
 	private TextField bookField;
 
-	@FXML
-	private Button enterSubscriberButton;
-
-	@FXML
-	private Button enterBookButton;
 
 	@FXML
 	private Button scanSubscriberButton;
@@ -50,6 +47,21 @@ public class BorrowBookController {
 
 	@FXML
 	private void onEnterSubscriber(ActionEvent event) {
+		
+	}
+
+	@FXML
+	private void onEnterBook(ActionEvent event) {
+		
+	}
+	
+	private ClientMain cm;
+	public void setClient(ClientMain cm) {
+		this.cm = cm;
+	}
+
+	@FXML
+	private void onAcceptClick(ActionEvent event) {
 		String subscriberInfo = subscriberField.getText();
 		if (subscriberInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
@@ -58,10 +70,6 @@ public class BorrowBookController {
 			// delete the show alert afte the implemention !!!
 			ScreenLoader.showAlert("Success", "Subscriber information submitted: " + subscriberInfo);
 		}
-	}
-
-	@FXML
-	private void onEnterBook(ActionEvent event) {
 		String bookInfo = bookField.getText();
 		if (bookInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
@@ -70,10 +78,7 @@ public class BorrowBookController {
 			// delete the show alert afte the implemention !!!
 			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
 		}
-	}
-
-	@FXML
-	private void onAcceptClick(ActionEvent event) {
+		
 		// check for date selected
 		LocalDate selectedDate = datePicker.getValue();
 		if (selectedDate != null) {
@@ -86,6 +91,22 @@ public class BorrowBookController {
 		// the details of book name and subscriber are in the variables subscriberInfo
 		// variables subscriberInfo and bookInfo
 		// the due date to borrow is in the variable selectedDate
+		 String[] parts = bookInfo.split("/");
+
+	     // Extract the book code and copy ID
+	     String bookCode = parts[0]; // Before the '/'
+	     String copyId = parts[1];   // After the '/'
+		
+		SubscriberController sc = new SubscriberController(cm);
+		
+		BorrowController borrowController = new BorrowController( sc, cm);
+		try {
+			borrowController.processBorrow(bookCode, copyId, subscriberInfo, selectedDate);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 	}
 

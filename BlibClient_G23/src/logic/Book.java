@@ -1,22 +1,28 @@
 package logic;
 
-public class Book {
+import java.io.Serializable;
+
+public class Book implements Serializable{
+	private static final long serialVersionUID=1L;
+	
 	private String title;
-	private String id;
+	private int id;
 	private String author;
 	private String subject;
+	private String description;
 	private int totalCopies;
-	private int ReservedCopies;
+
 	
 	
 	
-	public Book(String title, String id, String author, String subject, int totalCopies, int reservedCopies) {
+	public Book(String title, int id, String author, String subject,String description, int totalCopies) {
 		this.title = title;
 		this.id = id;
 		this.author = author;
 		this.subject = subject;
+		this.description=description;
 		this.totalCopies = totalCopies;
-		ReservedCopies = reservedCopies;
+
 	}
 	public String getTitle() {
 		return title;
@@ -24,10 +30,10 @@ public class Book {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getAuthor() {
@@ -48,14 +54,12 @@ public class Book {
 	public void setTotalCopies(int totalCopies) {
 		this.totalCopies = totalCopies;
 	}
-	public int getReservedCopies() {
-		return ReservedCopies;
-	}
-	public void setReservedCopies(int reservedCopies) {
-		ReservedCopies = reservedCopies;
-	}
+
 	
-	
+	@Override
+	public String toString() {
+		return "Book title=" + title + ", id=" + id + ", author=" + author + ", subject=" + subject + "Book description=" + description+"\n";
+	}
 	
 	
 
