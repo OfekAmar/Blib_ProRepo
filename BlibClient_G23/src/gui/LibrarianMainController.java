@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.Book;
 import logic.ScreenLoader;
@@ -33,6 +34,11 @@ public class LibrarianMainController {
 	private Button exitButton;
 
 	private Stage stage;
+	private ClientMain c;
+
+	public void setClient(ClientMain c) {
+		this.c = c;
+	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
