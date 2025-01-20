@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Book implements Serializable{
 	private static final long serialVersionUID=1L;
+
 	
 	private String title;
 	private int id;
@@ -59,8 +60,9 @@ public class Book implements Serializable{
 	@Override
 	public String toString() {
 		return "Book title=" + title + ", id=" + id + ", author=" + author + ", subject=" + subject + "Book description=" + description+"\n";
+	
+	
 	}
-	
-	
 
 }
+
