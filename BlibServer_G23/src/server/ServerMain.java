@@ -1,6 +1,7 @@
 package server;
 
 import java.sql.PreparedStatement;
+
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import logic.Book;
+import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
@@ -152,6 +154,24 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid SEARCH_BOOK_BY_FREE_TEXT format.");
 					}
 					break;
+				case "BORROW_HISTORY_BY_ID":
+					if (parts.length == 2) {
+						int id = Integer.valueOf(parts[1]);
+						List<String> result = dbConnector.BorrowHistoryByID(id);
+						client.sendToClient(new ArrayList<>(result));
+					} else {
+						client.sendToClient(new ArrayList<>());
+					}
+					break;
+				case "GET_RECORDS_BY_ID":
+					if (parts.length == 2) {
+						int id = Integer.valueOf(parts[1]);
+						List<Record> result = dbConnector.AllRecordByID(id);
+						client.sendToClient(new ArrayList<>(result));
+					} else {
+						client.sendToClient("ERROR: Invalid GET_RECORDS_BY_ID format.");
+					}
+					break;
 				case "CHECK_BOOK_AVAILABILITY":
 					if (parts.length == 2) {
 						String bookCode = parts[1];
@@ -226,7 +246,7 @@ public class ServerMain extends AbstractServer {
 								client.sendToClient("ERROR: Subscriber not found.");
 							}
 						}
-						
+
 					} else {
 						client.sendToClient("ERROR: Invalid CHECK_SUBSCRIBER_STATUS format.");
 					}
@@ -575,7 +595,9 @@ public class ServerMain extends AbstractServer {
 			} else {
 				client.sendToClient("ERROR: Invalid message format.");
 			}
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			System.err.println("Error processing message: " + e.getMessage());
 			try {
 				client.sendToClient("ERROR: " + e.getMessage());

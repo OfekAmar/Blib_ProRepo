@@ -48,7 +48,7 @@ public class ScreenLoader {
 	}
 
 	public static <T> void openScreenWithSize(String fxmlFileName, String stageTitle, ActionEvent event,
-			Consumer<T> controllerConsumer, int With, int Hight) {
+			Consumer<T> controllerConsumer, int Width, int Hight) {
 		Platform.runLater(() -> {
 			try {
 				// Get current stage
@@ -61,7 +61,7 @@ public class ScreenLoader {
 				// Create new stage
 				Stage newStage = new Stage();
 				newStage.setTitle(stageTitle);
-				newStage.setScene(new Scene(root, With, Hight));
+				newStage.setScene(new Scene(root, Width, Hight));
 
 				// Pass controller to consumer for additional setup
 				T controller = loader.getController();
@@ -90,6 +90,33 @@ public class ScreenLoader {
 				Stage newStage = new Stage();
 				newStage.setTitle(stageTitle);
 				newStage.setScene(new Scene(root));
+
+				// Pass controller to consumer for additional setup
+				T controller = loader.getController();
+				if (controllerConsumer != null) {
+					controllerConsumer.accept(controller);
+				}
+
+				// Show new stage and close current stage
+				newStage.show();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+
+	public static <T> void openPopUpScreenWithSize(String fxmlFileName, String stageTitle, ActionEvent event,
+			Consumer<T> controllerConsumer, int Width, int Hight) {
+		Platform.runLater(() -> {
+			try {
+				// Load FXML
+				FXMLLoader loader = new FXMLLoader(ScreenLoader.class.getResource(fxmlFileName));
+				Parent root = loader.load();
+
+				// Create new stage
+				Stage newStage = new Stage();
+				newStage.setTitle(stageTitle);
+				newStage.setScene(new Scene(root, Width, Hight));
 
 				// Pass controller to consumer for additional setup
 				T controller = loader.getController();

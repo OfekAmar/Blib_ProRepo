@@ -28,6 +28,9 @@ public class SubscriberMainController {
 	private Button myProfileButton;
 
 	@FXML
+	private Button borrowHistoryButton;
+
+	@FXML
 	private Button viewHistoryButton;
 
 	@FXML
@@ -71,9 +74,21 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof SearchBookController) {
 				((SearchBookController) controller).setStage(stage);
+				((SearchBookController) controller).setClient(c);
 				((SearchBookController) controller).setLoggedIn(true);
 			}
 		});
+	}
+
+	@FXML
+	private void borrowHistoryClick(ActionEvent event) {
+		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof BorrowHistoryController) {
+				((BorrowHistoryController) controller).setStage(stage);
+				((BorrowHistoryController) controller).setClientAndSubscrber(sub, c);
+
+			}
+		}, 450, 300);
 	}
 
 	@FXML
