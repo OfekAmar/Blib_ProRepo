@@ -49,6 +49,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Subscriber Managemnt", event, controller -> {
 			if (controller instanceof ManagmentSubscriberController) {
 				((ManagmentSubscriberController) controller).setStage(stage);
+				((ManagmentSubscriberController) controller).setClient(c);
 			}
 		});
 	}

@@ -110,6 +110,32 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid ADD_BOOK format.");
 					}
 					break;
+				case "ADD_SUBSCRIBER":
+					if(parts.length==5) {
+						String name=parts[1];
+						String phone=parts[2];
+						String email=parts[3];
+						String password=parts[4];
+						dbConnector.addSubscriber(name, phone, email, password);
+						client.sendToClient("New Subscriber added successfuly:\nname: "+name+"\nphone number: "+phone+"\nemail: "+email);
+					}else {
+						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
+					}
+					break;
+				case "EDIT_SUBSCRIBER":	
+					if(parts.length==5) {
+						int id=Integer.parseInt(parts[1]);
+						String phone=parts[2];
+						String email=parts[3];
+						String password=parts[4];
+						dbConnector.editSubscriber(id, phone, email, password);
+						client.sendToClient("edit Subscriber successfuly:\nid: "+id+"\nphone number: "+phone+"\nemail: "+email+"\npassword: "+password);
+					}else {
+						client.sendToClient("ERROR: Invalid EDIT_SUBSCRIBER format.");
+					}
+					break;
+					
+		
 
 				case "DELETE_BOOK":
 					if (parts.length == 2) {

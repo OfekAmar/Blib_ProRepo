@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.ScreenLoader;
 import logic.Subscriber;
@@ -40,9 +41,14 @@ public class ManagmentSubscriberController {
 
 	private Stage stage;
 	private Subscriber searchedsubs = null;
+	private ClientMain c;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+
+	public void setClient(ClientMain c) {
+		this.c = c;
 	}
 
 	@FXML
@@ -86,6 +92,7 @@ public class ManagmentSubscriberController {
 		ScreenLoader.openPopUpScreen("/gui/NewSubscriberScreen.fxml", "Add New Subscriber", event, controller -> {
 			if (controller instanceof NewSubscriberController) {
 				((NewSubscriberController) controller).setStage(new Stage());
+				((NewSubscriberController) controller).setClient(c);
 			}
 		});
 	}

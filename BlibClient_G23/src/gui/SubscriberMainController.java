@@ -40,7 +40,8 @@ public class SubscriberMainController {
 
 	private String subscriberName;
 	private Stage stage;
-	private Subscriber sub = new Subscriber(1, "name example", "phone example", "active", "email example", "password");
+	private Subscriber sub = new Subscriber(7, "Irit Kogan", "3333444466", "active", "irit14@gmail.com", "password");
+	private ClientMain c;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -54,7 +55,9 @@ public class SubscriberMainController {
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 	}
+
 	private ClientMain cm;
+
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}
@@ -106,7 +109,7 @@ public class SubscriberMainController {
 	private void onViewProfileClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
-				((SubscriberDetailsController) controller).setStage(new Stage(), null);
+				((SubscriberDetailsController) controller).setStage(new Stage(), cm);
 				// !!!! suppose to be setStage(new Stage(), ClientMain Client) !!!!!!! need to
 				// adapt later on
 				((SubscriberDetailsController) controller).setSubscriber(sub);
