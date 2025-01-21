@@ -47,6 +47,7 @@ public class LoginController {
 					controller -> {
 						if (controller instanceof SubscriberMainController) {
 							((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
+							((SubscriberMainController) controller).setClient(c);
 						}
 					}, 400, 250);
 		}

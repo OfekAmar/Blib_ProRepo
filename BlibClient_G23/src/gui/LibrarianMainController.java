@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.Book;
+import logic.ReturnController;
 import logic.ScreenLoader;
 
 public class LibrarianMainController {
@@ -66,6 +67,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/ReturnBookScreen.fxml", "Return Book", event, controller -> {
 			if (controller instanceof ReturnBookController) {
 				((ReturnBookController) controller).setStage(stage);
+				((ReturnBookController) controller).setClient(c);
 			}
 		}, 400, 300);
 	}

@@ -2,6 +2,7 @@ package gui;
 
 import java.time.LocalDate;
 
+import client.ClientMain;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -10,24 +11,17 @@ import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import logic.Book;
+import logic.BorrowController;
+import logic.ReturnController;
 import logic.ScreenLoader;
+import logic.SubscriberController;
 
 public class ReturnBookController {
-	@FXML
-	private TextField subscriberField;
-
+	
 	@FXML
 	private TextField bookField;
 
-	@FXML
-	private Button enterSubscriberButton;
-
-	@FXML
-	private Button enterBookButton;
-
-	@FXML
-	private Button scanSubscriberButton;
-
+	
 	@FXML
 	private Button scanBookButton;
 
@@ -44,16 +38,9 @@ public class ReturnBookController {
 		this.stage = stage;
 	}
 
-	@FXML
-	private void onEnterSubscriber(ActionEvent event) {
-		String subscriberInfo = subscriberField.getText();
-		if (subscriberInfo.isEmpty()) {
-			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
-		} else {
-			// need to verify in database that therre is subscriber like entered
-			// delete the show alert afte the implemention !!!
-			ScreenLoader.showAlert("Success", "Subscriber information submitted: " + subscriberInfo);
-		}
+	private ClientMain cm;
+	public void setClient(ClientMain cm) {
+		this.cm = cm;
 	}
 
 	@FXML
@@ -70,18 +57,39 @@ public class ReturnBookController {
 
 	@FXML
 	private void onReturnClick(ActionEvent event) {
+		String bookInfo = bookField.getText();
+		if (bookInfo.isEmpty()) {
+			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
+		}
+		
+		
 		// implement the logic of return book
 		// add copy to database add return record and goes on....
 		// the details of book name and subscriber are in the variables subscriberInfo
 		// variables subscriberInfo and bookInfo
 		// the due date to the return is in todayDate variable
+		
+		String[] parts = bookInfo.split("/");
+
+	     // Extract the book code and copy ID
+	     String bookCode = parts[0]; // Before the '/'
+	     String copyId = parts[1];   // After the '/'
+		
+		SubscriberController sc = new SubscriberController(cm);
+		
+		ReturnController returnController = new ReturnController(cm);
+		try {
+			ScreenLoader.showAlert("Success",returnController.returnBook(bookCode, copyId));
+			returnController.returnBook(bookCode, copyId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+
 	}
 
-	@FXML
-	private void onScanSubscriber(ActionEvent event) {
-		// there is no implementation for scan we dont have access to scanner :(
-		ScreenLoader.showAlert("Scan Subscriber", "Scanning subscriber card...");
-	}
+	
 
 	@FXML
 	private void onScanBook(ActionEvent event) {
