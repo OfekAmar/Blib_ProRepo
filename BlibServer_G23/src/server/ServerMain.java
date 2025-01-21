@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import logic.Book;
 import logic.Record;
@@ -17,10 +20,69 @@ public class ServerMain extends AbstractServer {
 
 	private final DBconnector dbConnector;
 
+    private final ScheduledExecutorService scheduler;
+
 	public ServerMain(int port) {
 		super(port);
 		this.dbConnector = new DBconnector();
+		 this.scheduler = Executors.newScheduledThreadPool(1);
+	     startDailyOverdueCheck();
 	}
+	
+	private void startDailyOverdueCheck() {
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                checkAndFreezeOverdueSubscribers();
+            } catch (Exception e) {
+                System.err.println("Error during overdue subscriber check: " + e.getMessage());
+            }
+        }, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
+    }
+
+	private void checkAndFreezeOverdueSubscribers() {
+	    System.out.println("Running daily overdue check...");
+
+	    // Update overdue borrows to 'late' and freeze subscribers
+	    String overdueQuery = "SELECT sub_id, borrow_id FROM Borrow WHERE status = 'borrowed' AND return_max_date < ?";
+	    String updateBorrowQuery = "UPDATE Borrow SET status = 'late' WHERE borrow_id = ?";
+	    String freezeSubscriberQuery = "UPDATE Subscriber SET status = 'frozen' WHERE sub_id = ?";
+
+	    try (PreparedStatement overduePs = dbConnector.getDbConnection().prepareStatement(overdueQuery)) {
+	        overduePs.setDate(1, java.sql.Date.valueOf(LocalDate.now().minusDays(7)));
+	        ResultSet rs = overduePs.executeQuery();
+
+	        while (rs.next()) {
+	            int subscriberId = rs.getInt("sub_id");
+	            int borrowId = rs.getInt("borrow_id");
+
+	            // Update the Borrow status to 'late'
+	            try (PreparedStatement updateBorrowPs = dbConnector.getDbConnection().prepareStatement(updateBorrowQuery)) {
+	                updateBorrowPs.setInt(1, borrowId);
+	                int rowsAffected = updateBorrowPs.executeUpdate();
+	                if (rowsAffected > 0) {
+	                    System.out.println("Borrow ID " + borrowId + " status updated to 'late'.");
+	                }
+	            }
+
+	            // Freeze the subscriber
+	            try (PreparedStatement freezeSubscriberPs = dbConnector.getDbConnection().prepareStatement(freezeSubscriberQuery)) {
+	                freezeSubscriberPs.setInt(1, subscriberId);
+	                int rowsAffected = freezeSubscriberPs.executeUpdate();
+	                if (rowsAffected > 0) {
+	                    System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
+	                }
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Error during overdue check: " + e.getMessage());
+	    }
+	}
+
+    @Override
+    protected void finalize() throws Throwable {
+        scheduler.shutdownNow(); // Shut down the scheduler when the server stops
+        super.finalize();
+    }
 
 	@Override
 	protected synchronized void handleMessageFromClient(Object msg, ConnectionToClient client) {
@@ -345,6 +407,103 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid PROCESS_BORROW format.");
 					}
 					break;
+					
+				case "RETURN_BOOK":
+				    if (parts.length == 3) {
+				        String bookId = parts[1];
+				        String copyId = parts[2];
+
+				        try {
+				            // Check if the borrow record exists with status 'borrowed'
+				            String borrowQuery = "SELECT * FROM Borrow WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
+				            try (PreparedStatement borrowPs = dbConnector.getDbConnection().prepareStatement(borrowQuery)) {
+				                borrowPs.setString(1, bookId);
+				                borrowPs.setString(2, copyId);
+				                ResultSet rsBorrow = borrowPs.executeQuery();
+
+				                if (rsBorrow.next()) {
+				                    // Change the status in the Borrow table to 'returned'
+				                    String updateBorrowQuery = "UPDATE Borrow SET status = 'returned' WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
+				                    try (PreparedStatement updateBorrowPs = dbConnector.getDbConnection().prepareStatement(updateBorrowQuery)) {
+				                        updateBorrowPs.setString(1, bookId);
+				                        updateBorrowPs.setString(2, copyId);
+				                        updateBorrowPs.executeUpdate();
+				                    }
+
+				                    // Check if there is a reservation with status 'borrowed' for this copy
+				                    String reserveQuery = "SELECT * FROM Reserved WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
+				                    try (PreparedStatement reservePs = dbConnector.getDbConnection().prepareStatement(reserveQuery)) {
+				                        reservePs.setString(1, bookId);
+				                        reservePs.setString(2, copyId);
+				                        ResultSet rsReserve = reservePs.executeQuery();
+
+				                        if (rsReserve.next()) {
+				                            // Update the reservation status to 'wait'
+				                            String updateReserveQuery = "UPDATE Reserved SET status = 'wait' WHERE book_code = ? AND copy_id = ?";
+				                            try (PreparedStatement updateReservePs = dbConnector.getDbConnection().prepareStatement(updateReserveQuery)) {
+				                                updateReservePs.setString(1, bookId);
+				                                updateReservePs.setString(2, copyId);
+				                                updateReservePs.executeUpdate();
+				                            }
+
+				                            // Update the copy status in CopyOfBook to 'reserved'
+				                            String updateCopyQuery = "UPDATE CopyOfBook SET status = 'reserved' WHERE book_code = ? AND copy_id = ?";
+				                            try (PreparedStatement updateCopyPs = dbConnector.getDbConnection().prepareStatement(updateCopyQuery)) {
+				                                updateCopyPs.setString(1, bookId);
+				                                updateCopyPs.setString(2, copyId);
+				                                updateCopyPs.executeUpdate();
+				                            }
+
+				                            client.sendToClient("Book returned successfully. The copy is now reserved.");
+				                        } else {
+				                            // No reservation exists, update the copy status to 'exists'
+				                            String updateCopyQuery = "UPDATE CopyOfBook SET status = 'exists' WHERE book_code = ? AND copy_id = ?";
+				                            try (PreparedStatement updateCopyPs = dbConnector.getDbConnection().prepareStatement(updateCopyQuery)) {
+				                                updateCopyPs.setString(1, bookId);
+				                                updateCopyPs.setString(2, copyId);
+				                                updateCopyPs.executeUpdate();
+				                            }
+
+				                            client.sendToClient("Book returned successfully. The copy is now available.");
+				                        }
+				                    }
+				                } else {
+				                    client.sendToClient("ERROR: This borrow does not exist or the copy is not borrowed.");
+				                }
+				            }
+				        } catch (Exception e) {
+				            client.sendToClient("ERROR: " + e.getMessage());
+				        }
+				    } else {
+				        client.sendToClient("ERROR: Invalid RETURN_BOOK format.");
+				    }
+				    break;
+				    
+				    
+				case "GET_ACTIVE_BORROWED":
+				    if (parts.length == 2) {
+				        String subscriberId = parts[1];
+				        try {
+				            String query = "SELECT book_code, copy_id FROM Borrow WHERE sub_id = ? AND status = 'borrowed'";
+				            PreparedStatement ps = dbConnector.getDbConnection().prepareStatement(query);
+				            ps.setString(1, subscriberId);
+				            ResultSet rs = ps.executeQuery();
+
+				            List<String> borrowedBooks = new ArrayList<>();
+				            while (rs.next()) {
+				                borrowedBooks.add("Book ID: " + rs.getString("book_code") + ", Copy ID: " + rs.getString("copy_id"));
+				            }
+
+				            client.sendToClient(borrowedBooks);
+				        } catch (Exception e) {
+				            client.sendToClient("ERROR: Failed to fetch borrowed books: " + e.getMessage());
+				        }
+				    } else {
+				        client.sendToClient("ERROR: Invalid GET_ACTIVE_BORROWED format.");
+				    }
+				    break;
+					
+					
 
 				case "EXTEND_BORROW":
 					if (parts.length == 2) {

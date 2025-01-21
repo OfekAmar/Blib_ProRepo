@@ -79,13 +79,25 @@ public class BorrowBookController {
 			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
 		}
 		
-		// check for date selected
-		LocalDate selectedDate = datePicker.getValue();
-		if (selectedDate != null) {
-			ScreenLoader.showAlert("Date Selected", "You selected: " + selectedDate.toString());
-		} else {
-			ScreenLoader.showAlert("Error", "Please select a valid date.");
-		}
+		// Check for date selection
+	    LocalDate selectedDate = datePicker.getValue();
+	    LocalDate currentDate = LocalDate.now();
+	    if (selectedDate == null) {
+	        ScreenLoader.showAlert("Error", "Please select a valid due date.");
+	        return;
+	    }
+
+	    // Validate that the selected date is not before the current date
+	    if (selectedDate.isBefore(currentDate)) {
+	        ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
+	        return;
+	    }
+
+	    // Validate that the selected date is not more than 14 days from the current date
+	    if (selectedDate.isAfter(currentDate.plusDays(14))) {
+	        ScreenLoader.showAlert("Error", "The selected due date cannot be more than 14 days from today.");
+	        return;
+	    }
 		// implement the logic of borrow book
 		// remove copy from database add borrow record and goes on....
 		// the details of book name and subscriber are in the variables subscriberInfo

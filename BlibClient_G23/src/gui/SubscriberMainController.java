@@ -41,11 +41,6 @@ public class SubscriberMainController {
 	private String subscriberName;
 	private Stage stage;
 	private Subscriber sub = new Subscriber(1, "name example", "phone example", "active", "email example", "password");
-	private ClientMain c;
-
-	public void setClient(ClientMain c) {
-		this.c = c;
-	}
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -58,6 +53,10 @@ public class SubscriberMainController {
 
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
+	}
+	private ClientMain cm;
+	public void setClient(ClientMain cm) {
+		this.cm = cm;
 	}
 
 	@FXML
@@ -98,6 +97,7 @@ public class SubscriberMainController {
 			if (controller instanceof ExtendBorrowController) {
 				((ExtendBorrowController) controller).setStage(stage);
 				((ExtendBorrowController) controller).setSubscriber(sub);
+				((ExtendBorrowController) controller).setClient(cm);
 			}
 		});
 	}

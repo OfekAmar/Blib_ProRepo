@@ -69,6 +69,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
+        ((BorrowBookController) controller).setClient(c);
 			}
 		}, 500, 350);
 
@@ -79,6 +80,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/ReturnBookScreen.fxml", "Return Book", event, controller -> {
 			if (controller instanceof ReturnBookController) {
 				((ReturnBookController) controller).setStage(stage);
+        ((ReturnBookController) controller).setClient(c);
 			}
 		}, 400, 300);
 	}
@@ -107,3 +109,4 @@ public class LibrarianMainController {
 	}
 
 }
+
