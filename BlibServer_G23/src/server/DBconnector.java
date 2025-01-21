@@ -61,13 +61,13 @@ public class DBconnector {
 		return result.toString();
 	}
 
-	// Update subscriber information
-	public void updateSubscriber(int id, String name, String email, String phoneNumber) throws SQLException {
-		String query = "UPDATE subscriber SET sub_name = ?, email_address = ?, phone_num = ? WHERE sub_id = ?";
+	// edit subscriber information
+	public void editSubscriber(int id, String phoneNumber, String email, String password) throws SQLException {
+		String query = "UPDATE subscriber SET phone_num = ?, email_address = ?, password = ? WHERE sub_id = ?";
 		PreparedStatement pstmt = dbConnection.prepareStatement(query);
-		pstmt.setString(1, name);
+		pstmt.setString(1, phoneNumber);
 		pstmt.setString(2, email);
-		pstmt.setString(3, phoneNumber);
+		pstmt.setString(3, password);
 		pstmt.setInt(4, id);
 		pstmt.executeUpdate();
 	}
@@ -185,6 +185,17 @@ public class DBconnector {
 			records.add(r);
 		}
 		return records;
+	}
+	
+	public void addSubscriber(String name, String phone, String email,String password) throws SQLException {
+		String query="INSERT INTO subscriber (sub_name, phone_num, status, email_address, password) VALUES (?, ?, ?, ?, ?)";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, name);
+		ps.setString(2, phone);
+		ps.setString(3, "active");
+		ps.setString(4, email);
+		ps.setString(5, password);
+		ps.executeUpdate();
 	}
 
 }

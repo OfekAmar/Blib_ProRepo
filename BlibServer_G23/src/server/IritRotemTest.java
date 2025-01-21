@@ -6,7 +6,7 @@ public class IritRotemTest {
 	public static void main(String[] args) throws SQLException {
 		DBconnector db = new DBconnector();
 		try {
-			System.out.println(db.searchBookByTitle("1984"));
+			db.editSubscriber(7,"3333444466","irit@gmail.com","password");	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -16,6 +16,6 @@ public class IritRotemTest {
 		// System.out.println(db.searchBookBySubject("Fantasy"));
 		// System.out.println(db.searchBookByFreeText("A tale"));
 		// System.out.println(db.ReaderCardByID(1));
-		System.out.println(db.AllRecordByID(2));
+		//System.out.println(db.AllRecordByID(2));
 	}
 }

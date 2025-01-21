@@ -24,7 +24,7 @@ public class LoginController {
 
 	private Stage stage;
 	private ClientMain c;
-	private boolean isLibrarian = true;
+	private boolean isLibrarian = false;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
