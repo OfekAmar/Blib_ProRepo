@@ -4,8 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert;
+import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import logic.BorrowController;
 import logic.ScreenLoader;
 import logic.Subscriber;
 
@@ -22,9 +24,14 @@ public class OrderBookController {
 
 	private Stage stage;
 	private Subscriber sub;
+	private ClientMain c;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+
+	public void setClient(ClientMain cm) {
+		this.c = cm;
 	}
 
 	public void setSubscriber(Subscriber s) {
@@ -33,13 +40,14 @@ public class OrderBookController {
 
 	@FXML
 	private void onOrderBookClick(ActionEvent event) {
-		String bookId = bookIdField.getText();
-
-		if (bookId == null || bookId.isEmpty()) {
-			ScreenLoader.showAlert("Error", "Please enter a valid Book ID.");
-		} else {
-			// Implement logic to order the book
-			ScreenLoader.showAlert("Success", "Book with ID " + bookId + " has been ordered successfully.");
+		int bookId = Integer.valueOf(bookIdField.getText());
+		int subID = this.sub.getId();
+		BorrowController b = new BorrowController(null, c);
+		try {
+			ScreenLoader.showAlert("Order", b.orderBook(subID, bookId));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

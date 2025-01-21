@@ -41,7 +41,6 @@ public class SubscriberMainController {
 	private String subscriberName;
 	private Stage stage;
 	private Subscriber sub = new Subscriber(7, "Irit Kogan", "3333444466", "active", "irit14@gmail.com", "password");
-	private ClientMain c;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -68,6 +67,7 @@ public class SubscriberMainController {
 			if (controller instanceof OrderBookController) {
 				((OrderBookController) controller).setStage(stage);
 				((OrderBookController) controller).setSubscriber(sub);
+				((OrderBookController) controller).setClient(cm);
 			}
 		});
 	}
