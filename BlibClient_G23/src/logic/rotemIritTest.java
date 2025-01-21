@@ -24,8 +24,11 @@ public class rotemIritTest {
 			// books = searchLogic.searchBookByFreeText("adventure");
 			// System.out.println("Books found IN FREE TEXT: " + books);
 
-			SubscriberController s = new SubscriberController(c);
-			ArrayList<String> result = (ArrayList<String>) s.viewBorrowHistory("1");
+			// SubscriberController s = new SubscriberController(c);
+			// ArrayList<String> result = (ArrayList<String>) s.viewBorrowHistory("1");
+
+			ReportController r = new ReportController(c);
+			List<Record> result = r.getAllRecordsByID(1);
 
 			if (result.isEmpty()) {
 				System.out.println("No data found for the subscriber.");
