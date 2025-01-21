@@ -58,8 +58,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
 				((ReaderCardController) controller).setStage(stage);
-				((ReaderCardController) controller).setClientMain(c);
-				((ReaderCardController) controller).setLibrarian(true);
+				((ReaderCardController) controller).setClientAndSubscriber(null, c);
 			}
 		}, 450, 300);
 	}
@@ -69,7 +68,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
-        ((BorrowBookController) controller).setClient(c);
+				((BorrowBookController) controller).setClient(c);
 			}
 		}, 500, 350);
 
@@ -80,7 +79,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/ReturnBookScreen.fxml", "Return Book", event, controller -> {
 			if (controller instanceof ReturnBookController) {
 				((ReturnBookController) controller).setStage(stage);
-        ((ReturnBookController) controller).setClient(c);
+				((ReturnBookController) controller).setClient(c);
 			}
 		}, 400, 300);
 	}
@@ -109,4 +108,3 @@ public class LibrarianMainController {
 	}
 
 }
-
