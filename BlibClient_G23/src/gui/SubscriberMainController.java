@@ -74,7 +74,7 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
 			if (controller instanceof SearchBookController) {
 				((SearchBookController) controller).setStage(stage);
-				((SearchBookController) controller).setClient(c);
+				((SearchBookController) controller).setClient(cm);
 				((SearchBookController) controller).setLoggedIn(true);
 			}
 		});
@@ -85,7 +85,7 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof BorrowHistoryController) {
 				((BorrowHistoryController) controller).setStage(stage);
-				((BorrowHistoryController) controller).setClientAndSubscrber(sub, c);
+				((BorrowHistoryController) controller).setClientAndSubscrber(sub, cm);
 
 			}
 		}, 450, 300);
