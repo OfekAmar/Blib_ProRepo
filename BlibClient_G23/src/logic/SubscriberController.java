@@ -20,17 +20,39 @@ public class SubscriberController {
 		client.sendMessageToServer(message);
 	}
 
-	public void addSubscriber(String subscriberId, String name, String phone, String email, String status)
-			throws InterruptedException {
+	public String addSubscriber(String name, String phone, String email, String password) throws InterruptedException {
+		String msg = "ADD_SUBSCRIBER," + name + "," + phone + "," + email + "," + password;
+		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
+		client.setMessageHandler((Object serverResponse) -> {
+			this.response = serverResponse; // Save the server's response
+			latch.countDown(); // Release the latch
+		});
+
+		client.sendMessageToServer(msg); // Send the message to the server
+
+		latch.await();
+		return (String) (response);// Wait for the server response
 	}
 
 	public void deleteSubscriber(String subscriberId) throws InterruptedException {
 
 	}
 
-	public void editSubscriber(String subscriberId, String name, String phone, String email, String status)
+	public String editSubscriber(String subscriberID, String phone, String email, String password)
 			throws InterruptedException {
+		String msg = "EDIT_SUBSCRIBER," + subscriberID + "," + phone + "," + email + "," + password;
+		latch = new CountDownLatch(1); // Create a latch to wait for the response
+
+		client.setMessageHandler((Object serverResponse) -> {
+			this.response = serverResponse; // Save the server's response
+			latch.countDown(); // Release the latch
+		});
+
+		client.sendMessageToServer(msg); // Send the message to the server
+
+		latch.await();
+		return (String) (response);// Wait for the server response
 
 	}
 

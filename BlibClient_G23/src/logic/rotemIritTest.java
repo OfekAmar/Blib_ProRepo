@@ -27,14 +27,17 @@ public class rotemIritTest {
 			// SubscriberController s = new SubscriberController(c);
 			// ArrayList<String> result = (ArrayList<String>) s.viewBorrowHistory("1");
 
-			ReportController r = new ReportController(c);
-			List<Record> result = r.getAllRecordsByID(1);
+			//ReportController r = new ReportController(c);
+			//List<Record> result = r.getAllRecordsByID(1);
 
-			if (result.isEmpty()) {
-				System.out.println("No data found for the subscriber.");
-			} else {
-				System.out.println("Subscriber card data: " + result.toString());
-			}
+			//if (result.isEmpty()) {
+			//	System.out.println("No data found for the subscriber.");
+			//} else {
+			//	System.out.println("Subscriber card data: " + result.toString());
+			//}
+			SubscriberController s = new SubscriberController(c);
+			
+			System.out.println(s.editSubscriber("7","3333444466","irit14@gmail.com","password"));
 
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());

@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
 import logic.Subscriber;
+import logic.SubscriberController;
 
 ////the class is the controller for the SubscriberDetails.fxml and make the connection between the logic and the UI
 public class SubscriberDetailsController {
@@ -22,7 +23,7 @@ public class SubscriberDetailsController {
 	private Label statusLabel;
 
 	@FXML
-	private TextField nameField;
+	private Label nameLabel;
 
 	@FXML
 	private TextField phoneField;
@@ -36,19 +37,25 @@ public class SubscriberDetailsController {
 	@FXML
 	private Button closeButton;
 
+	@FXML
+	private Button editButton;
+
 	private Stage stage;
 	private ClientMain client;
 	private Subscriber sub;
 	private String subscriberId;
+	private SubscriberController sc;
 
 	// initialize stage to further operations
 	public void setStage(Stage stage, ClientMain client) {
 		this.stage = stage;
 		this.client = client;
+		sc = new SubscriberController(client);
 	}
 
 	public void setSubscriber(Subscriber s) {
 		sub = s;
+		subscriberId = String.valueOf(sub.getId());
 		setDetails();
 	}
 
@@ -59,7 +66,7 @@ public class SubscriberDetailsController {
 		// String[] parts = details.split(",");
 		idLabel.setText(Integer.toString(sub.getId()));
 		statusLabel.setText(sub.getStatus());
-		nameField.setText(sub.getName());
+		nameLabel.setText(sub.getName());
 		phoneField.setText(sub.getPhone());
 		emailField.setText(sub.getEmail());
 		passwordField.setText(sub.getPassword());
@@ -71,15 +78,21 @@ public class SubscriberDetailsController {
 	// and send message to the client using key word "UPDATE" and the details that
 	// need update
 	@FXML
-	public void editSubscriberDetails() {
-		String newName = nameField.getText();
+	public void onEditClick() {
 		String newPhone = phoneField.getText();
 		String newEmail = emailField.getText();
+		String newPassword = passwordField.getText();
 
 		// send to the client
 		if (subscriberId != null) {
-			String updateMessage = "UPDATE," + subscriberId + "," + newName + "," + newEmail + "," + newPhone;
-			client.sendMessageToServer(updateMessage);
+			try {
+				String alert = sc.editSubscriber(subscriberId, newPhone, newEmail, newPassword);
+				ScreenLoader.showAlert("Successs", alert);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 
 		// closing stage
