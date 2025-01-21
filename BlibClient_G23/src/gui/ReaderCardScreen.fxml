@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/8.0.171"
@@ -14,37 +19,61 @@
 	style="-fx-background-color: #f4f4f4;">
 
 	<top>
-		<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
-			<Label text="Reader Card"
-				style="-fx-font-size: 20px; -fx-font-weight: bold;" />
-		</HBox>
+		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+			<Label text="Reader Card Screen"
+				style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+			<HBox alignment="CENTER" spacing="10">
+				<Label text="Choose Subscriber:" />
+				<TextField fx:id="searchField"
+					promptText="Enter subscriber name or ID" />
+				<ComboBox fx:id="subscriberComboBox" />
+				<Button text="Enter" fx:id="searchButton"
+					onAction="#onSearchClick" />
+			</HBox>
+		</VBox>
 	</top>
 
 	<center>
-		<GridPane alignment="CENTER" hgap="10" vgap="10"
-			style="-fx-padding: 20;">
-			<Label text="Subscriber:" GridPane.columnIndex="0"
-				GridPane.rowIndex="0" />
-			<TextField fx:id="searchField"
-				promptText="Enter subscriber name or ID" GridPane.columnIndex="1"
-				GridPane.rowIndex="0" />
-			<Button text="Search" fx:id="searchButton"
-				onAction="#onSearchClick" GridPane.columnIndex="2"
-				GridPane.rowIndex="0" />
+		<VBox alignment="CENTER" spacing="20" style="-fx-padding: 20;">
+			<HBox alignment="CENTER" spacing="10">
+				<Button text="Borrow History" fx:id="borrowHistoryButton"
+					onAction="#onBorrowHistoryClick" />
+				<Button text="Activity Records" fx:id="activityRecordsButton"
+					onAction="#onActivityRecordsClick" />
+			</HBox>
+			<ListView fx:id="resultsListView" prefHeight="200" />
+			<TableView fx:id="resultsTableView">
+				<columns>
+					<TableColumn fx:id="recordIdColumn" text="Record ID" />
+					<TableColumn fx:id="recordTypeColumn"
+						text="Record Type" />
+					<TableColumn fx:id="subscriberIDColumn"
+						text="Subscriber ID" />
+					<TableColumn fx:id="recordDateColumn"
+						text="Record Date" />
+					<TableColumn fx:id="bookCodeColumn" text="Book Code" />
+				</columns>
+			</TableView>
 
-			<ListView fx:id="resultsListView" GridPane.columnIndex="0"
-				GridPane.rowIndex="1" GridPane.columnSpan="3" prefHeight="200" />
-		</GridPane>
+			<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+				<Label text="Borrow ID:" />
+				<TextField fx:id="borrowIdField"
+					promptText="Enter Borrow ID" />
+				<Label text="Due Date:" />
+				<DatePicker fx:id="dueDatePicker" />
+			</HBox>
+			<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+				<Button text="Edit" fx:id="editButton"
+					onAction="#onEditClick" />
+			</HBox>
+		</VBox>
 	</center>
 
 	<bottom>
-		<GridPane alignment="CENTER" hgap="10" vgap="10"
+		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
-			<Button text="Back" fx:id="backButton" onAction="#onBackClick"
-				GridPane.columnIndex="0" />
-			<Button text="Edit" fx:id="editButton" onAction="#onEditClick"
-				GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
-		</GridPane>
+			<Button text="Back" fx:id="backButton" onAction="#onBackClick" />
+		</HBox>
 	</bottom>
 
 </BorderPane>

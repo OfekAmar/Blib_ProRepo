@@ -59,8 +59,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
 				((ReaderCardController) controller).setStage(stage);
-				((ReaderCardController) controller).setClientMain(c);
-				((ReaderCardController) controller).setLibrarian(true);
+				((ReaderCardController) controller).setClientAndSubscriber(null, c);
 			}
 		}, 450, 300);
 	}
