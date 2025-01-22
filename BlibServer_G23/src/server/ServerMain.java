@@ -227,11 +227,13 @@ public class ServerMain extends AbstractServer {
 					}
 					break;
 				case "MONTHLY_BORROW_REPORT":
-					if (parts.length == 2) {
+					if (parts.length == 3) {
 						int month = Integer.valueOf(parts[1]);
 						int year = Integer.valueOf(parts[2]);
 						List<ExtendedRecord> result = dbConnector.getMonthlyBorrowRecords(month, year);
 						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: Invalid MONTHLY_BORROW_REPORT format.");
 					}
 					break;
 				case "CHECK_BOOK_AVAILABILITY":
