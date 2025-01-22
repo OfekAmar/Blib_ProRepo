@@ -1,10 +1,12 @@
 package server;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import logic.Book;
+import logic.ExtendedRecord;
 import logic.Record;
 
 public class DBconnector {
@@ -186,9 +188,9 @@ public class DBconnector {
 		}
 		return records;
 	}
-	
-	public void addSubscriber(String name, String phone, String email,String password) throws SQLException {
-		String query="INSERT INTO subscriber (sub_name, phone_num, status, email_address, password) VALUES (?, ?, ?, ?, ?)";
+
+	public void addSubscriber(String name, String phone, String email, String password) throws SQLException {
+		String query = "INSERT INTO subscriber (sub_name, phone_num, status, email_address, password) VALUES (?, ?, ?, ?, ?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, name);
 		ps.setString(2, phone);
@@ -197,5 +199,99 @@ public class DBconnector {
 		ps.setString(5, password);
 		ps.executeUpdate();
 	}
+
+	public void orderBook(int subID, int bookCode, int copyID) throws SQLException {
+		LocalDate today = LocalDate.now();
+		String query;
+		PreparedStatement ps;
+		// query = "UPDATE copyofbook SET status = 'reserved' WHERE copy_id = ?";
+		// ps = dbConnection.prepareStatement(query);
+		// ps.setInt(1, copyID);
+		// ps.executeUpdate();
+		query = "INSERT INTO reserved (book_code, copy_id, sub_id, res_max_date, status) VALUES (?, ?, ?, ?, 'wait')";
+		ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ps.setInt(2, (Integer) null);
+		ps.setInt(3, subID);
+		ps.setDate(4, Date.valueOf(today.plusDays(2)));
+		ps.executeUpdate();
+		query = "INSERT INTO record (record_type, subscriber_id, record_date, book_code) VALUES ('order', ?, ?, ?)";
+		ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, subID);
+		ps.setDate(2, Date.valueOf(today));
+		ps.setInt(3, bookCode);
+		ps.executeUpdate();
+	}
+
+	public boolean checkFrozenSubscriber(int subID) throws SQLException {
+		String status = null;
+		String query = "SELECT status FROM subscriber WHERE sub_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, subID);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			status = rs.getString("status");
+		} else {
+			throw new SQLException("Subscriber with sub_id " + subID + " not found.");
+		}
+		return "frozen".equalsIgnoreCase(status);
+	}
+
+	public int findCopyToOrder(int bookCode) throws SQLException {
+		int copytoorder;
+		String query = "SELECT copy_id, status FROM copyofbook WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			copytoorder = rs.getInt("copy_id");
+			if (!("reserved".equalsIgnoreCase(rs.getString("status")))) {
+				return copytoorder;
+			}
+		}
+		return 0;
+	}
+
+	public String findExistCopy(int bookCode) throws SQLException {
+		String str;
+		String query = "SELECT copy_id, status, location FROM copyofbook WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			if ("exists".equalsIgnoreCase(rs.getString("status"))) {
+				return "The book is available for borrowing\nCopyID: " + Integer.valueOf(rs.getInt("copy_id"))
+						+ ", Location: " + rs.getString("location");
+			}
+		}
+		return null;
+
+	}
+
+	public List<ExtendedRecord> getMonthlyBorrowRecords(int month, int year) throws SQLException {
+		String query = "SELECT r1.record_id AS borrow_id, r1.subscriber_id, r1.book_code, "
+				+ "r1.record_date AS borrow_date, COALESCE(r2.record_date, r3.record_date) AS return_date, "
+				+ "CASE WHEN r2.record_id IS NOT NULL THEN 'Returned' "
+				+ "WHEN r3.record_id IS NOT NULL THEN 'Late Returned' " + "ELSE 'Not Returned' END AS return_status "
+				+ "FROM record r1 "
+				+ "LEFT JOIN record r2 ON r1.book_code = r2.book_code AND r1.subscriber_id = r2.subscriber_id AND r2.record_type = 'return' "
+				+ "LEFT JOIN record r3 ON r1.book_code = r3.book_code AND r1.subscriber_id = r3.subscriber_id AND r3.record_type = 'lateReturned' "
+				+ "WHERE r1.record_type = 'borrow' AND MONTH(r1.record_date) = ? AND YEAR(r1.record_date) = ?";
+
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, month);
+		ps.setInt(2, year);
+
+		ResultSet rs = ps.executeQuery();
+		List<ExtendedRecord> records = new ArrayList<>();
+		while (rs.next()) {
+			records.add(new ExtendedRecord(rs.getInt("borrow_id"), "borrow", // תמיד recordType = borrow לפי השאילתה
+					rs.getInt("subscriber_id"), rs.getString("borrow_date"), rs.getInt("book_code"),
+					rs.getString("return_date"), rs.getString("return_status")));
+		}
+		return records;
+	}
+	
+	
 
 }
