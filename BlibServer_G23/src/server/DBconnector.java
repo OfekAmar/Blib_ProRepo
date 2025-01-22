@@ -36,13 +36,14 @@ public class DBconnector {
 
 	// Read subscribers
 	public List<Subscriber> getAllSubscribers() throws SQLException {
-		List<Subscriber> subscribersList=new ArrayList<>();
+		List<Subscriber> subscribersList = new ArrayList<>();
 		Subscriber sub;
-		String query="SELECT * FROM subscriber";
-		PreparedStatement ps=dbConnection.prepareStatement(query);
-		ResultSet rs=ps.executeQuery();
-		while(rs.next()) {
-			sub=new Subscriber(rs.getInt("sub_id"),rs.getString("sub_name"),rs.getString("phone_num"),rs.getString("status"),rs.getString("email_address"),rs.getString("password"));
+		String query = "SELECT * FROM subscriber";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			sub = new Subscriber(rs.getInt("sub_id"), rs.getString("sub_name"), rs.getString("phone_num"),
+					rs.getString("status"), rs.getString("email_address"), rs.getString("password"));
 			subscribersList.add(sub);
 		}
 		return subscribersList;
@@ -51,15 +52,15 @@ public class DBconnector {
 	// Show subscriber by ID
 	public Subscriber searchSubscriberById(int id) throws SQLException {
 		String query = "SELECT * FROM subscriber WHERE sub_id = ?";
-		//Subscriber sub;
+		// Subscriber sub;
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, id);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			return new Subscriber(rs.getInt("sub_id"),rs.getString("sub_name"),rs.getString("phone_num"),rs.getString("status"),rs.getString("email_address"),rs.getString("password"));
-		}
-		else {
-			throw new IllegalArgumentException("Subscriber with ID "+id+"not found.");
+			return new Subscriber(rs.getInt("sub_id"), rs.getString("sub_name"), rs.getString("phone_num"),
+					rs.getString("status"), rs.getString("email_address"), rs.getString("password"));
+		} else {
+			throw new IllegalArgumentException("Subscriber with ID " + id + "not found.");
 		}
 	}
 
@@ -73,8 +74,6 @@ public class DBconnector {
 		pstmt.setInt(4, id);
 		pstmt.executeUpdate();
 	}
-	
- 
 
 	// Execute a general query
 	public ResultSet executeQuery(String query) throws SQLException {
@@ -293,7 +292,5 @@ public class DBconnector {
 		}
 		return records;
 	}
-	
-	
 
 }
