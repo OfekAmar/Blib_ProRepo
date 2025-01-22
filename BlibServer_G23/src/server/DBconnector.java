@@ -95,6 +95,17 @@ public class DBconnector {
 		return rowsAffected;
 	}
 
+	public String searchBookByID(int bookID) throws SQLException {
+		String query = "SELECT title FROM book WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookID);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			return rs.getString("title");
+		}
+		return null;
+	}
+
 	// Search book by title
 	public String searchBookByTitle(String title) throws SQLException {
 		String query = "SELECT book_code FROM book WHERE title = ?";
@@ -301,7 +312,6 @@ public class DBconnector {
 		return records;
 	}
 
-
 	public List<Record> getMonthlyFreezeAndUnfreezeRecords(int month, int year) throws SQLException {
 		String query = "SELECT * FROM record WHERE (record_type = 'freeze' OR record_type = 'unfreeze') "
 				+ "AND MONTH(record_date) = ? AND YEAR(record_date) = ?";
@@ -336,10 +346,12 @@ public class DBconnector {
 	}
 
 	public void setCopyToReservedTable(int resID, int copyID) throws SQLException {
-		String query = "UPDATE reserved SET copy_id = ?, status = 'wait' WHERE res_id = ?";
+		LocalDate today = LocalDate.now();
+		String query = "UPDATE reserved SET copy_id = ?, res_max_date = ?, status = 'wait' WHERE res_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, copyID);
-		ps.setInt(2, resID);
+		ps.setDate(2, Date.valueOf(today.plusDays(2)));
+		ps.setInt(3, resID);
 		ps.executeUpdate();
 	}
 
@@ -349,6 +361,13 @@ public class DBconnector {
 		ps.setString(1, status);
 		ps.setInt(2, copyID);
 		ps.setInt(3, bookID);
+		ps.executeUpdate();
+	}
+
+	public void decreaseAmountOfReservation(int bookID) throws SQLException {
+		String query = "UPDATE book SET amount_of_reservation = amount_of_reservation - 1 WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookID);
 		ps.executeUpdate();
 	}
 
@@ -362,7 +381,26 @@ public class DBconnector {
 			int resid = rs.getInt("res_id");
 			setCopyToReservedTable(resid, copyID);
 			changeStatusOfCopyOfBook(bookID, copyID, "reserved");
+			decreaseAmountOfReservation(bookID);
+			String desc = searchBookByID(bookID)
+					+ "is wating for you to borrow\n The reservation wiil be exired in 2 days";
+			sendNotificationToSubscriber(subid, desc);
 		}
+	}
+
+	public void sendNotificationToSubscriber(int subID, String description) throws SQLException {
+		String query = "INSERT INTO subscribernotifications (sub_id, description) VALUES (?, ?)";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, subID);
+		ps.setString(2, description);
+		ps.executeUpdate();
+	}
+
+	public void sendNotificationToLibrarian(int subID, String description) throws SQLException {
+		String query = "INSERT INTO librariannotifications (description) VALUES (?)";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, description);
+		ps.executeUpdate();
 	}
 
 	public boolean isUserExists(String userName) throws SQLException {
