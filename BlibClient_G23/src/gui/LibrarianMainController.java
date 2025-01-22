@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.Book;
+import logic.Librarian;
 import logic.ScreenLoader;
 
 public class LibrarianMainController {
@@ -35,6 +36,8 @@ public class LibrarianMainController {
 
 	private Stage stage;
 	private ClientMain c;
+	private String librarianName;
+	private Librarian lib;
 
 	public void setClient(ClientMain c) {
 		this.c = c;
@@ -42,6 +45,11 @@ public class LibrarianMainController {
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+
+	public void setLibrarian(Librarian lib) {
+		this.lib = lib;
+		welcomeLabel.setText("Hello, " + lib.getName() + "!");
 	}
 
 	@FXML
@@ -100,6 +108,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
 			if (controller instanceof LoginController) {
 				((LoginController) controller).setStage(stage);
+				((LoginController) controller).setClient(c);
 			}
 		});
 	}

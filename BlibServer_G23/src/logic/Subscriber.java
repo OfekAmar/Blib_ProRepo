@@ -11,7 +11,11 @@ public class Subscriber implements Serializable {
 	private String email;
 	private String password;
 
-	public Subscriber(int id, String name, String phone, String status, String email, String password) {
+
+
+	private String userName;
+
+	public Subscriber(int id, String name, String phone, String status, String email, String password,String userName) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -19,6 +23,7 @@ public class Subscriber implements Serializable {
 		this.status = status;
 		this.email = email;
 		this.password = password;
+		this.userName=userName;
 	}
 
 	public int getId() {
@@ -44,6 +49,11 @@ public class Subscriber implements Serializable {
 	public String getPassword() {
 		return password;
 	}
+	
+	public String getUserName() {
+		return userName;
+	}
+
 
 	public void setId(int id) {
 		this.id = id;
@@ -69,9 +79,13 @@ public class Subscriber implements Serializable {
 		this.password = password;
 	}
 	
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	
 	@Override
 	public String toString() {
-		return "\nid: " + id + "\nname: " + name + "\nphone: " + phone + "\nstatus: " + status + "\nemail: "+email+"\npassword: "+password;
+		return "\nid: " + id + "\nname: " + name + "\nphone: " + phone + "\nstatus: " + status + "\nemail: "+email+"\npassword: "+password+ "\nuserName: "+userName;
 	}
 
 }
