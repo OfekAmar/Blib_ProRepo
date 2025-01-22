@@ -22,14 +22,6 @@
 		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
 			<Label text="Reader Card Screen"
 				style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-			<HBox alignment="CENTER" spacing="10">
-				<Label text="Choose Subscriber:" />
-				<TextField fx:id="searchField"
-					promptText="Enter subscriber name or ID" />
-				<ComboBox fx:id="subscriberComboBox" />
-				<Button text="Enter" fx:id="searchButton"
-					onAction="#onSearchClick" />
-			</HBox>
 		</VBox>
 	</top>
 
@@ -55,7 +47,8 @@
 				</columns>
 			</TableView>
 
-			<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+			<HBox fx:id="editHBox" alignment="CENTER" spacing="10"
+				style="-fx-padding: 10;">
 				<Label text="Borrow ID:" />
 				<TextField fx:id="borrowIdField"
 					promptText="Enter Borrow ID" />

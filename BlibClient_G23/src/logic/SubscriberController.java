@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import client.ClientMain;
 
 public class SubscriberController {
-	
+
 	private final ClientMain client;
 	private Object response;
 	private CountDownLatch latch;
@@ -21,8 +21,9 @@ public class SubscriberController {
 		client.sendMessageToServer(message);
 	}
 
-	public String addSubscriber(String name, String phone, String email, String password, String userName) throws InterruptedException {
-		String msg = "ADD_SUBSCRIBER," + name + "," + phone + "," + email + "," + password+ "," + userName;
+	public String addSubscriber(String name, String phone, String email, String password, String userName)
+			throws InterruptedException {
+		String msg = "ADD_SUBSCRIBER," + name + "," + phone + "," + email + "," + password + "," + userName;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
 		client.setMessageHandler((Object serverResponse) -> {
@@ -115,15 +116,15 @@ public class SubscriberController {
 		System.out.println(response.toString());
 		return (List<String>) response;
 	}
-	
-	public synchronized List<Subscriber> getAllSubscribers() throws InterruptedException{
-		String msg="GET_ALL_SUBSCRIBERS";
-		latch = new CountDownLatch(1); 
+
+	public synchronized List<Subscriber> getAllSubscribers() throws InterruptedException {
+		String msg = "GET_ALL_SUBSCRIBERS";
+		latch = new CountDownLatch(1);
 
 		client.setMessageHandler((Object serverResponse) -> {
 			if (serverResponse instanceof List<?>) {
 				try {
-					List<Subscriber> subscribersList = (List<Subscriber>) serverResponse; 
+					List<Subscriber> subscribersList = (List<Subscriber>) serverResponse;
 					this.response = subscribersList;
 				} catch (ClassCastException e) {
 					System.err.println("Failed to cast response to List<Subscriber>: " + e.getMessage());
@@ -149,15 +150,15 @@ public class SubscriberController {
 			return null;
 		}
 	}
-	
+
 	public synchronized Subscriber searchSubscriberById(String subscriberId) throws InterruptedException {
-		String msg="SEARCH_SUBSCRIBER_BY_ID,"+subscriberId;
-		latch = new CountDownLatch(1); 
+		String msg = "SEARCH_SUBSCRIBER_BY_ID," + subscriberId;
+		latch = new CountDownLatch(1);
 
 		client.setMessageHandler((Object serverResponse) -> {
 			if (serverResponse instanceof Subscriber) {
 				try {
-					Subscriber sub = (Subscriber) serverResponse; 
+					Subscriber sub = (Subscriber) serverResponse;
 					this.response = sub;
 				} catch (ClassCastException e) {
 					System.err.println("Failed to cast response to Subscriber: " + e.getMessage());

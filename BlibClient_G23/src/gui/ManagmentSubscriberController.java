@@ -7,8 +7,10 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import client.ClientMain;
 import javafx.event.ActionEvent;
+import logic.Librarian;
 import logic.ScreenLoader;
 import logic.Subscriber;
+import logic.SubscriberController;
 
 public class ManagmentSubscriberController {
 
@@ -25,7 +27,7 @@ public class ManagmentSubscriberController {
 	private Button searchButton;
 
 	@FXML
-	private Button deleteSubscriberButton;
+	private Button readerCard;
 
 	@FXML
 	private Button viewProfileButton;
@@ -42,6 +44,8 @@ public class ManagmentSubscriberController {
 	private Stage stage;
 	private Subscriber searchedsubs = null;
 	private ClientMain c;
+	private SubscriberController sc;
+	private Librarian lib;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -49,25 +53,37 @@ public class ManagmentSubscriberController {
 
 	public void setClient(ClientMain c) {
 		this.c = c;
+		sc = new SubscriberController(c);
+	}
+
+	public void setLibrarian(Librarian lib) {
+		this.lib = lib;
 	}
 
 	@FXML
-	private void onSearchSubscriberClick(ActionEvent event) {
-		String subscriberName = searchField.getText();
-		if (subscriberName.isEmpty()) {
+	private void onSearchSubscriberClick(ActionEvent event) throws InterruptedException {
+		String subscriberID = searchField.getText();
+		if (subscriberID.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a subscriber name to search.");
 		} else {
-			// Implement search logic here
-			subscriberDetailsField.setText("Details of subscriber: " + subscriberName);
-			searchedsubs = new Subscriber(0, "name example", "phone example", "active", "email example", "password");
+			searchedsubs = sc.searchSubscriberById(subscriberID);
+			subscriberDetailsField
+					.setText("Details of subscriber: " + searchedsubs.getName() + "(" + searchedsubs.getId() + ")");
 		}
 	}
 
 	@FXML
-	private void onDeleteSubscriberClick(ActionEvent event) {
-		// Implement delete logic here
-		ScreenLoader.showAlert("Delete Subscriber", "Subscriber deleted successfully.");
-		subscriberDetailsField.clear();
+	private void onReaderCardClick(ActionEvent event) {
+		if (searchedsubs != null) {
+			ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+				if (controller instanceof ReaderCardController) {
+					((ReaderCardController) controller).setStage(stage);
+					((ReaderCardController) controller).setClientAndSubscriber(searchedsubs, c);
+				}
+			}, 450, 300);
+		} else {
+			ScreenLoader.showAlert("Error", "No such subscriber exist or you didnt searched for one ! ");
+		}
 	}
 
 	@FXML
@@ -88,7 +104,6 @@ public class ManagmentSubscriberController {
 
 	@FXML
 	private void onAddSubscriberClick(ActionEvent event) {
-		// Implement add subscriber logic here
 		ScreenLoader.openPopUpScreen("/gui/NewSubscriberScreen.fxml", "Add New Subscriber", event, controller -> {
 			if (controller instanceof NewSubscriberController) {
 				((NewSubscriberController) controller).setStage(new Stage());
@@ -108,6 +123,7 @@ public class ManagmentSubscriberController {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
 			if (controller instanceof LibrarianMainController) {
 				((LibrarianMainController) controller).setStage(new Stage());
+				((LibrarianMainController) controller).setLibrarian(lib);
 			}
 		});
 	}

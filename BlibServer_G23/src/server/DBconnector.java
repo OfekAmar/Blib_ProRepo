@@ -193,6 +193,17 @@ public class DBconnector {
 		return (ArrayList<String>) borrowdList;
 	}
 
+	public void recordActivity(String recordType, int subID, int bookID) throws SQLException {
+		LocalDate today = LocalDate.now();
+		String query = "INSERT INTO record (record_type, subscriber_id, record_date, book_code) VALUES (?, ?, ?, ?)";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, recordType);
+		ps.setInt(2, subID);
+		ps.setDate(3, Date.valueOf(today));
+		ps.setInt(4, bookID);
+		ps.executeUpdate();
+	}
+
 	public List<Record> AllRecordByID(int subscriberID) throws SQLException {
 		List<Record> records = new ArrayList<Record>();
 		String query = "SELECT * FROM record WHERE subscriber_id = ?";
@@ -220,27 +231,25 @@ public class DBconnector {
 		ps.executeUpdate();
 	}
 
-	public void orderBook(int subID, int bookCode, int copyID) throws SQLException {
+	public void updateBorrowReturn(int borrowID, LocalDate date) throws SQLException {
+		String query = "UPDATE borrow SET return_max_date = ? WHERE borrow_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setDate(1, Date.valueOf(date));
+		ps.setInt(2, borrowID);
+		ps.executeUpdate();
+	}
+
+	public void orderBook(int subID, int bookCode) throws SQLException {
 		LocalDate today = LocalDate.now();
 		String query;
 		PreparedStatement ps;
-		// query = "UPDATE copyofbook SET status = 'reserved' WHERE copy_id = ?";
-		// ps = dbConnection.prepareStatement(query);
-		// ps.setInt(1, copyID);
-		// ps.executeUpdate();
-		query = "INSERT INTO reserved (book_code, copy_id, sub_id, res_max_date, status) VALUES (?, ?, ?, ?, 'wait')";
+		query = "INSERT INTO reserved (book_code, sub_id, res_date, status) VALUES (?, ?, ?, ?, 'wait')";
 		ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
-		ps.setInt(2, (Integer) null);
-		ps.setInt(3, subID);
-		ps.setDate(4, Date.valueOf(today.plusDays(2)));
+		ps.setInt(2, subID);
+		ps.setDate(3, Date.valueOf(today));
 		ps.executeUpdate();
-		query = "INSERT INTO record (record_type, subscriber_id, record_date, book_code) VALUES ('order', ?, ?, ?)";
-		ps = dbConnection.prepareStatement(query);
-		ps.setInt(1, subID);
-		ps.setDate(2, Date.valueOf(today));
-		ps.setInt(3, bookCode);
-		ps.executeUpdate();
+		recordActivity("order", subID, bookCode);
 	}
 
 	public boolean checkFrozenSubscriber(int subID) throws SQLException {
@@ -257,19 +266,17 @@ public class DBconnector {
 		return "frozen".equalsIgnoreCase(status);
 	}
 
-	public int findCopyToOrder(int bookCode) throws SQLException {
-		int copytoorder;
-		String query = "SELECT copy_id, status FROM copyofbook WHERE book_code = ?";
+	public boolean findCopyToOrder(int bookCode) throws SQLException {
+		String query = "SELECT amount_of_copies, amount_of_reservation FROM book WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
 		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			copytoorder = rs.getInt("copy_id");
-			if (!("reserved".equalsIgnoreCase(rs.getString("status")))) {
-				return copytoorder;
+		if (rs.next()) {
+			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservation") > 0) {
+				return true;
 			}
 		}
-		return 0;
+		return false;
 	}
 
 	public String findExistCopy(int bookCode) throws SQLException {
@@ -437,5 +444,17 @@ public class DBconnector {
 			}
 		}
 		return "wrong password";
+	}
+
+	public int getBookFromBorrow(int borrowID) throws SQLException {
+		String query = "SELECT book_code FROM borrow WHERE borrow_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, borrowID);
+		ResultSet rs = ps.executeQuery();
+		rs = ps.executeQuery();
+		if (rs.next()) {
+			return rs.getInt("book_code");
+		}
+		return 0;
 	}
 }

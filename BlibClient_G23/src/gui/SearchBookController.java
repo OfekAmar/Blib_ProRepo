@@ -183,6 +183,7 @@ public class SearchBookController {
 		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
 			if (controller instanceof LoginController) {
 				((LoginController) controller).setStage(new Stage());
+				((LoginController) controller).setClient(c);
 			}
 		});
 		// this is pop - up alert in case needed !

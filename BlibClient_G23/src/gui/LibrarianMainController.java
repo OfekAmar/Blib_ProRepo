@@ -63,16 +63,6 @@ public class LibrarianMainController {
 	}
 
 	@FXML
-	private void onReaderCardClick(ActionEvent event) {
-		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
-			if (controller instanceof ReaderCardController) {
-				((ReaderCardController) controller).setStage(stage);
-				((ReaderCardController) controller).setClientAndSubscriber(null, c);
-			}
-		}, 450, 300);
-	}
-
-	@FXML
 	private void onBorrowBookClick(ActionEvent event) {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
 			if (controller instanceof BorrowBookController) {

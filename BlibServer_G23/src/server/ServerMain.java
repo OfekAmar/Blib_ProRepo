@@ -122,10 +122,10 @@ public class ServerMain extends AbstractServer {
 						String phone = parts[2];
 						String email = parts[3];
 						String password = parts[4];
-						String userName=parts[5];
+						String userName = parts[5];
 						dbConnector.addSubscriber(name, phone, email, password, userName);
 						client.sendToClient("New Subscriber added successfuly:\nname: " + name + "\nphone number: "
-								+ phone + "\nemail: " + email+ "\nuserName: "+userName);
+								+ phone + "\nemail: " + email + "\nuserName: " + userName);
 					} else {
 						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
 					}
@@ -159,36 +159,32 @@ public class ServerMain extends AbstractServer {
 					}
 					break;
 				case "IS_USER_EXISTS":
-					if(parts.length==2) {
-						String userName=parts[1];
-						boolean result=dbConnector.isUserExists(userName);
+					if (parts.length == 2) {
+						String userName = parts[1];
+						boolean result = dbConnector.isUserExists(userName);
 						client.sendToClient(result);
-					}
-					else {
+					} else {
 						client.sendToClient("ERROR: Invalid IS_USER_EXISTS format.");
 					}
 					break;
-					
+
 				case "LOGIN":
-					if(parts.length==3) {
-						String userName=parts[1];
-						String password=parts[2];
-						Object user=dbConnector.login(userName, password);
-						if(user instanceof Subscriber) {
-							//Subscriber sub=(Subscriber)user;
-							//client.sendToClient("Logged in as Subscriber: " + sub);
+					if (parts.length == 3) {
+						String userName = parts[1];
+						String password = parts[2];
+						Object user = dbConnector.login(userName, password);
+						if (user instanceof Subscriber) {
+							// Subscriber sub=(Subscriber)user;
+							// client.sendToClient("Logged in as Subscriber: " + sub);
+							client.sendToClient(user);
+						} else if (user instanceof Librarian) {
+							// Librarian lib=(Librarian)user;
+							// client.sendToClient("Logged in as Librarian: " + lib);
+							client.sendToClient(user);
+						} else if (user instanceof String) {
 							client.sendToClient(user);
 						}
-						else if(user instanceof Librarian) {
-							//Librarian lib=(Librarian)user;
-							//client.sendToClient("Logged in as Librarian: " + lib);
-							client.sendToClient(user);
-						}
-						else if(user instanceof String) {
-							client.sendToClient(user);
-						}
-					}
-					else {
+					} else {
 						client.sendToClient("ERROR: Invalid LOGIN format.");
 					}
 					break;
@@ -258,20 +254,16 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 3) {
 						int subID = Integer.valueOf(parts[1]);
 						int bookCode = Integer.valueOf(parts[2]);
-						int copyID = 0;
+						boolean available = dbConnector.findCopyToOrder(bookCode);
 						String checkforexistcopy = dbConnector.findExistCopy(bookCode);
-						if (checkforexistcopy == null) {
-							copyID = dbConnector.findCopyToOrder(bookCode);
-						} else {
+						if (checkforexistcopy != null) {
 							client.sendToClient(checkforexistcopy);
-						}
-
-						if (dbConnector.checkFrozenSubscriber(subID)) {
+						} else if (dbConnector.checkFrozenSubscriber(subID)) {
 							client.sendToClient("Subscriber is frozen unable to order");
-						} else if (copyID == 0) {
+						} else if (!available) {
 							client.sendToClient("All book copies are reserved try again in a few days");
 						} else {
-							dbConnector.orderBook(subID, bookCode, copyID);
+							dbConnector.orderBook(subID, bookCode);
 							client.sendToClient("Order logged in succesfully");
 						}
 
@@ -303,6 +295,20 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 1) {
 						Map<String, Integer> result = dbConnector.getSubscriberStatusCounts();
 						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: STATUS_STATISTICS format.");
+					}
+					break;
+
+				case "UPDATE_BORROW_RETURN":
+					if (parts.length == 4) {
+						int subID = Integer.valueOf(parts[1]);
+						int borrowID = Integer.valueOf(parts[2]);
+						LocalDate date = LocalDate.parse(parts[3]);
+						int bookID = dbConnector.getBookFromBorrow(borrowID);
+						dbConnector.updateBorrowReturn(borrowID, date);
+						dbConnector.recordActivity("manual extend", subID, bookID);
+						client.sendToClient("Update Completed Successfuly");
 					} else {
 						client.sendToClient("ERROR: STATUS_STATISTICS format.");
 					}

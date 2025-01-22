@@ -1,5 +1,6 @@
 package gui;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +18,11 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
 import logic.Subscriber;
+import logic.BorrowController;
 import logic.Record;
 import logic.SubscriberController;
 import logic.ReportController;
@@ -36,12 +39,6 @@ public class ReaderCardController {
 	private DatePicker dueDatePicker;
 
 	@FXML
-	private ComboBox<String> subscriberComboBox;
-
-	@FXML
-	private Button searchButton;
-
-	@FXML
 	private Button backButton;
 
 	@FXML
@@ -52,6 +49,9 @@ public class ReaderCardController {
 
 	@FXML
 	private Button activityRecordsButton;
+
+	@FXML
+	private HBox editHBox;
 
 	@FXML
 	private ListView<String> resultsListView;
@@ -82,6 +82,7 @@ public class ReaderCardController {
 	private ClientMain c;
 	SubscriberController sc;
 	ReportController rc;
+	BorrowController bc;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -100,10 +101,12 @@ public class ReaderCardController {
 	}
 
 	public void setClientAndSubscriber(Subscriber s, ClientMain c) {
-		this.sub = new Subscriber(1, "xx", "xx", "xx", "xx", "xx");
+		this.sub = s;
 		this.c = c;
 		sc = new SubscriberController(c);
 		rc = new ReportController(c);
+		bc = new BorrowController(sc, c);
+		updateBorrowHistoryList();
 	}
 
 	private void updateBorrowHistoryList() {
@@ -144,19 +147,14 @@ public class ReaderCardController {
 		}
 	}
 
-	private void updateSubscribersComboBox() {
-		// after reciving from database all the subscribers names + id
-		// need to initialize the combobox !!!
-	}
-
 	@FXML
 	public void initialize() {
-
-		updateSubscribersComboBox();
 		resultsTableView.setVisible(false);
 		resultsTableView.setManaged(false);
 		resultsListView.setVisible(false);
 		resultsListView.setManaged(false);
+		editHBox.setVisible(false);
+		editHBox.setManaged(false);
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 
 		recordTypeColumn
@@ -172,65 +170,52 @@ public class ReaderCardController {
 	}
 
 	@FXML
-	private void onSearchClick(ActionEvent event) {
-		String searchTerm = searchField.getText();
-		if (searchTerm == null || searchTerm.trim().isEmpty()) {
-			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
-			return;
-		}
+	private void onEditClick(ActionEvent event) throws InterruptedException {
+		Integer borrowId = Integer.valueOf(borrowIdField.getText());
+		LocalDate dueDate = dueDatePicker.getValue();
 
-		// Simulating search result
-		// recive from the comboBox the chosen subscriber
-		// set the subscriber returend to the setSubscriber of this controller !
-
-		updateBorrowHistoryList();
-	}
-
-	@FXML
-	private void onEditClick(ActionEvent event) {
-		String subscriberId = borrowIdField.getText();
-		String dueDate = (dueDatePicker.getValue() != null) ? dueDatePicker.getValue().toString() : null;
-
-		if (subscriberId == null || subscriberId.trim().isEmpty() || dueDate == null) {
+		if (borrowId == null || dueDate == null) {
 			ScreenLoader.showAlert("Error", "Please fill all the fields before editing.");
 			return;
 		}
-
-		// Perform edit logic here
-		System.out.println("Editing subscriber ID: " + subscriberId + " with due date: " + dueDate);
+		bc.extendBorrowManualy(sub.getId(), borrowId, dueDate);
+		updateBorrowHistoryList();
 	}
 
 	@FXML
 	private void onBorrowHistoryClick(ActionEvent event) {
 		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(500);
+		st.setWidth(700);
 		st.setHeight(500);
 		resultsTableView.setVisible(false);
 		resultsTableView.setManaged(false);
 		resultsListView.setVisible(true);
 		resultsListView.setManaged(true);
-		// Logic for Borrow History button
-		updateBorrowHistoryList(); // Example: Refresh list with borrow history
+		editHBox.setVisible(true);
+		editHBox.setManaged(true);
+		updateBorrowHistoryList();
 	}
 
 	@FXML
 	private void onActivityRecordsClick(ActionEvent event) {
 		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(500);
+		st.setWidth(700);
 		st.setHeight(500);
 		resultsListView.setVisible(false);
 		resultsListView.setManaged(false);
 		resultsTableView.setVisible(true);
 		resultsTableView.setManaged(true);
-		// Logic for Activity Records button
+		editHBox.setVisible(false);
+		editHBox.setManaged(false);
 		updateActivityRecordsTable();
 	}
 
 	@FXML
 	private void onBackClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
-			if (controller instanceof LibrarianMainController) {
-				((LibrarianMainController) controller).setStage(new Stage());
+		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Managment Subscriber", event, controller -> {
+			if (controller instanceof ManagmentSubscriberController) {
+				((ManagmentSubscriberController) controller).setStage(new Stage());
+				((ManagmentSubscriberController) controller).setClient(c);
 			}
 		});
 
