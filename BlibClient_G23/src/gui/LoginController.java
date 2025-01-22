@@ -1,6 +1,10 @@
 
 package gui;
 
+import java.lang.ModuleLayer.Controller;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
 import client.ClientMain;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -12,18 +16,23 @@ import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import logic.Librarian;
+import logic.LoginLogic;
 import logic.ScreenLoader;
+import logic.Subscriber;
 
 public class LoginController {
 
 	@FXML
-	private TextField usernameField;
+	private TextField userNameField;
 
 	@FXML
 	private PasswordField passwordField;
 
 	private Stage stage;
 	private ClientMain c;
+	private Object response;
+	private LoginLogic loginLogic;
 	private boolean isLibrarian = true;
 
 	public void setStage(Stage stage) {
@@ -33,26 +42,50 @@ public class LoginController {
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
+	
 
 	@FXML
 	private void onLoginClick(ActionEvent event) {
-		if (isLibrarian) {
-			ScreenLoader.openScreenWithSize("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, controller -> {
-				if (controller instanceof LibrarianMainController) {
-					((LibrarianMainController) controller).setStage(new Stage());
-					((LibrarianMainController) controller).setClient(c);
-				}
-			}, 250, 400);
-		} else {
-			ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
-					controller -> {
-						if (controller instanceof SubscriberMainController) {
-							((SubscriberMainController) controller).setSubscriberName(usernameField.getText());
-							((SubscriberMainController) controller).setClient(c);
-						}
-					}, 400, 250);
+		String userName = userNameField.getText();
+		String password = passwordField.getText();
+		
+		if(userName.isEmpty() || password.isEmpty()) {
+			ScreenLoader.showAlert("ERROR", "all fields are required");
+			return;
 		}
+		
+		try {
+			Object response=new LoginLogic(c).login(userName, password);
+			if(response instanceof Subscriber) {
+				Subscriber sub=(Subscriber)response;
+				ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event, controller -> {
+					if(controller instanceof SubscriberMainController) {
+						((SubscriberMainController) controller).setClient(c);
+						((SubscriberMainController) controller).setSubscriber(sub);
+					}
+				}, 400, 250);
+				
+			}
+			else if(response instanceof Librarian) {
+				Librarian lib=(Librarian)response;
+				ScreenLoader.openScreenWithSize("/gui/LibrarianMainScreen.fxml", "Librarian Screen", event, controller -> {
+					if(controller instanceof LibrarianMainController) {
+						((LibrarianMainController) controller).setStage(new Stage());
+						((LibrarianMainController) controller).setClient(c);
+					}
+				}, 250, 400);
+				
+			}
+			else if(response instanceof String) {
+				ScreenLoader.showAlert("Error: ",(String)response);
+			}
+		}catch(Exception e) {
+			System.out.println("Error during login: "+e.getMessage());
+			ScreenLoader.showAlert("Error", "An error occurred during the login. Please try again later.");
+		}
+
 	}
+
 
 	@FXML
 	private void onGuestLoginClick(ActionEvent event) {
