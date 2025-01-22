@@ -24,8 +24,6 @@
 		<VBox alignment="CENTER" spacing="20" style="-fx-padding: 20;">
 			<Button text="Manage Subscriber" fx:id="manageUsersButton"
 				onAction="#onManageSubscriberClick" />
-			<Button text="View Subscriber Reader Crds"
-				fx:id="readerCardButton" onAction="#onReaderCardClick" />
 			<Button text="Borrow Book" fx:id="borrowBookButton"
 				onAction="#onBorrowBookClick" />
 			<Button text="Return Book" fx:id="returnBookButton"

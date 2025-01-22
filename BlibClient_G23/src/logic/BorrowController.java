@@ -63,6 +63,21 @@ public class BorrowController {
 		return (String) (response);
 	}
 
+	public synchronized void extendBorrowManualy(int subscriberID, int borrowID, LocalDate date)
+			throws InterruptedException {
+		String msg = "UPDATE_BORROW_RETURN," + subscriberID + "," + borrowID + "," + date;
+		latch = new CountDownLatch(1); // Create a latch to wait for the response
+
+		client.setMessageHandler((Object serverResponse) -> {
+			this.response = serverResponse; // Save the server's response
+			latch.countDown(); // Release the latch
+		});
+
+		client.sendMessageToServer(msg); // Send the message to the server
+		latch.await();
+		System.out.println(response);
+	}
+
 	public synchronized String orderBook(int subscriberID, int bookID) throws InterruptedException {
 		String msg = "ORDER_BOOK," + subscriberID + "," + bookID;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response

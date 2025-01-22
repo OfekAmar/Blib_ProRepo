@@ -38,7 +38,6 @@ public class SubscriberMainController {
 	@FXML
 	private Button logoutButton;
 
-	private String subscriberName;
 	private Stage stage;
 	private Subscriber sub;
 
@@ -48,7 +47,7 @@ public class SubscriberMainController {
 
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
-		welcomeLabel.setText("Hello, " + s.getName()+ "!");
+		welcomeLabel.setText("Hello, " + s.getName() + "!");
 	}
 
 	private ClientMain cm;
@@ -81,7 +80,7 @@ public class SubscriberMainController {
 
 	@FXML
 	private void borrowHistoryClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Reader Card", event, controller -> {
+		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Borrow History", event, controller -> {
 			if (controller instanceof BorrowHistoryController) {
 				((BorrowHistoryController) controller).setStage(stage);
 				((BorrowHistoryController) controller).setClientAndSubscrber(sub, cm);
@@ -106,8 +105,6 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
 				((SubscriberDetailsController) controller).setStage(new Stage(), cm);
-				// !!!! suppose to be setStage(new Stage(), ClientMain Client) !!!!!!! need to
-				// adapt later on
 				((SubscriberDetailsController) controller).setSubscriber(sub);
 			}
 		});
