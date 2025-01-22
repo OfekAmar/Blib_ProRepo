@@ -3,6 +3,7 @@ package logic;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import client.*;
 
@@ -27,9 +28,11 @@ public class rotemIritTest {
 			// SubscriberController s = new SubscriberController(c);
 			// ArrayList<String> result = (ArrayList<String>) s.viewBorrowHistory("1");
 
-			// ReportController r = new ReportController(c);
-			// List<Record> result = r.getAllRecordsByID(1);
-
+			ReportController r = new ReportController(c);
+			List<Record> result = r.getMonthlyStatusReport(1, 2025);
+			System.out.println(result);
+			Map<String, Integer> re = r.getStatusStatistics();
+			System.out.println(re);
 			// if (result.isEmpty()) {
 			// System.out.println("No data found for the subscriber.");
 			// } else {
@@ -39,11 +42,11 @@ public class rotemIritTest {
 
 			// System.out.println(s.editSubscriber("7","3333444466","irit14@gmail.com","password"));
 
-			//BorrowController b = new BorrowController(null, c);
-			//System.out.println(b.orderBook(7, 1));
-			
-			SubscriberController sc=new SubscriberController(c);
-			System.out.println(sc.getAllSubscribers());
+			// BorrowController b = new BorrowController(null, c);
+			// System.out.println(b.orderBook(7, 1));
+
+			// SubscriberController sc=new SubscriberController(c);
+			// System.out.println(sc.getAllSubscribers());
 
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());

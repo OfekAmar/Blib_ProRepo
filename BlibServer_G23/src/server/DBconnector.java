@@ -3,7 +3,10 @@ package server;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import logic.Book;
 import logic.ExtendedRecord;
 import logic.Record;
@@ -291,6 +294,69 @@ public class DBconnector {
 					rs.getString("return_date"), rs.getString("return_status")));
 		}
 		return records;
+	}
+
+	public List<Record> getMonthlyFreezeAndUnfreezeRecords(int month, int year) throws SQLException {
+		String query = "SELECT * FROM record WHERE (record_type = 'freeze' OR record_type = 'unfreeze') "
+				+ "AND MONTH(record_date) = ? AND YEAR(record_date) = ?";
+		List<Record> records = new ArrayList<>();
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, month);
+		ps.setInt(2, year);
+		ResultSet rs = ps.executeQuery();
+
+		while (rs.next()) {
+			Record record = new Record(rs.getInt("record_id"), rs.getString("record_type"), rs.getInt("subscriber_id"),
+					rs.getString("record_date"), rs.getInt("book_code"));
+			records.add(record);
+		}
+
+		return records;
+	}
+
+	public Map<String, Integer> getSubscriberStatusCounts() throws SQLException {
+		String query = "SELECT status, COUNT(*) AS count FROM subscriber GROUP BY status";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+
+		Map<String, Integer> statusCounts = new HashMap<>();
+		while (rs.next()) {
+			String status = rs.getString("status");
+			int count = rs.getInt("count");
+			statusCounts.put(status, count);
+		}
+
+		return statusCounts;
+	}
+
+	public void setCopyToReservedTable(int resID, int copyID) throws SQLException {
+		String query = "UPDATE reserved SET copy_id = ?, status = 'wait' WHERE res_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, copyID);
+		ps.setInt(2, resID);
+		ps.executeUpdate();
+	}
+
+	public void changeStatusOfCopyOfBook(int bookID, int copyID, String status) throws SQLException {
+		String query = "UPDATE copyofbook SET status = ? WHERE copy_id = ? AND book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, status);
+		ps.setInt(2, copyID);
+		ps.setInt(3, bookID);
+		ps.executeUpdate();
+	}
+
+	public void allocateReturnedCopyToReserved(int bookID, int copyID) throws SQLException {
+		String query = "SELECT sub_id,res_id FROM reserved WHERE book_code = ? AND status = 'wait' ORDER BY res_date ASC LIMIT 1";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookID);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			int subid = rs.getInt("sub_id");
+			int resid = rs.getInt("res_id");
+			setCopyToReservedTable(resid, copyID);
+			changeStatusOfCopyOfBook(bookID, copyID, "reserved");
+		}
 	}
 
 }
