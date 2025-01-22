@@ -18,9 +18,10 @@ public class IritRotemTest {
 			// System.out.println(db.findExistCopy(4));
 
 			// System.out.println(db.getAllSubscribers());
-			System.out.println(db.getMonthlyFreezeAndUnfreezeRecords(1, 2025));
-			System.out.println(db.getSubscriberStatusCounts());
-			System.out.println(db.login("L1", "pas"));
+			// System.out.println(db.getMonthlyFreezeAndUnfreezeRecords(1, 2025));
+			// System.out.println(db.getSubscriberStatusCounts());
+			// System.out.println(db.login("L1", "pas"));
+			db.allocateReturnedCopyToReserved(2, 2);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
