@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import logic.Book;
+import logic.ExtendedRecord;
 import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -223,6 +224,14 @@ public class ServerMain extends AbstractServer {
 
 					} else {
 						client.sendToClient("ERROR: Invalid ORDER_BOOK format.");
+					}
+					break;
+				case "MONTHLY_BORROW_REPORT":
+					if (parts.length == 2) {
+						int month = Integer.valueOf(parts[1]);
+						int year = Integer.valueOf(parts[2]);
+						List<ExtendedRecord> result = dbConnector.getMonthlyBorrowRecords(month, year);
+						client.sendToClient(result);
 					}
 					break;
 				case "CHECK_BOOK_AVAILABILITY":
