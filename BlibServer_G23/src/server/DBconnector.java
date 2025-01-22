@@ -9,6 +9,7 @@ import java.util.Map;
 
 import logic.Book;
 import logic.ExtendedRecord;
+import logic.Librarian;
 import logic.Record;
 import logic.Subscriber;
 
@@ -46,7 +47,8 @@ public class DBconnector {
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			sub = new Subscriber(rs.getInt("sub_id"), rs.getString("sub_name"), rs.getString("phone_num"),
-					rs.getString("status"), rs.getString("email_address"), rs.getString("password"));
+					rs.getString("status"), rs.getString("email_address"), rs.getString("password"),
+					rs.getString("user_name"));
 			subscribersList.add(sub);
 		}
 		return subscribersList;
@@ -61,7 +63,8 @@ public class DBconnector {
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			return new Subscriber(rs.getInt("sub_id"), rs.getString("sub_name"), rs.getString("phone_num"),
-					rs.getString("status"), rs.getString("email_address"), rs.getString("password"));
+					rs.getString("status"), rs.getString("email_address"), rs.getString("password"),
+					rs.getString("user_name"));
 		} else {
 			throw new IllegalArgumentException("Subscriber with ID " + id + "not found.");
 		}
@@ -193,14 +196,16 @@ public class DBconnector {
 		return records;
 	}
 
-	public void addSubscriber(String name, String phone, String email, String password) throws SQLException {
-		String query = "INSERT INTO subscriber (sub_name, phone_num, status, email_address, password) VALUES (?, ?, ?, ?, ?)";
+	public void addSubscriber(String name, String phone, String email, String password, String userName)
+			throws SQLException {
+		String query = "INSERT INTO subscriber (sub_name, phone_num, status, email_address, password, user_name) VALUES (?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, name);
 		ps.setString(2, phone);
 		ps.setString(3, "active");
 		ps.setString(4, email);
 		ps.setString(5, password);
+		ps.setString(6, userName);
 		ps.executeUpdate();
 	}
 
@@ -296,6 +301,7 @@ public class DBconnector {
 		return records;
 	}
 
+
 	public List<Record> getMonthlyFreezeAndUnfreezeRecords(int month, int year) throws SQLException {
 		String query = "SELECT * FROM record WHERE (record_type = 'freeze' OR record_type = 'unfreeze') "
 				+ "AND MONTH(record_date) = ? AND YEAR(record_date) = ?";
@@ -359,4 +365,39 @@ public class DBconnector {
 		}
 	}
 
+	public boolean isUserExists(String userName) throws SQLException {
+		String query = "SELECT user_name FROM subscriber WHERE user_name = ? UNION SELECT user_name FROM librarian WHERE user_name = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, userName);
+		ps.setString(2, userName);
+		ResultSet rs = ps.executeQuery();
+		return rs.next();
+	}
+
+	public Object login(String userName, String password) throws SQLException {
+		if (!isUserExists(userName)) {
+			return "user does not exists";
+		}
+		String query = "SELECT * FROM subscriber WHERE user_name = ? AND password = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, userName);
+		ps.setString(2, password);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			return new Subscriber(rs.getInt("sub_id"), rs.getString("sub_name"), rs.getString("phone_num"),
+					rs.getString("status"), rs.getString("email_address"), rs.getString("password"),
+					rs.getString("user_name"));
+		} else {
+			query = "SELECT * FROM librarian WHERE user_name = ? AND password = ?";
+			ps = dbConnection.prepareStatement(query);
+			ps.setString(1, userName);
+			ps.setString(2, password);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Librarian(rs.getInt("lib_id"), rs.getString("lib_name"), rs.getString("phone_num"),
+						rs.getString("password"), rs.getString("user_name"));
+			}
+		}
+		return "wrong password";
+	}
 }

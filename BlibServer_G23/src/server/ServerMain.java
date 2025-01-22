@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import logic.Book;
 import logic.Subscriber;
 import logic.ExtendedRecord;
+import logic.Librarian;
 import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -116,14 +117,15 @@ public class ServerMain extends AbstractServer {
 					}
 					break;
 				case "ADD_SUBSCRIBER":
-					if (parts.length == 5) {
+					if (parts.length == 6) {
 						String name = parts[1];
 						String phone = parts[2];
 						String email = parts[3];
 						String password = parts[4];
-						dbConnector.addSubscriber(name, phone, email, password);
+						String userName=parts[5];
+						dbConnector.addSubscriber(name, phone, email, password, userName);
 						client.sendToClient("New Subscriber added successfuly:\nname: " + name + "\nphone number: "
-								+ phone + "\nemail: " + email);
+								+ phone + "\nemail: " + email+ "\nuserName: "+userName);
 					} else {
 						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
 					}
@@ -155,6 +157,41 @@ public class ServerMain extends AbstractServer {
 					} else {
 						client.sendToClient("ERROR: Invalid GET_ALL_SUBSCRIBERS format.");
 					}
+					break;
+				case "IS_USER_EXISTS":
+					if(parts.length==2) {
+						String userName=parts[1];
+						boolean result=dbConnector.isUserExists(userName);
+						client.sendToClient(result);
+					}
+					else {
+						client.sendToClient("ERROR: Invalid IS_USER_EXISTS format.");
+					}
+					break;
+					
+				case "LOGIN":
+					if(parts.length==3) {
+						String userName=parts[1];
+						String password=parts[2];
+						Object user=dbConnector.login(userName, password);
+						if(user instanceof Subscriber) {
+							//Subscriber sub=(Subscriber)user;
+							//client.sendToClient("Logged in as Subscriber: " + sub);
+							client.sendToClient(user);
+						}
+						else if(user instanceof Librarian) {
+							//Librarian lib=(Librarian)user;
+							//client.sendToClient("Logged in as Librarian: " + lib);
+							client.sendToClient(user);
+						}
+						else if(user instanceof String) {
+							client.sendToClient(user);
+						}
+					}
+					else {
+						client.sendToClient("ERROR: Invalid LOGIN format.");
+					}
+					break;
 
 				case "DELETE_BOOK":
 					if (parts.length == 2) {

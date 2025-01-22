@@ -40,19 +40,15 @@ public class SubscriberMainController {
 
 	private String subscriberName;
 	private Stage stage;
-	private Subscriber sub = new Subscriber(7, "Irit Kogan", "3333444466", "active", "irit14@gmail.com", "password");
+	private Subscriber sub;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
-	public void setSubscriberName(String subscriberName) {
-		this.subscriberName = subscriberName;
-		welcomeLabel.setText("Hello, " + sub.getName() + "!");
-	}
-
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
+		welcomeLabel.setText("Hello, " + s.getName()+ "!");
 	}
 
 	private ClientMain cm;
@@ -133,6 +129,7 @@ public class SubscriberMainController {
 		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
 			if (controller instanceof LoginController) {
 				((LoginController) controller).setStage(stage);
+				((LoginController) controller).setClient(cm);
 			}
 		});
 	}

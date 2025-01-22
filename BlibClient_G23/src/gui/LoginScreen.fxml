@@ -21,7 +21,7 @@
 		<!-- Username Label and TextField -->
 		<Label text="Username:" GridPane.columnIndex="0"
 			GridPane.rowIndex="0" />
-		<TextField fx:id="usernameField" promptText="Enter username"
+		<TextField fx:id="userNameField" promptText="Enter username"
 			GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
 		<!-- Password Label and PasswordField -->

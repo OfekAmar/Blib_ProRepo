@@ -21,8 +21,8 @@ public class SubscriberController {
 		client.sendMessageToServer(message);
 	}
 
-	public String addSubscriber(String name, String phone, String email, String password) throws InterruptedException {
-		String msg = "ADD_SUBSCRIBER," + name + "," + phone + "," + email + "," + password;
+	public String addSubscriber(String name, String phone, String email, String password, String userName) throws InterruptedException {
+		String msg = "ADD_SUBSCRIBER," + name + "," + phone + "," + email + "," + password+ "," + userName;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
 		client.setMessageHandler((Object serverResponse) -> {
