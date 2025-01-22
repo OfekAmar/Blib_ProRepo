@@ -47,7 +47,37 @@ public class ReportController {
 		}
 	}
 
-	public List<ExtendedRecord> getMonthlyBorrowReport(int month, int year) {
+	public List<ExtendedRecord> getMonthlyBorrowReport(int month, int year) throws InterruptedException {
+		String msg = "MONTHLY_BORROW_REPORT," + String.valueOf(month) + "," + String.valueOf(year);
+		latch = new CountDownLatch(1);
+		client.setMessageHandler((Object serverResponse) -> {
+			if (serverResponse instanceof List<?>) {
+				try {
+					List<ExtendedRecord> records = (List<ExtendedRecord>) serverResponse; // Try to cast to List<Record>
+					this.response = records; // Save the response
+				} catch (ClassCastException e) {
+					System.err.println("Failed to cast response to List<Record>: " + e.getMessage());
+				}
+			} else {
+				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
+			}
+			latch.countDown(); // Release the latch
+		});
+
+		client.sendMessageToServer(msg);
+		latch.await();
+		if (response instanceof List<?>) {
+
+			try {
+				return (List<ExtendedRecord>) response;
+			} catch (ClassCastException e) {
+				System.err.println("Failed to cast response to List<ExtendedRecord>:: " + e.getMessage());
+				return null;
+			}
+		} else {
+			System.err.println("Response is not of type List<ExtendedRecord>:.");
+			return null;
+		}
 
 	}
 }

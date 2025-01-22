@@ -90,6 +90,7 @@ public class LibrarianMainController {
 		ScreenLoader.openScreen("/gui/ReportsScreen.fxml", "Reports Screen", event, controller -> {
 			if (controller instanceof ReportsController) {
 				((ReportsController) controller).setStage(stage);
+				((ReportsController) controller).setClient(c);
 			}
 		});
 	}
