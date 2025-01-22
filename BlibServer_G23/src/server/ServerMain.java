@@ -12,6 +12,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import logic.Book;
+import logic.Subscriber;
 import logic.ExtendedRecord;
 import logic.Record;
 import ocsf.server.AbstractServer;
@@ -138,6 +139,11 @@ public class ServerMain extends AbstractServer {
 					} else {
 						client.sendToClient("ERROR: Invalid EDIT_SUBSCRIBER format.");
 					}
+					break;
+					
+				case "GET_ALL_SUBSCRIBERS":
+					List<Subscriber> subscribersList=dbConnector.getAllSubscribers();
+					client.sendToClient(new ArrayList<>(subscribersList));
 					break;
 
 				case "DELETE_BOOK":

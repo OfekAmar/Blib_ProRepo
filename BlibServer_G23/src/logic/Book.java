@@ -56,13 +56,11 @@ public class Book implements Serializable{
 		this.totalCopies = totalCopies;
 	}
 
-	
 	@Override
 	public String toString() {
 		return "Book title=" + title + ", id=" + id + ", author=" + author + ", subject=" + subject + "Book description=" + description+"\n";
-	
-	
 	}
+
 
 }
 
