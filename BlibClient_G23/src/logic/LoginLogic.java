@@ -34,7 +34,8 @@ public class LoginLogic {
 					System.err.println("Failed to cast response to Librarian: "+e.getMessage());
 				}
 			}else if(serverResponse instanceof String) {
-				System.out.println(serverResponse);
+				String str=(String)serverResponse;
+				this.response=str;
 			}
 			else {
 				System.err.println("Unexpected response type from server: "+serverResponse.getClass().getName());
