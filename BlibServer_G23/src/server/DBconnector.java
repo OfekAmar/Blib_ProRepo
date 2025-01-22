@@ -4,10 +4,10 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import logic.Book;
 import logic.ExtendedRecord;
 import logic.Record;
+import logic.Subscriber;
 
 public class DBconnector {
 	private Connection dbConnection;
@@ -35,32 +35,32 @@ public class DBconnector {
 	}
 
 	// Read subscribers
-	public String readSubscribers() throws SQLException {
-		StringBuilder result = new StringBuilder();
-		String query = "SELECT * FROM subscriber";
-		Statement stmt = dbConnection.createStatement();
-		ResultSet rs = stmt.executeQuery(query);
-		while (rs.next()) {
-			result.append(rs.getInt("sub_id")).append(",").append(rs.getString("sub_name")).append(",")
-					.append(rs.getString("phone_num")).append(",").append(rs.getString("status")).append(",")
-					.append(rs.getString("email_address")).append(",").append(rs.getString("password")).append("\\n");
+	public List<Subscriber> getAllSubscribers() throws SQLException {
+		List<Subscriber> subscribersList=new ArrayList<>();
+		Subscriber sub;
+		String query="SELECT * FROM subscriber";
+		PreparedStatement ps=dbConnection.prepareStatement(query);
+		ResultSet rs=ps.executeQuery();
+		while(rs.next()) {
+			sub=new Subscriber(rs.getInt("sub_id"),rs.getString("sub_name"),rs.getString("phone_num"),rs.getString("status"),rs.getString("email_address"),rs.getString("password"));
+			subscribersList.add(sub);
 		}
-		return result.toString();
+		return subscribersList;
 	}
 
 	// Show subscriber by ID
-	public String showSubscriber(int id) throws SQLException {
+	public Subscriber showSubscriber(int id) throws SQLException {
 		String query = "SELECT * FROM subscriber WHERE sub_id = ?";
+		//Subscriber sub;
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, id);
 		ResultSet rs = ps.executeQuery();
-		StringBuilder result = new StringBuilder();
-		while (rs.next()) {
-			result.append(rs.getInt("sub_id")).append(",").append(rs.getString("sub_name")).append(",")
-					.append(rs.getString("phone_num")).append(",").append(rs.getString("status")).append(",")
-					.append(rs.getString("email_address"));
+		if (rs.next()) {
+			return new Subscriber(rs.getInt("sub_id"),rs.getString("sub_name"),rs.getString("phone_num"),rs.getString("status"),rs.getString("email_address"),rs.getString("password"));
 		}
-		return result.toString();
+		else {
+			throw new IllegalArgumentException("Subscriber with ID "+id+"not found.");
+		}
 	}
 
 	// edit subscriber information
@@ -73,6 +73,8 @@ public class DBconnector {
 		pstmt.setInt(4, id);
 		pstmt.executeUpdate();
 	}
+	
+ 
 
 	// Execute a general query
 	public ResultSet executeQuery(String query) throws SQLException {

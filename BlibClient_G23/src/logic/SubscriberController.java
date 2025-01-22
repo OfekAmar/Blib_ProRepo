@@ -114,5 +114,9 @@ public class SubscriberController {
 		System.out.println(response.toString());
 		return (List<String>) response;
 	}
+	
+	public List<Subscriber> getAllSubscribers(){
+		
+	}
 
 }
