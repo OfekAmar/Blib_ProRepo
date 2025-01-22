@@ -145,6 +145,15 @@ public class ServerMain extends AbstractServer {
 					List<Subscriber> subscribersList=dbConnector.getAllSubscribers();
 					client.sendToClient(new ArrayList<>(subscribersList));
 					break;
+					
+				case "SEARCH_SUBSCRIBER_BY_ID":
+					if(parts.length==2) {
+						int id=Integer.valueOf(parts[1]);
+						Subscriber sub=dbConnector.searchSubscriberById(id);
+						client.sendToClient(sub);
+					}else {
+						client.sendToClient("ERROR: Invalid GET_ALL_SUBSCRIBERS format.");
+					}
 
 				case "DELETE_BOOK":
 					if (parts.length == 2) {

@@ -50,7 +50,7 @@ public class DBconnector {
 	}
 
 	// Show subscriber by ID
-	public Subscriber showSubscriber(int id) throws SQLException {
+	public Subscriber searchSubscriberById(int id) throws SQLException {
 		String query = "SELECT * FROM subscriber WHERE sub_id = ?";
 		// Subscriber sub;
 		PreparedStatement ps = dbConnection.prepareStatement(query);
