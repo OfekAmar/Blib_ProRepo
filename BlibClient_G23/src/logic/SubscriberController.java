@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import client.ClientMain;
 
 public class SubscriberController {
+	
 	private final ClientMain client;
 	private Object response;
 	private CountDownLatch latch;
@@ -115,8 +116,72 @@ public class SubscriberController {
 		return (List<String>) response;
 	}
 	
-	public List<Subscriber> getAllSubscribers(){
-		
+	public synchronized List<Subscriber> getAllSubscribers() throws InterruptedException{
+		String msg="GET_ALL_SUBSCRIBERS";
+		latch = new CountDownLatch(1); 
+
+		client.setMessageHandler((Object serverResponse) -> {
+			if (serverResponse instanceof List<?>) {
+				try {
+					List<Subscriber> subscribersList = (List<Subscriber>) serverResponse; 
+					this.response = subscribersList;
+				} catch (ClassCastException e) {
+					System.err.println("Failed to cast response to List<Subscriber>: " + e.getMessage());
+				}
+			} else {
+				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
+			}
+			latch.countDown(); // Release the latch
+		});
+		client.sendMessageToServer(msg); // Send the message to the server
+		latch.await(); // Wait for the response
+		if (response instanceof List<?>) {
+
+			try {
+				return (List<Subscriber>) response;
+			} catch (ClassCastException e) {
+				System.err.println("Failed to cast response to List<Subscriber>: " + e.getMessage());
+				return null;
+			}
+		} else {
+			System.err.println("Response is not of type List<Subscriber>.");
+			// Thread.sleep(1000);
+			return null;
+		}
+	}
+	
+	public synchronized Subscriber searchSubscriberById(String subscriberId) throws InterruptedException {
+		String msg="SEARCH_SUBSCRIBER_BY_ID,"+subscriberId;
+		latch = new CountDownLatch(1); 
+
+		client.setMessageHandler((Object serverResponse) -> {
+			if (serverResponse instanceof Subscriber) {
+				try {
+					Subscriber sub = (Subscriber) serverResponse; 
+					this.response = sub;
+				} catch (ClassCastException e) {
+					System.err.println("Failed to cast response to Subscriber: " + e.getMessage());
+				}
+			} else {
+				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
+			}
+			latch.countDown(); // Release the latch
+		});
+		client.sendMessageToServer(msg); // Send the message to the server
+		latch.await(); // Wait for the response
+		if (response instanceof Subscriber) {
+
+			try {
+				return (Subscriber) response;
+			} catch (ClassCastException e) {
+				System.err.println("Failed to cast response to Subscriber: " + e.getMessage());
+				return null;
+			}
+		} else {
+			System.err.println("Response is not of type Subscriber.");
+			// Thread.sleep(1000);
+			return null;
+		}
 	}
 
 }

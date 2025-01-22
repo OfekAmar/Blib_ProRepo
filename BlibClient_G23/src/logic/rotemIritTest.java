@@ -39,8 +39,11 @@ public class rotemIritTest {
 
 			// System.out.println(s.editSubscriber("7","3333444466","irit14@gmail.com","password"));
 
-			BorrowController b = new BorrowController(null, c);
-			System.out.println(b.orderBook(7, 1));
+			//BorrowController b = new BorrowController(null, c);
+			//System.out.println(b.orderBook(7, 1));
+			
+			SubscriberController sc=new SubscriberController(c);
+			System.out.println(sc.getAllSubscribers());
 
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());

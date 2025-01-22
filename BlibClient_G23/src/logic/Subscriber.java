@@ -1,6 +1,9 @@
 package logic;
 
-public class Subscriber {
+import java.io.Serializable;
+
+public class Subscriber implements Serializable {
+	private static final long serialVersionUID=3L;
 	private int id;
 	private String name;
 	private String phone;
