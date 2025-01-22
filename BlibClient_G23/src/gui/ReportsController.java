@@ -5,10 +5,10 @@ import javafx.scene.control.Button;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Alert;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import logic.ExtendedRecord;
 import logic.ReportController;
 import logic.ScreenLoader;
+import logic.Record;
 
 public class ReportsController {
 
@@ -46,11 +47,21 @@ public class ReportsController {
 	@FXML
 	private NumberAxis yAxis;
 
+	@FXML
+	private LineChart<String, Number> statusLineChart;
+
+	@FXML
+	private CategoryAxis lineChartXAxis;
+
+	@FXML
+	private NumberAxis lineChartYAxis;
+
 	private Stage stage;
 	private ClientMain c;
 	private ReportController r;
-	private List<ExtendedRecord> monthleyReport;
-	private List<Record> statsReport;
+	private List<ExtendedRecord> monthleyBorrowReport;
+	private List<Record> monthlyStatusReport;
+	private Map<String, Integer> statusStatistics;
 
 	public void setClient(ClientMain c) {
 		this.c = c;
@@ -66,7 +77,9 @@ public class ReportsController {
 	private void initializeReportData() {
 		LocalDate d = LocalDate.now();
 		try {
-			monthleyReport = r.getMonthlyBorrowReport(d.getMonthValue(), d.getYear());
+			monthleyBorrowReport = r.getMonthlyBorrowReport(d.getMonthValue(), d.getYear());
+			monthlyStatusReport = r.getMonthlyStatusReport(d.getMonthValue(), d.getYear());
+			statusStatistics = r.getStatusStatistics();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,6 +93,9 @@ public class ReportsController {
 		st.setWidth(800);
 		st.setHeight(1200);
 
+		statusLineChart.setVisible(false);
+		statusLineChart.setManaged(false);
+
 		borrowingPieChart.setVisible(true);
 		borrowingPieChart.setManaged(true);
 
@@ -87,7 +103,7 @@ public class ReportsController {
 		subscriberBarChart.setManaged(true);
 
 		Map<String, Integer> actionCounts = new HashMap<>();
-		for (ExtendedRecord record : monthleyReport) {
+		for (ExtendedRecord record : monthleyBorrowReport) {
 			String status = record.getReturnStatus();
 			actionCounts.put(status, actionCounts.getOrDefault(status, 0) + 1);
 		}
@@ -98,9 +114,8 @@ public class ReportsController {
 		}
 		borrowingPieChart.setData(pieData);
 
-		// מילוי נתונים לתרשים עמודות
 		Map<Integer, Integer> borrowCounts = new HashMap<>();
-		for (ExtendedRecord record : monthleyReport) {
+		for (ExtendedRecord record : monthleyBorrowReport) {
 			int subscriberId = record.getSubscriberID();
 			borrowCounts.put(subscriberId, borrowCounts.getOrDefault(subscriberId, 0) + 1);
 		}
@@ -117,8 +132,60 @@ public class ReportsController {
 
 	@FXML
 	private void onSubscribersStatusClick(ActionEvent event) {
-		// Implement logic for subscribers status reports
-		ScreenLoader.showAlert("Subscribers Status Reports", "Displaying Subscribers Status Reports.");
+		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		st.setWidth(800);
+		st.setHeight(1200);
+
+		statusLineChart.setVisible(true);
+		statusLineChart.setManaged(true);
+		borrowingPieChart.setVisible(true);
+		borrowingPieChart.setManaged(true);
+
+		subscriberBarChart.setVisible(false);
+		subscriberBarChart.setManaged(false);
+
+		borrowingPieChart.getData().clear();
+
+		ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
+		for (Map.Entry<String, Integer> entry : statusStatistics.entrySet()) {
+			pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
+		}
+		borrowingPieChart.setData(pieData);
+		borrowingPieChart.setTitle("Subscribers Status Distribution");
+
+		statusLineChart.getData().clear();
+
+		Map<String, Integer> cumulativeFreeze = new HashMap<>();
+		Map<String, Integer> cumulativeUnfreeze = new HashMap<>();
+
+		int freezeCount = 0;
+		int unfreezeCount = 0;
+
+		for (Record record : monthlyStatusReport) {
+			String date = record.getRecordDate();
+			if (record.getRecordType().equals("freeze")) {
+				freezeCount++;
+			} else if (record.getRecordType().equals("unfreeze")) {
+				unfreezeCount++;
+			}
+			cumulativeFreeze.put(date, freezeCount);
+			cumulativeUnfreeze.put(date, unfreezeCount);
+		}
+		List<String> allDates = cumulativeFreeze.keySet().stream().distinct().sorted().toList();
+
+		XYChart.Series<String, Number> freezeSeries = new XYChart.Series<>();
+		freezeSeries.setName("Freeze");
+
+		XYChart.Series<String, Number> unfreezeSeries = new XYChart.Series<>();
+		unfreezeSeries.setName("Unfreeze");
+
+		for (String date : allDates) {
+			freezeSeries.getData().add(new XYChart.Data<>(date, cumulativeFreeze.getOrDefault(date, 0)));
+			unfreezeSeries.getData().add(new XYChart.Data<>(date, cumulativeUnfreeze.getOrDefault(date, 0)));
+		}
+
+		statusLineChart.getData().addAll(freezeSeries, unfreezeSeries);
+		statusLineChart.setTitle("Cumulative Freeze and Unfreeze Actions");
 	}
 
 	@FXML

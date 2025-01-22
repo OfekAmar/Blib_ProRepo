@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -142,18 +143,18 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid EDIT_SUBSCRIBER format.");
 					}
 					break;
-					
+
 				case "GET_ALL_SUBSCRIBERS":
-					List<Subscriber> subscribersList=dbConnector.getAllSubscribers();
+					List<Subscriber> subscribersList = dbConnector.getAllSubscribers();
 					client.sendToClient(new ArrayList<>(subscribersList));
 					break;
-					
+
 				case "SEARCH_SUBSCRIBER_BY_ID":
-					if(parts.length==2) {
-						int id=Integer.valueOf(parts[1]);
-						Subscriber sub=dbConnector.searchSubscriberById(id);
+					if (parts.length == 2) {
+						int id = Integer.valueOf(parts[1]);
+						Subscriber sub = dbConnector.searchSubscriberById(id);
 						client.sendToClient(sub);
-					}else {
+					} else {
 						client.sendToClient("ERROR: Invalid GET_ALL_SUBSCRIBERS format.");
 					}
 					break;
@@ -286,6 +287,24 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient(result);
 					} else {
 						client.sendToClient("ERROR: Invalid MONTHLY_BORROW_REPORT format.");
+					}
+					break;
+				case "MONTHLY_STATUS_REPORT":
+					if (parts.length == 3) {
+						int month = Integer.valueOf(parts[1]);
+						int year = Integer.valueOf(parts[2]);
+						List<Record> result = dbConnector.getMonthlyFreezeAndUnfreezeRecords(month, year);
+						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: Invalid MONTHLY_STATUS_REPORT format.");
+					}
+					break;
+				case "STATUS_STATISTICS":
+					if (parts.length == 1) {
+						Map<String, Integer> result = dbConnector.getSubscriberStatusCounts();
+						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: STATUS_STATISTICS format.");
 					}
 					break;
 				case "CHECK_BOOK_AVAILABILITY":

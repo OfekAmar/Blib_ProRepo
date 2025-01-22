@@ -1,8 +1,8 @@
 package logic;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
 import client.ClientMain;
 
 public class ReportController {
@@ -14,70 +14,45 @@ public class ReportController {
 		this.client = c;
 	}
 
-	public List<Record> getAllRecordsByID(int subscriberID) throws InterruptedException {
-		String msg = "GET_RECORDS_BY_ID," + String.valueOf(subscriberID);
+	private <T> T sendMessageAndAwaitResponse(String message, Class<T> expectedType) throws InterruptedException {
 		latch = new CountDownLatch(1);
 		client.setMessageHandler((Object serverResponse) -> {
-			if (serverResponse instanceof List<?>) {
-				try {
-					List<Record> records = (List<Record>) serverResponse; // Try to cast to List<Record>
-					this.response = records; // Save the response
-				} catch (ClassCastException e) {
-					System.err.println("Failed to cast response to List<Record>: " + e.getMessage());
-				}
+			if (expectedType.isInstance(serverResponse)) {
+				response = expectedType.cast(serverResponse);
 			} else {
-				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
+				System.err.println("Unexpected response type: " + serverResponse.getClass().getName());
 			}
-			latch.countDown(); // Release the latch
+			latch.countDown();
 		});
 
-		client.sendMessageToServer(msg);
+		client.sendMessageToServer(message);
 		latch.await();
-		if (response instanceof List<?>) {
 
-			try {
-				return (List<Record>) response;
-			} catch (ClassCastException e) {
-				System.err.println("Failed to cast response to List<Record>:: " + e.getMessage());
-				return null;
-			}
+		if (expectedType.isInstance(response)) {
+			return expectedType.cast(response);
 		} else {
-			System.err.println("Response is not of type List<Record>:.");
+			System.err.println("Response is not of type: " + expectedType.getName());
 			return null;
 		}
 	}
 
+	public List<Record> getAllRecordsByID(int subscriberID) throws InterruptedException {
+		String msg = "GET_RECORDS_BY_ID," + subscriberID;
+		return sendMessageAndAwaitResponse(msg, List.class);
+	}
+
 	public List<ExtendedRecord> getMonthlyBorrowReport(int month, int year) throws InterruptedException {
-		String msg = "MONTHLY_BORROW_REPORT," + String.valueOf(month) + "," + String.valueOf(year);
-		latch = new CountDownLatch(1);
-		client.setMessageHandler((Object serverResponse) -> {
-			if (serverResponse instanceof List<?>) {
-				try {
-					List<ExtendedRecord> records = (List<ExtendedRecord>) serverResponse; // Try to cast to List<Record>
-					this.response = records; // Save the response
-				} catch (ClassCastException e) {
-					System.err.println("Failed to cast response to List<Record>: " + e.getMessage());
-				}
-			} else {
-				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
-			}
-			latch.countDown(); // Release the latch
-		});
+		String msg = "MONTHLY_BORROW_REPORT," + month + "," + year;
+		return sendMessageAndAwaitResponse(msg, List.class);
+	}
 
-		client.sendMessageToServer(msg);
-		latch.await();
-		if (response instanceof List<?>) {
+	public List<Record> getMonthlyStatusReport(int month, int year) throws InterruptedException {
+		String msg = "MONTHLY_STATUS_REPORT," + month + "," + year;
+		return sendMessageAndAwaitResponse(msg, List.class);
+	}
 
-			try {
-				return (List<ExtendedRecord>) response;
-			} catch (ClassCastException e) {
-				System.err.println("Failed to cast response to List<ExtendedRecord>:: " + e.getMessage());
-				return null;
-			}
-		} else {
-			System.err.println("Response is not of type List<ExtendedRecord>:.");
-			return null;
-		}
-
+	public Map<String, Integer> getStatusStatistics() throws InterruptedException {
+		String msg = "STATUS_STATISTICS";
+		return sendMessageAndAwaitResponse(msg, Map.class);
 	}
 }

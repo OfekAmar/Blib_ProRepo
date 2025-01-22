@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 
@@ -38,6 +39,16 @@
 						label="Number of Books Borrowed" />
 				</yAxis>
 			</BarChart>
+			<LineChart fx:id="statusLineChart" visible="false"
+				managed="false" title="Cumulative Freeze and Unfreeze Actions">
+				<xAxis>
+					<CategoryAxis fx:id="lineChartXAxis" label="Date" />
+				</xAxis>
+				<yAxis>
+					<NumberAxis fx:id="lineChartYAxis"
+						label="Cumulative Count" />
+				</yAxis>
+			</LineChart>
 		</VBox>
 	</center>
 
