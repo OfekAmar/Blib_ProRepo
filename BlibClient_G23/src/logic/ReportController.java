@@ -46,4 +46,8 @@ public class ReportController {
 			return null;
 		}
 	}
+
+	public List<ExtendedRecord> getMonthlyBorrowReport(int month, int year) {
+
+	}
 }
