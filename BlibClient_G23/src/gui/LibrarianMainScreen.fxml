@@ -5,29 +5,54 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
-<BorderPane style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LibrarianMainController">
+<BorderPane style="-fx-background-color: #f4f4f4;"
+	xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="gui.LibrarianMainController">
 	<top>
-		<VBox alignment="CENTER" prefHeight="112.0" prefWidth="242.0" spacing="10" style="-fx-padding: 10;">
-			<Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Hello Librarian !" />
-			<Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Choose your action please" />
+		<VBox alignment="CENTER" prefHeight="112.0" prefWidth="242.0"
+			spacing="10" style="-fx-padding: 10;">
+			<Label fx:id="welcomeLabel"
+				style="-fx-font-size: 18px; -fx-font-weight: bold;"
+				text="Hello Librarian !" />
+			<Label style="-fx-font-size: 18px; -fx-font-weight: bold;"
+				text="Choose your action please" />
 		</VBox>
 	</top>
 
 	<center>
-		<VBox alignment="CENTER" prefHeight="294.0" prefWidth="242.0" spacing="20" style="-fx-padding: 20;">
-         <Button fx:id="manageBooksButton" layoutX="72.0" layoutY="77.0" onAction="#onManageBooksClick" text="Manage Books" />
-			<Button fx:id="manageUsersButton" onAction="#onManageSubscriberClick" text="Manage Subscribers" />
-			<Button fx:id="borrowBookButton" onAction="#onBorrowBookClick" text="Borrow Book" />
-			<Button fx:id="returnBookButton" onAction="#onReturnBookClick" text="Return Book" />
-			<Button fx:id="reportsButton" onAction="#onReportsClick" text="Reports" />
+		<VBox alignment="CENTER" prefHeight="294.0" prefWidth="242.0"
+			spacing="20" style="-fx-padding: 20;">
+			<Button fx:id="manageBooksButton" layoutX="72.0"
+				layoutY="77.0" onAction="#onManageBooksClick" text="Manage Books" />
+			<Button fx:id="manageUsersButton"
+				onAction="#onManageSubscriberClick" text="Manage Subscribers" />
+			<Button fx:id="borrowBookButton" onAction="#onBorrowBookClick"
+				text="Borrow Book" />
+			<Button fx:id="returnBookButton" onAction="#onReturnBookClick"
+				text="Return Book" />
+			<Button fx:id="reportsButton" onAction="#onReportsClick"
+				text="Reports" />
+			<HBox alignment="CENTER" spacing="20">
+				<StackPane>
+					<Button text="Notifications" fx:id="notiButton"
+						onAction="#onNotificationClick" />
+
+					<Label fx:id="notificationBubble" text="1"
+						style="-fx-background-color: red; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 2 6; -fx-font-size: 10; -fx-border-radius: 15; -fx-background-radius: 15;"
+						translateX="40" translateY="-15" visible="false" />
+				</StackPane>
+			</HBox>
 		</VBox>
 	</center>
 
 	<bottom>
-		<HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
+		<HBox alignment="CENTER_LEFT" spacing="10"
+			style="-fx-padding: 10;">
 			<Button fx:id="exitButton" onAction="#onExitClick" text="Exit" />
-			<Button fx:id="logoutButton" onAction="#onLogoutClick" text="Logout" />
+			<Button fx:id="logoutButton" onAction="#onLogoutClick"
+				text="Logout" />
 		</HBox>
 	</bottom>
 </BorderPane>

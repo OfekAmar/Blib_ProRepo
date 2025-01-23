@@ -5,12 +5,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import logic.ScreenLoader;
-import logic.Book;
-import logic.BookController;
-import logic.Librarian;
+import java.util.Map;
 import client.ClientMain;
 import javafx.event.ActionEvent;
+import logic.Book;
+import logic.BookController;
+import logic.NotificationsController;
+import logic.ScreenLoader;
+
 
 public class LibrarianMainController {
 	@FXML
@@ -37,13 +39,33 @@ public class LibrarianMainController {
 	private Button logoutButton;
 	@FXML
 	private Button exitButton;
+	@FXML
+	private Button notiButton;
+
+	@FXML
+	private Label notificationBubble;
 
 	private Stage stage;
 	private ClientMain c;
 	private Librarian lib;
 	private BookController bc;
+	private NotificationsController nc;
+	private int notifilabel;
+	private Map<String, Integer> notifications;
 
-	
+	public void setClient(ClientMain c) {
+		this.c = c;
+		nc = new NotificationsController(c);
+		try {
+			this.notifications = nc.getNotificationsLib(0);
+			notifilabel = notifications.size();
+			updateNotificationBubble(notifilabel);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
@@ -55,6 +77,15 @@ public class LibrarianMainController {
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 		welcomeLabel.setText("Hello, " + lib.getName() + "!");
+	}
+
+	public void updateNotificationBubble(int count) {
+		if (count > 0) {
+			notificationBubble.setText(String.valueOf(count));
+			notificationBubble.setVisible(true);
+		} else {
+			notificationBubble.setVisible(false);
+		}
 	}
 
 	@FXML
@@ -123,6 +154,17 @@ public class LibrarianMainController {
 				((LoginController) controller).setClient(c);
 			}
 		});
+	}
+
+	@FXML
+	private void onNotificationClick(ActionEvent event) {
+		ScreenLoader.openPopUpScreenWithSize("/gui/NotificationShowScreen.fxml", "Notification", event, controller -> {
+			if (controller instanceof NotificationShowController) {
+				((NotificationShowController) controller).setStage(stage);
+				((NotificationShowController) controller).setLibrarian(lib, nc);
+				((NotificationShowController) controller).setLibrarianMainController(this);
+			}
+		}, 400, 400);
 	}
 
 	@FXML

@@ -4,8 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import logic.LoginLogic;
+import logic.NotificationsController;
 import logic.ScreenLoader;
 import logic.Subscriber;
+
+import java.util.Map;
+
 import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -35,11 +40,22 @@ public class SubscriberMainController {
 
 	@FXML
 	private Button exitButton;
+
 	@FXML
 	private Button logoutButton;
 
+	@FXML
+	private Button notiButton;
+
+	@FXML
+	private Label notificationBubble;
+
 	private Stage stage;
 	private Subscriber sub;
+	private Map<String, Integer> notifications;
+	private NotificationsController nc;
+	private ClientMain cm;
+	private int notifilabel;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -50,10 +66,26 @@ public class SubscriberMainController {
 		welcomeLabel.setText("Hello, " + s.getName() + "!");
 	}
 
-	private ClientMain cm;
-
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
+		nc = new NotificationsController(cm);
+		try {
+			this.notifications = nc.getNotificationsSub(sub.getId(), 0);
+			notifilabel = notifications.size();
+			updateNotificationBubble(notifilabel);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void updateNotificationBubble(int count) {
+		if (count > 0) {
+			notificationBubble.setText(String.valueOf(count));
+			notificationBubble.setVisible(true);
+		} else {
+			notificationBubble.setVisible(false);
+		}
 	}
 
 	@FXML
@@ -94,8 +126,9 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
 			if (controller instanceof ExtendBorrowController) {
 				((ExtendBorrowController) controller).setStage(stage);
-				((ExtendBorrowController) controller).setSubscriber(sub);
-				((ExtendBorrowController) controller).setClient(cm);
+				// ((ExtendBorrowController) controller).setSubscriber(sub); // Setting
+				// Subscriber
+				((ExtendBorrowController) controller).setClient(cm, sub); // Setting ClientMain
 			}
 		});
 	}
@@ -118,6 +151,17 @@ public class SubscriberMainController {
 				((HistoryController) controller).setSubscriber(sub);
 			}
 		});
+	}
+
+	@FXML
+	private void onNotificationClick(ActionEvent event) {
+		ScreenLoader.openPopUpScreenWithSize("/gui/NotificationShowScreen.fxml", "Notification", event, controller -> {
+			if (controller instanceof NotificationShowController) {
+				((NotificationShowController) controller).setStage(stage);
+				((NotificationShowController) controller).setSubscriber(sub, nc);
+				((NotificationShowController) controller).setSubscriberMainController(this);
+			}
+		}, 400, 400);
 	}
 
 	@FXML

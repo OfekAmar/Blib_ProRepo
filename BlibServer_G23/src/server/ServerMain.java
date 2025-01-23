@@ -104,30 +104,30 @@ public class ServerMain extends AbstractServer {
 				switch (command) {
 				case "ADD_BOOK":
 					if (parts.length == 5) {
-						String author=parts[1];
-						String title=parts[2];
-						String subject=parts[3];
-						String description=parts[4];
+						String author = parts[1];
+						String title = parts[2];
+						String subject = parts[3];
+						String description = parts[4];
 						dbConnector.addBook(author, title, subject, description);
-						client.sendToClient("New book added successfuly:\nauthor: "+author+"\ntitle: "+title+"\nsubject: "+subject+"\ndescription: "+description);
-					}
-					else {
+						client.sendToClient("New book added successfuly:\nauthor: " + author + "\ntitle: " + title
+								+ "\nsubject: " + subject + "\ndescription: " + description);
+					} else {
 						client.sendToClient("ERROR: Invalid ADD_BOOK format.");
 					}
 					break;
 
 				case "ADD_COPY_OF_BOOK":
-					if(parts.length==3) {
-						int bookId=Integer.valueOf(parts[1]);
-						String location=parts[2];
-						dbConnector.addCopyOfBook(bookId,location);
-						client.sendToClient("New copy of book added successfuly:\nbook id: "+bookId+"\nlocation: "+location);
-					}
-					else {
+					if (parts.length == 3) {
+						int bookId = Integer.valueOf(parts[1]);
+						String location = parts[2];
+						dbConnector.addCopyOfBook(bookId, location);
+						client.sendToClient(
+								"New copy of book added successfuly:\nbook id: " + bookId + "\nlocation: " + location);
+					} else {
 						client.sendToClient("ERROR: Invalid ADD_COPY_OF_BOOK format.");
 					}
 					break;
-						
+
 				case "ADD_SUBSCRIBER":
 					if (parts.length == 6) {
 						String name = parts[1];
@@ -140,37 +140,38 @@ public class ServerMain extends AbstractServer {
 								+ phone + "\nemail: " + email + "\nuserName: " + userName);
 					} else {
 						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
-					}	
+					}
 					break;
-					
+
 				case "GET_ALL_BOOKS":
-					List<Book> booksList=dbConnector.getAllBooks();
+					List<Book> booksList = dbConnector.getAllBooks();
 					client.sendToClient(new ArrayList<>(booksList));
 					break;
-					
+
 				case "GET_ALL_BOOK_COPIES":
-					if(parts.length==2) {
-						int bookCode=Integer.valueOf(parts[1]);
-						List<CopyOfBook> copiesList=dbConnector.getAllBookCopies(bookCode);
+					if (parts.length == 2) {
+						int bookCode = Integer.valueOf(parts[1]);
+						List<CopyOfBook> copiesList = dbConnector.getAllBookCopies(bookCode);
 						client.sendToClient(new ArrayList<>(copiesList));
-					}else {
+					} else {
 						client.sendToClient("ERROR: Invalid GET_ALL_BOOK_COPIES format.");
 					}
 					break;
-				
+
 				case "EDIT_COPY_OF_BOOK":
-					if(parts.length==5) {
-						int bookCode=Integer.valueOf(parts[1]);
-						int copyId=Integer.valueOf(parts[2]);
-						String location=parts[3];
-						String status=parts[4];
+					if (parts.length == 5) {
+						int bookCode = Integer.valueOf(parts[1]);
+						int copyId = Integer.valueOf(parts[2]);
+						String location = parts[3];
+						String status = parts[4];
 						dbConnector.editCopyOfBook(bookCode, copyId, location, status);
-						client.sendToClient("edit copy of book successfuly: \nbook code: "+bookCode+"\ncopy id: "+copyId+"\nlocation: "+location+"\nstatus: "+status);
-					}else {
+						client.sendToClient("edit copy of book successfuly: \nbook code: " + bookCode + "\ncopy id: "
+								+ copyId + "\nlocation: " + location + "\nstatus: " + status);
+					} else {
 						client.sendToClient("ERROR: Invalid EDIT_COPY_OF_BOOK format.");
 					}
 					break;
-					
+
 				case "EDIT_SUBSCRIBER":
 					if (parts.length == 5) {
 						int id = Integer.parseInt(parts[1]);
@@ -359,7 +360,7 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 3) {
 						int subID = Integer.valueOf(parts[1]);
 						int status = Integer.valueOf(parts[2]);
-						List<String> result = dbConnector.getNotiSubs(subID, status);
+						Map<String, Integer> result = dbConnector.getNotiSubs(subID, status);
 						client.sendToClient(result);
 					} else {
 						client.sendToClient("ERROR: GET_NOTIFICATIONS_SUB format.");
@@ -368,10 +369,28 @@ public class ServerMain extends AbstractServer {
 				case "GET_NOTIFICATIONS_LIB":
 					if (parts.length == 2) {
 						int status = Integer.valueOf(parts[1]);
-						List<String> result = dbConnector.getNotiLib(status);
+						Map<String, Integer> result = dbConnector.getNotiLib(status);
 						client.sendToClient(result);
 					} else {
 						client.sendToClient("ERROR: GET_NOTIFICATIONS_LIB format.");
+					}
+					break;
+				case "MARK_AS_READ_SUB":
+					if (parts.length == 2) {
+						int notiID = Integer.valueOf(parts[1]);
+						dbConnector.readNotiSubs(notiID);
+						client.sendToClient("Notification marked as read");
+					} else {
+						client.sendToClient("ERROR: MARK_AS_READ_SUB format.");
+					}
+					break;
+				case "MARK_AS_READ_LIB":
+					if (parts.length == 2) {
+						int notiID = Integer.valueOf(parts[1]);
+						dbConnector.readNotiLib(notiID);
+						client.sendToClient("Notification marked as read");
+					} else {
+						client.sendToClient("ERROR: MARK_AS_READ_LIB format.");
 					}
 					break;
 				case "CHECK_BOOK_AVAILABILITY":
@@ -485,125 +504,16 @@ public class ServerMain extends AbstractServer {
 
 				case "PROCESS_BORROW":
 					if (parts.length == 5) {
-						String bookId = parts[1];
-						String copyId = parts[2];
-						String subscriberId = parts[3];
-						LocalDate returnDate = LocalDate.parse(parts[4]);
-
 						try {
-							// Check the copy's status
-							String copyQuery = "SELECT status FROM CopyOfBook WHERE book_code = ? AND copy_id = ?";
-							try (PreparedStatement copyPs = dbConnector.getDbConnection().prepareStatement(copyQuery)) {
-								copyPs.setString(1, bookId);
-								copyPs.setString(2, copyId);
-								ResultSet rsCopy = copyPs.executeQuery();
+							int bookId = Integer.parseInt(parts[1]);
+							int copyId = Integer.parseInt(parts[2]);
+							int subscriberId = Integer.parseInt(parts[3]);
+							LocalDate returnDate = LocalDate.parse(parts[4]);
 
-								if (rsCopy.next()) {
-									String copyStatus = rsCopy.getString("status");
-
-									if ("exists".equals(copyStatus)) {
-										// Update the copy status to 'borrowed'
-										String updateCopyQuery = "UPDATE CopyOfBook SET status = 'borrowed' WHERE book_code = ? AND copy_id = ?";
-										try (PreparedStatement updateCopyPs = dbConnector.getDbConnection()
-												.prepareStatement(updateCopyQuery)) {
-											updateCopyPs.setString(1, bookId);
-											updateCopyPs.setString(2, copyId);
-											updateCopyPs.executeUpdate();
-										}
-
-										// Add a new record to the Borrow table
-										String borrowQuery = "INSERT INTO Borrow (sub_id, book_code, copy_id, borrow_date, return_max_date, status) VALUES (?, ?, ?, ?, ?, ?)";
-										try (PreparedStatement borrowPs = dbConnector.getDbConnection()
-												.prepareStatement(borrowQuery, Statement.RETURN_GENERATED_KEYS)) {
-											borrowPs.setString(1, subscriberId);
-											borrowPs.setString(2, bookId);
-											borrowPs.setString(3, copyId);
-											borrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-											borrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
-											borrowPs.setString(6, "borrowed");
-											borrowPs.executeUpdate();
-
-											ResultSet generatedKeys = borrowPs.getGeneratedKeys();
-											if (generatedKeys.next()) {
-												client.sendToClient("Borrow record created successfully with ID: "
-														+ generatedKeys.getInt(1));
-											} else {
-												client.sendToClient("ERROR: Borrow record creation failed.");
-											}
-										}
-									} else if ("reserved".equals(copyStatus)) {
-										// Handle reserved copies
-										String reservationQuery = "SELECT sub_id, status FROM Reserved WHERE book_code = ? AND copy_id = ?";
-										try (PreparedStatement resPs = dbConnector.getDbConnection()
-												.prepareStatement(reservationQuery)) {
-											resPs.setString(1, bookId);
-											resPs.setString(2, copyId);
-											ResultSet rsReservation = resPs.executeQuery();
-
-											if (rsReservation.next()) {
-												String reservedSubId = rsReservation.getString("sub_id");
-												String reservationStatus = rsReservation.getString("status");
-
-												if (subscriberId.equals(reservedSubId)
-														&& "wait".equals(reservationStatus)) {
-													// Update the reservation status to 'borrowed'
-													String updateReservationQuery = "UPDATE Reserved SET status = 'taken' WHERE book_code = ? AND copy_id = ?";
-													try (PreparedStatement updateResPs = dbConnector.getDbConnection()
-															.prepareStatement(updateReservationQuery)) {
-														updateResPs.setString(1, bookId);
-														updateResPs.setString(2, copyId);
-														updateResPs.executeUpdate();
-													}
-
-													// Update the copy status to 'borrowed'
-													String updateCopyQuery = "UPDATE CopyOfBook SET status = 'borrowed' WHERE book_code = ? AND copy_id = ?";
-													try (PreparedStatement updateCopyPs = dbConnector.getDbConnection()
-															.prepareStatement(updateCopyQuery)) {
-														updateCopyPs.setString(1, bookId);
-														updateCopyPs.setString(2, copyId);
-														updateCopyPs.executeUpdate();
-													}
-
-													// Add a new record to the Borrow table
-													String borrowQuery = "INSERT INTO Borrow (sub_id, book_code, copy_id, borrow_date, return_max_date, status) VALUES (?, ?, ?, ?, ?, ?)";
-													try (PreparedStatement borrowPs = dbConnector.getDbConnection()
-															.prepareStatement(borrowQuery,
-																	Statement.RETURN_GENERATED_KEYS)) {
-														borrowPs.setString(1, subscriberId);
-														borrowPs.setString(2, bookId);
-														borrowPs.setString(3, copyId);
-														borrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-														borrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
-														borrowPs.setString(6, "borrowed");
-														borrowPs.executeUpdate();
-
-														ResultSet generatedKeys = borrowPs.getGeneratedKeys();
-														if (generatedKeys.next()) {
-															client.sendToClient(
-																	"Borrow record created successfully with ID: "
-																			+ generatedKeys.getInt(1));
-														} else {
-															client.sendToClient(
-																	"ERROR: Borrow record creation failed.");
-														}
-													}
-												} else {
-													client.sendToClient(
-															"ERROR: This copy is reserved by another subscriber.");
-												}
-											} else {
-												client.sendToClient("ERROR: No valid reservation found for this copy.");
-											}
-										}
-									} else {
-										client.sendToClient("ERROR: Copy is not available for borrowing.");
-									}
-								} else {
-									client.sendToClient("ERROR: Copy does not exist.");
-								}
-							}
+							String result = dbConnector.processBorrow(bookId, copyId, subscriberId, returnDate);
+							client.sendToClient(result);
 						} catch (Exception e) {
-							client.sendToClient("ERROR: " + e.getMessage());
+							client.sendToClient("ERROR: Invalid data format. " + e.getMessage());
 						}
 					} else {
 						client.sendToClient("ERROR: Invalid PROCESS_BORROW format.");
@@ -612,76 +522,12 @@ public class ServerMain extends AbstractServer {
 
 				case "RETURN_BOOK":
 					if (parts.length == 3) {
-						String bookId = parts[1];
-						String copyId = parts[2];
-
 						try {
-							// Check if the borrow record exists with status 'borrowed'
-							String borrowQuery = "SELECT * FROM Borrow WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
-							try (PreparedStatement borrowPs = dbConnector.getDbConnection()
-									.prepareStatement(borrowQuery)) {
-								borrowPs.setString(1, bookId);
-								borrowPs.setString(2, copyId);
-								ResultSet rsBorrow = borrowPs.executeQuery();
+							int bookId = Integer.parseInt(parts[1]);
+							int copyId = Integer.parseInt(parts[2]);
 
-								if (rsBorrow.next()) {
-									// Change the status in the Borrow table to 'returned'
-									String updateBorrowQuery = "UPDATE Borrow SET status = 'returned' WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
-									try (PreparedStatement updateBorrowPs = dbConnector.getDbConnection()
-											.prepareStatement(updateBorrowQuery)) {
-										updateBorrowPs.setString(1, bookId);
-										updateBorrowPs.setString(2, copyId);
-										updateBorrowPs.executeUpdate();
-									}
-
-									// Check if there is a reservation with status 'borrowed' for this copy
-									String reserveQuery = "SELECT * FROM Reserved WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
-									try (PreparedStatement reservePs = dbConnector.getDbConnection()
-											.prepareStatement(reserveQuery)) {
-										reservePs.setString(1, bookId);
-										reservePs.setString(2, copyId);
-										ResultSet rsReserve = reservePs.executeQuery();
-
-										if (rsReserve.next()) {
-											// Update the reservation status to 'wait'
-											String updateReserveQuery = "UPDATE Reserved SET status = 'wait' WHERE book_code = ? AND copy_id = ?";
-											try (PreparedStatement updateReservePs = dbConnector.getDbConnection()
-													.prepareStatement(updateReserveQuery)) {
-												updateReservePs.setString(1, bookId);
-												updateReservePs.setString(2, copyId);
-												updateReservePs.executeUpdate();
-											}
-
-											// Update the copy status in CopyOfBook to 'reserved'
-											String updateCopyQuery = "UPDATE CopyOfBook SET status = 'reserved' WHERE book_code = ? AND copy_id = ?";
-											try (PreparedStatement updateCopyPs = dbConnector.getDbConnection()
-													.prepareStatement(updateCopyQuery)) {
-												updateCopyPs.setString(1, bookId);
-												updateCopyPs.setString(2, copyId);
-												updateCopyPs.executeUpdate();
-											}
-
-											client.sendToClient(
-													"Book returned successfully. The copy is now reserved.");
-										} else {
-											// No reservation exists, update the copy status to 'exists'
-											String updateCopyQuery = "UPDATE CopyOfBook SET status = 'exists' WHERE book_code = ? AND copy_id = ?";
-											try (PreparedStatement updateCopyPs = dbConnector.getDbConnection()
-													.prepareStatement(updateCopyQuery)) {
-												updateCopyPs.setString(1, bookId);
-												updateCopyPs.setString(2, copyId);
-												updateCopyPs.executeUpdate();
-											}
-
-											client.sendToClient(
-													"Book returned successfully. The copy is now available.");
-										}
-									}
-								} else {
-									client.sendToClient(
-											"ERROR: This borrow does not exist or the copy is not borrowed.");
-								}
-							}
+							String result = dbConnector.processReturnBook(bookId, copyId);
+							client.sendToClient(result);
 						} catch (Exception e) {
 							client.sendToClient("ERROR: " + e.getMessage());
 						}
@@ -689,86 +535,34 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid RETURN_BOOK format.");
 					}
 					break;
-
 				case "GET_ACTIVE_BORROWED":
 					if (parts.length == 2) {
-						String subscriberId = parts[1];
 						try {
-							String query = "SELECT book_code, copy_id FROM Borrow WHERE sub_id = ? AND status = 'borrowed'";
-							PreparedStatement ps = dbConnector.getDbConnection().prepareStatement(query);
-							ps.setString(1, subscriberId);
-							ResultSet rs = ps.executeQuery();
-
-							List<String> borrowedBooks = new ArrayList<>();
-							while (rs.next()) {
-								borrowedBooks.add("Book ID: " + rs.getString("book_code") + ", Copy ID: "
-										+ rs.getString("copy_id"));
-							}
-
-							client.sendToClient(borrowedBooks);
+							int subId = Integer.parseInt(parts[1]);
+							List<String> activeBorrows = dbConnector.getActiveBorrows(subId);
+							client.sendToClient(activeBorrows);
 						} catch (Exception e) {
-							client.sendToClient("ERROR: Failed to fetch borrowed books: " + e.getMessage());
+							List<String> errorResponse = new ArrayList<>();
+							errorResponse.add("ERROR: " + e.getMessage());
+							client.sendToClient(errorResponse);
 						}
 					} else {
-						client.sendToClient("ERROR: Invalid GET_ACTIVE_BORROWED format.");
+						List<String> errorResponse = new ArrayList<>();
+						errorResponse.add("ERROR: Invalid GET_ACTIVE_BORROWED format.");
+						client.sendToClient(errorResponse);
 					}
 					break;
 
 				case "EXTEND_BORROW":
-					if (parts.length == 2) {
-						String borrowId = parts[1];
-
+					if (parts.length == 3) {
 						try {
-							// Validate that the max return date is within 7 days
-							String dateQuery = "SELECT return_max_date FROM Borrow WHERE borrow_id = ?";
-							LocalDate returnMaxDate;
-							try (PreparedStatement datePs = dbConnector.getDbConnection().prepareStatement(dateQuery)) {
-								datePs.setString(1, borrowId);
-								ResultSet rsDate = datePs.executeQuery();
-								if (rsDate.next()) {
-									returnMaxDate = rsDate.getDate("return_max_date").toLocalDate();
-									LocalDate currentDate = LocalDate.now();
+							int borrowId = Integer.parseInt(parts[1]);
+							LocalDate newReturnDate = LocalDate.parse(parts[2]);
 
-									if (returnMaxDate.isBefore(currentDate)
-											|| returnMaxDate.isAfter(currentDate.plusDays(7))) {
-										client.sendToClient(
-												"ERROR: Borrow cannot be extended. Return date is not within 7 days of the current date.");
-										break;
-									}
-								} else {
-									client.sendToClient("ERROR: Borrow record not found.");
-									break;
-								}
-							}
-
-							// Check if the copy is reserved
-							String reserveQuery = "SELECT status FROM Reserved WHERE book_code = (SELECT book_code FROM Borrow WHERE borrow_id = ?) AND copy_id = (SELECT copy_id FROM Borrow WHERE borrow_id = ?) AND status = 'borrowed'";
-							try (PreparedStatement reservePs = dbConnector.getDbConnection()
-									.prepareStatement(reserveQuery)) {
-								reservePs.setString(1, borrowId);
-								reservePs.setString(2, borrowId);
-								ResultSet rsReserve = reservePs.executeQuery();
-								if (rsReserve.next()) {
-									client.sendToClient("ERROR: Borrow cannot be extended. This copy is reserved.");
-									break;
-								}
-							}
-
-							// Extend the max return date by 7 days
-							String updateQuery = "UPDATE Borrow SET return_max_date = return_max_date + INTERVAL 7 DAY WHERE borrow_id = ?";
-							try (PreparedStatement updatePs = dbConnector.getDbConnection()
-									.prepareStatement(updateQuery)) {
-								updatePs.setString(1, borrowId);
-								int rowsAffected = updatePs.executeUpdate();
-								if (rowsAffected > 0) {
-									client.sendToClient(
-											"Borrow extended successfully. 7 days added to the return max date.");
-								} else {
-									client.sendToClient("ERROR: Failed to extend borrow. No rows updated.");
-								}
-							}
+							String result = dbConnector.extendBorrow(borrowId, newReturnDate);
+							client.sendToClient(result);
 						} catch (Exception e) {
-							client.sendToClient("ERROR: " + e.getMessage());
+							client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
 						}
 					} else {
 						client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
