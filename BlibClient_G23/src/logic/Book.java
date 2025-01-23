@@ -21,7 +21,7 @@ public class Book implements Serializable {
 		this.totalCopies = totalCopies;
 
 	}
-
+	
 	public String getTitle() {
 		return title;
 	}
@@ -52,6 +52,13 @@ public class Book implements Serializable {
 
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public int getTotalCopies() {
