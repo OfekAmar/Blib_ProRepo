@@ -5,11 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import logic.ScreenLoader;
+import logic.Book;
+import logic.BookController;
+import logic.Librarian;
 import client.ClientMain;
 import javafx.event.ActionEvent;
-import logic.Book;
-import logic.Librarian;
-import logic.ScreenLoader;
 
 public class LibrarianMainController {
 	@FXML
@@ -17,6 +18,9 @@ public class LibrarianMainController {
 
 	@FXML
 	private Button manageUsersButton;
+	
+	@FXML
+	private Button manageBooksButton;
 
 	@FXML
 	private Button borrowBookButton;
@@ -37,13 +41,15 @@ public class LibrarianMainController {
 	private Stage stage;
 	private ClientMain c;
 	private Librarian lib;
+	private BookController bc;
 
-	public void setClient(ClientMain c) {
-		this.c = c;
-	}
-
+	
 	public void setStage(Stage stage) {
 		this.stage = stage;
+	}
+	
+	public void setClient(ClientMain c) {
+		this.c = c;
 	}
 
 	public void setLibrarian(Librarian lib) {
@@ -53,7 +59,15 @@ public class LibrarianMainController {
 
 	@FXML
 	private void onManageBooksClick(ActionEvent event) {
-
+		ScreenLoader.openScreen("/gui/ManagmentBooksScreen.fxml", "Books Managemnt", event, controller -> {
+	        if (controller instanceof ManagmentBookController) {
+	            ManagmentBookController managmentController = (ManagmentBookController) controller;
+	            managmentController.setStage(stage);
+	            managmentController.setClient(c);
+	            managmentController.setLibrarian(lib);
+	            System.out.println("onManageBooksClick: setClient and setLibrarian called");
+			}
+		});
 	}
 
 	@FXML

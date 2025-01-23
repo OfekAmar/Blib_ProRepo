@@ -68,6 +68,7 @@ public class BookController {
 	}
     
     public synchronized List<Book> getAllBooks() throws InterruptedException {
+    	System.out.println("getallbooks called");
 		String msg = "GET_ALL_BOOKS";
 		latch = new CountDownLatch(1);
 

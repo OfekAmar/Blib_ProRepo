@@ -24,6 +24,9 @@ public class NewSubscriberController {
 
 	@FXML
 	private PasswordField passwordField;
+	
+	@FXML
+	private TextField userNameField;
 
 	@FXML
 	private Button confirmButton;
@@ -50,8 +53,9 @@ public class NewSubscriberController {
 		String phone = phoneField.getText();
 		String email = emailField.getText();
 		String password = passwordField.getText();
+		String userName=userNameField.getText();
 
-		if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
+		if (name.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || userName.isEmpty()) {
 			ScreenLoader.showAlert("Error", "All fields are required.");
 			return;
 		} else {
@@ -60,7 +64,7 @@ public class NewSubscriberController {
 		}
 		SubscriberController s = new SubscriberController(c);
 		try {
-			ScreenLoader.showAlert("user added", s.addSubscriber(name, phone, email, password));
+			ScreenLoader.showAlert("user added", s.addSubscriber(name, phone, email, password, userName));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
