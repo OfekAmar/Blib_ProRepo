@@ -104,30 +104,30 @@ public class ServerMain extends AbstractServer {
 				switch (command) {
 				case "ADD_BOOK":
 					if (parts.length == 5) {
-						String author=parts[1];
-						String title=parts[2];
-						String subject=parts[3];
-						String description=parts[4];
+						String author = parts[1];
+						String title = parts[2];
+						String subject = parts[3];
+						String description = parts[4];
 						dbConnector.addBook(author, title, subject, description);
-						client.sendToClient("New book added successfuly:\nauthor: "+author+"\ntitle: "+title+"\nsubject: "+subject+"\ndescription: "+description);
-					}
-					else {
+						client.sendToClient("New book added successfuly:\nauthor: " + author + "\ntitle: " + title
+								+ "\nsubject: " + subject + "\ndescription: " + description);
+					} else {
 						client.sendToClient("ERROR: Invalid ADD_BOOK format.");
 					}
 					break;
 
 				case "ADD_COPY_OF_BOOK":
-					if(parts.length==3) {
-						int bookId=Integer.valueOf(parts[1]);
-						String location=parts[2];
-						dbConnector.addCopyOfBook(bookId,location);
-						client.sendToClient("New copy of book added successfuly:\nbook id: "+bookId+"\nlocation: "+location);
-					}
-					else {
+					if (parts.length == 3) {
+						int bookId = Integer.valueOf(parts[1]);
+						String location = parts[2];
+						dbConnector.addCopyOfBook(bookId, location);
+						client.sendToClient(
+								"New copy of book added successfuly:\nbook id: " + bookId + "\nlocation: " + location);
+					} else {
 						client.sendToClient("ERROR: Invalid ADD_COPY_OF_BOOK format.");
 					}
 					break;
-						
+
 				case "ADD_SUBSCRIBER":
 					if (parts.length == 6) {
 						String name = parts[1];
@@ -140,37 +140,38 @@ public class ServerMain extends AbstractServer {
 								+ phone + "\nemail: " + email + "\nuserName: " + userName);
 					} else {
 						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
-					}	
+					}
 					break;
-					
+
 				case "GET_ALL_BOOKS":
-					List<Book> booksList=dbConnector.getAllBooks();
+					List<Book> booksList = dbConnector.getAllBooks();
 					client.sendToClient(new ArrayList<>(booksList));
 					break;
-					
+
 				case "GET_ALL_BOOK_COPIES":
-					if(parts.length==2) {
-						int bookCode=Integer.valueOf(parts[1]);
-						List<CopyOfBook> copiesList=dbConnector.getAllBookCopies(bookCode);
+					if (parts.length == 2) {
+						int bookCode = Integer.valueOf(parts[1]);
+						List<CopyOfBook> copiesList = dbConnector.getAllBookCopies(bookCode);
 						client.sendToClient(new ArrayList<>(copiesList));
-					}else {
+					} else {
 						client.sendToClient("ERROR: Invalid GET_ALL_BOOK_COPIES format.");
 					}
 					break;
-				
+
 				case "EDIT_COPY_OF_BOOK":
-					if(parts.length==5) {
-						int bookCode=Integer.valueOf(parts[1]);
-						int copyId=Integer.valueOf(parts[2]);
-						String location=parts[3];
-						String status=parts[4];
+					if (parts.length == 5) {
+						int bookCode = Integer.valueOf(parts[1]);
+						int copyId = Integer.valueOf(parts[2]);
+						String location = parts[3];
+						String status = parts[4];
 						dbConnector.editCopyOfBook(bookCode, copyId, location, status);
-						client.sendToClient("edit copy of book successfuly: \nbook code: "+bookCode+"\ncopy id: "+copyId+"\nlocation: "+location+"\nstatus: "+status);
-					}else {
+						client.sendToClient("edit copy of book successfuly: \nbook code: " + bookCode + "\ncopy id: "
+								+ copyId + "\nlocation: " + location + "\nstatus: " + status);
+					} else {
 						client.sendToClient("ERROR: Invalid EDIT_COPY_OF_BOOK format.");
 					}
 					break;
-					
+
 				case "EDIT_SUBSCRIBER":
 					if (parts.length == 5) {
 						int id = Integer.parseInt(parts[1]);
@@ -359,7 +360,7 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 3) {
 						int subID = Integer.valueOf(parts[1]);
 						int status = Integer.valueOf(parts[2]);
-						List<String> result = dbConnector.getNotiSubs(subID, status);
+						Map<String, Integer> result = dbConnector.getNotiSubs(subID, status);
 						client.sendToClient(result);
 					} else {
 						client.sendToClient("ERROR: GET_NOTIFICATIONS_SUB format.");
@@ -368,10 +369,28 @@ public class ServerMain extends AbstractServer {
 				case "GET_NOTIFICATIONS_LIB":
 					if (parts.length == 2) {
 						int status = Integer.valueOf(parts[1]);
-						List<String> result = dbConnector.getNotiLib(status);
+						Map<String, Integer> result = dbConnector.getNotiLib(status);
 						client.sendToClient(result);
 					} else {
 						client.sendToClient("ERROR: GET_NOTIFICATIONS_LIB format.");
+					}
+					break;
+				case "MARK_AS_READ_SUB":
+					if (parts.length == 2) {
+						int notiID = Integer.valueOf(parts[1]);
+						dbConnector.readNotiSubs(notiID);
+						client.sendToClient("Notification marked as read");
+					} else {
+						client.sendToClient("ERROR: MARK_AS_READ_SUB format.");
+					}
+					break;
+				case "MARK_AS_READ_LIB":
+					if (parts.length == 2) {
+						int notiID = Integer.valueOf(parts[1]);
+						dbConnector.readNotiLib(notiID);
+						client.sendToClient("Notification marked as read");
+					} else {
+						client.sendToClient("ERROR: MARK_AS_READ_LIB format.");
 					}
 					break;
 				case "CHECK_BOOK_AVAILABILITY":

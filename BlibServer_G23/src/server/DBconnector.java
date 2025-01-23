@@ -38,21 +38,22 @@ public class DBconnector {
 		}
 		return dbConnection;
 	}
-	
-	public List<Book> getAllBooks() throws SQLException{
-		List<Book> booksList=new ArrayList<>();
+
+	public List<Book> getAllBooks() throws SQLException {
+		List<Book> booksList = new ArrayList<>();
 		Book book;
-		String query="SELECT * FROM book";
+		String query = "SELECT * FROM book";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			book=new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"),  rs.getString("subject"), rs.getString("description"), rs.getInt("amount_of_copies"));
+			book = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"),
+					rs.getString("subject"), rs.getString("description"), rs.getInt("amount_of_copies"));
 			booksList.add(book);
 		}
 		return booksList;
 	}
-	
-	public List<CopyOfBook> getAllBookCopies(int bookCode) throws SQLException{
+
+	public List<CopyOfBook> getAllBookCopies(int bookCode) throws SQLException {
 		List<CopyOfBook> copiesList = new ArrayList<>();
 		CopyOfBook cb;
 		String query = "SELECT * FROM copyofbook WHERE book_code = ?";
@@ -60,13 +61,14 @@ public class DBconnector {
 		ps.setInt(1, bookCode);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			cb = new CopyOfBook(rs.getInt("book_code"), rs.getInt("copy_id"), rs.getString("location"), rs.getString("status"));
+			cb = new CopyOfBook(rs.getInt("book_code"), rs.getInt("copy_id"), rs.getString("location"),
+					rs.getString("status"));
 			copiesList.add(cb);
 		}
 		return copiesList;
 	}
-	
-	public void addBook(String author, String title, String subject, String description) throws SQLException{
+
+	public void addBook(String author, String title, String subject, String description) throws SQLException {
 		String query = "INSERT INTO book (author, title, subject, description, amount_of_copies) VALUES (?, ?, ?, ?, ?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, author);
@@ -76,21 +78,21 @@ public class DBconnector {
 		ps.setInt(5, 0);
 		ps.executeUpdate();
 	}
-	
-	public void addCopyOfBook(int bookCode, String location) throws SQLException{
+
+	public void addCopyOfBook(int bookCode, String location) throws SQLException {
 		String query = "INSERT INTO copyofbook (book_code, copy_id, location, status) SELECT ?, COALESCE(MAX(copy_id),0)+1, ?, 'exists' FROM copyofbook WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
 		ps.setString(2, location);
 		ps.setInt(3, bookCode);
 		ps.executeUpdate();
-		query="UPDATE book SET amount_of_copies = amount_of_copies+1 WHERE book_code = ?";
+		query = "UPDATE book SET amount_of_copies = amount_of_copies+1 WHERE book_code = ?";
 		ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
 		ps.executeUpdate();
 	}
-			
-	public void editCopyOfBook(int bookCode, int copyId, String newLocation, String newStatus) throws SQLException{
+
+	public void editCopyOfBook(int bookCode, int copyId, String newLocation, String newStatus) throws SQLException {
 		String query = "UPDATE copyofbook SET location = ?, status = ? WHERE book_code =? AND copy_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, newLocation);
@@ -98,10 +100,8 @@ public class DBconnector {
 		ps.setInt(3, bookCode);
 		ps.setInt(4, copyId);
 		ps.executeUpdate();
-	}	
-	
+	}
 
-	
 	// Read subscribers
 	public List<Subscriber> getAllSubscribers() throws SQLException {
 		List<Subscriber> subscribersList = new ArrayList<>();
@@ -467,7 +467,7 @@ public class DBconnector {
 		ps.executeUpdate();
 	}
 
-	public void sendNotificationToLibrarian(int subID, String description) throws SQLException {
+	public void sendNotificationToLibrarian(String description) throws SQLException {
 		String query = "INSERT INTO librariannotifications (description) VALUES (?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, description);
@@ -475,28 +475,52 @@ public class DBconnector {
 
 	}
 
-	public List<String> getNotiSubs(int subID, int status) throws SQLException {
-		List<String> noti = null;
-		String query = "SELECT description FROM subscribernotifications WHERE sub_id = ? AND read_status = 0";
+	public Map<String, Integer> getNotiSubs(int subID, int status) throws SQLException {
+		Map<String, Integer> noti = new HashMap<String, Integer>();
+		String query;
+		if (status == 0) {
+			query = "SELECT noti_id,description FROM subscribernotifications WHERE sub_id = ? AND read_status = 0";
+		} else {
+			query = "SELECT noti_id,description FROM subscribernotifications WHERE sub_id = ?";
+		}
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, subID);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			noti.add(rs.getString("description"));
+			noti.put(rs.getString("description"), rs.getInt("noti_id"));
 		}
 		return noti;
 	}
 
-	public List<String> getNotiLib(int status) throws SQLException {
-		List<String> noti = null;
-		String query = "SELECT description FROM librariannotifications WHERE read_status = 0";
+	public Map<String, Integer> getNotiLib(int status) throws SQLException {
+		Map<String, Integer> noti = new HashMap<String, Integer>();
+		String query;
+		if (status == 0) {
+			query = "SELECT noti_id,description FROM librariannotifications WHERE read_status = 0";
+		} else {
+			query = "SELECT noti_id,description FROM librariannotifications";
+		}
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
-			noti.add(rs.getString("description"));
+			noti.put(rs.getString("description"), rs.getInt("noti_id"));
 		}
 		return noti;
 
+	}
+
+	public void readNotiSubs(int notiID) throws SQLException {
+		String query = "UPDATE subscribernotifications SET read_status = 1 WHERE noti_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, notiID);
+		ps.executeUpdate();
+	}
+
+	public void readNotiLib(int notiID) throws SQLException {
+		String query = "UPDATE librariannotifications SET read_status = 1 WHERE noti_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, notiID);
+		ps.executeUpdate();
 	}
 
 	public boolean isUserExists(String userName) throws SQLException {
