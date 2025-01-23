@@ -10,9 +10,9 @@ import client.ClientMain;
 import javafx.event.ActionEvent;
 import logic.Book;
 import logic.BookController;
+import logic.Librarian;
 import logic.NotificationsController;
 import logic.ScreenLoader;
-
 
 public class LibrarianMainController {
 	@FXML
@@ -20,7 +20,7 @@ public class LibrarianMainController {
 
 	@FXML
 	private Button manageUsersButton;
-	
+
 	@FXML
 	private Button manageBooksButton;
 
@@ -69,10 +69,6 @@ public class LibrarianMainController {
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
-	
-	public void setClient(ClientMain c) {
-		this.c = c;
-	}
 
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
@@ -91,12 +87,12 @@ public class LibrarianMainController {
 	@FXML
 	private void onManageBooksClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/ManagmentBooksScreen.fxml", "Books Managemnt", event, controller -> {
-	        if (controller instanceof ManagmentBookController) {
-	            ManagmentBookController managmentController = (ManagmentBookController) controller;
-	            managmentController.setStage(stage);
-	            managmentController.setClient(c);
-	            managmentController.setLibrarian(lib);
-	            System.out.println("onManageBooksClick: setClient and setLibrarian called");
+			if (controller instanceof ManagmentBookController) {
+				ManagmentBookController managmentController = (ManagmentBookController) controller;
+				managmentController.setStage(stage);
+				managmentController.setClient(c);
+				managmentController.setLibrarian(lib);
+				System.out.println("onManageBooksClick: setClient and setLibrarian called");
 			}
 		});
 	}
