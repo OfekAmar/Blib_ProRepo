@@ -12,6 +12,7 @@ import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import logic.BorrowController;
+import logic.Librarian;
 import logic.ScreenLoader;
 import logic.SubscriberController;
 
@@ -22,7 +23,6 @@ public class BorrowBookController {
 
 	@FXML
 	private TextField bookField;
-
 
 	@FXML
 	private Button scanSubscriberButton;
@@ -40,22 +40,28 @@ public class BorrowBookController {
 	private DatePicker datePicker;
 
 	private Stage stage;
+	private Librarian lib;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	public void setLibrarian(Librarian lib) {
+		this.lib = lib;
+	}
+
 	@FXML
 	private void onEnterSubscriber(ActionEvent event) {
-		
+
 	}
 
 	@FXML
 	private void onEnterBook(ActionEvent event) {
-		
+
 	}
-	
+
 	private ClientMain cm;
+
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}
@@ -78,47 +84,47 @@ public class BorrowBookController {
 			// delete the show alert afte the implemention !!!
 			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
 		}
-		
+
 		// Check for date selection
-	    LocalDate selectedDate = datePicker.getValue();
-	    LocalDate currentDate = LocalDate.now();
-	    if (selectedDate == null) {
-	        ScreenLoader.showAlert("Error", "Please select a valid due date.");
-	        return;
-	    }
+		LocalDate selectedDate = datePicker.getValue();
+		LocalDate currentDate = LocalDate.now();
+		if (selectedDate == null) {
+			ScreenLoader.showAlert("Error", "Please select a valid due date.");
+			return;
+		}
 
-	    // Validate that the selected date is not before the current date
-	    if (selectedDate.isBefore(currentDate)) {
-	        ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
-	        return;
-	    }
+		// Validate that the selected date is not before the current date
+		if (selectedDate.isBefore(currentDate)) {
+			ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
+			return;
+		}
 
-	    // Validate that the selected date is not more than 14 days from the current date
-	    if (selectedDate.isAfter(currentDate.plusDays(14))) {
-	        ScreenLoader.showAlert("Error", "The selected due date cannot be more than 14 days from today.");
-	        return;
-	    }
+		// Validate that the selected date is not more than 14 days from the current
+		// date
+		if (selectedDate.isAfter(currentDate.plusDays(14))) {
+			ScreenLoader.showAlert("Error", "The selected due date cannot be more than 14 days from today.");
+			return;
+		}
 		// implement the logic of borrow book
 		// remove copy from database add borrow record and goes on....
 		// the details of book name and subscriber are in the variables subscriberInfo
 		// variables subscriberInfo and bookInfo
 		// the due date to borrow is in the variable selectedDate
-		 String[] parts = bookInfo.split("/");
+		String[] parts = bookInfo.split("/");
 
-	     // Extract the book code and copy ID
-	     String bookCode = parts[0]; // Before the '/'
-	     String copyId = parts[1];   // After the '/'
-		
+		// Extract the book code and copy ID
+		String bookCode = parts[0]; // Before the '/'
+		String copyId = parts[1]; // After the '/'
+
 		SubscriberController sc = new SubscriberController(cm);
-		
-		BorrowController borrowController = new BorrowController( sc, cm);
+
+		BorrowController borrowController = new BorrowController(sc, cm);
 		try {
 			borrowController.processBorrow(bookCode, copyId, subscriberInfo, selectedDate);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 	}
 
@@ -139,6 +145,8 @@ public class BorrowBookController {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
 			if (controller instanceof LibrarianMainController) {
 				((LibrarianMainController) controller).setStage(new Stage());
+				((LibrarianMainController) controller).setClient(cm);
+				((LibrarianMainController) controller).setLibrarian(lib);
 			}
 		});
 	}

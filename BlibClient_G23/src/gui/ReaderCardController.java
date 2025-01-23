@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.BorrowController;
+import logic.Librarian;
 import logic.Record;
 import logic.SubscriberController;
 import logic.ReportController;
@@ -76,7 +77,7 @@ public class ReaderCardController {
 	private ObservableList<Record> recordData;
 
 	private ObservableList<String> obslist;
-	private boolean isLibrarian = false;
+	private Librarian lib;
 	private Subscriber sub;
 	private Stage stage;
 	private ClientMain c;
@@ -88,8 +89,8 @@ public class ReaderCardController {
 		this.stage = stage;
 	}
 
-	public void setLibrarian(boolean b) {
-		isLibrarian = b;
+	public void setLibrarian(Librarian lib) {
+		this.lib = lib;
 	}
 
 	public void setSubscriber(Subscriber s) {
@@ -184,9 +185,7 @@ public class ReaderCardController {
 
 	@FXML
 	private void onBorrowHistoryClick(ActionEvent event) {
-		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(700);
-		st.setHeight(500);
+		ScreenLoader.resizeCenterWindow(event, 700, 500);
 		resultsTableView.setVisible(false);
 		resultsTableView.setManaged(false);
 		resultsListView.setVisible(true);
@@ -198,9 +197,7 @@ public class ReaderCardController {
 
 	@FXML
 	private void onActivityRecordsClick(ActionEvent event) {
-		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(700);
-		st.setHeight(500);
+		ScreenLoader.resizeCenterWindow(event, 700, 500);
 		resultsListView.setVisible(false);
 		resultsListView.setManaged(false);
 		resultsTableView.setVisible(true);
@@ -216,6 +213,7 @@ public class ReaderCardController {
 			if (controller instanceof ManagmentSubscriberController) {
 				((ManagmentSubscriberController) controller).setStage(new Stage());
 				((ManagmentSubscriberController) controller).setClient(c);
+				((ManagmentSubscriberController) controller).setLibrarian(lib);
 			}
 		});
 

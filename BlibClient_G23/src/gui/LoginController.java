@@ -33,7 +33,6 @@ public class LoginController {
 	private ClientMain c;
 	private Object response;
 	private LoginLogic loginLogic;
-	private boolean isLibrarian = true;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -72,6 +71,7 @@ public class LoginController {
 							if (controller instanceof LibrarianMainController) {
 								((LibrarianMainController) controller).setStage(new Stage());
 								((LibrarianMainController) controller).setClient(c);
+								((LibrarianMainController) controller).setLibrarian(lib);
 							}
 						}, 250, 400);
 

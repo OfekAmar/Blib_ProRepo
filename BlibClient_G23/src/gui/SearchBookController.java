@@ -186,8 +186,6 @@ public class SearchBookController {
 				((LoginController) controller).setClient(c);
 			}
 		});
-		// this is pop - up alert in case needed !
-		// showAlert("Info", "Going back to the previous screen.");
 	}
 
 	@FXML

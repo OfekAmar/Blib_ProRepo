@@ -407,7 +407,32 @@ public class DBconnector {
 		String query = "INSERT INTO librariannotifications (description) VALUES (?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, description);
-		ps.executeUpdate();
+		ps.executeQuery();
+
+	}
+
+	public List<String> getNotiSubs(int subID, int status) throws SQLException {
+		List<String> noti = null;
+		String query = "SELECT description FROM subscribernotifications WHERE sub_id = ? AND read_status = 0";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, subID);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			noti.add(rs.getString("description"));
+		}
+		return noti;
+	}
+
+	public List<String> getNotiLib(int status) throws SQLException {
+		List<String> noti = null;
+		String query = "SELECT description FROM librariannotifications WHERE read_status = 0";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			noti.add(rs.getString("description"));
+		}
+		return noti;
+
 	}
 
 	public boolean isUserExists(String userName) throws SQLException {

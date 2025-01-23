@@ -313,6 +313,26 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: STATUS_STATISTICS format.");
 					}
 					break;
+
+				case "GET_NOTIFICATIONS_SUB":
+					if (parts.length == 3) {
+						int subID = Integer.valueOf(parts[1]);
+						int status = Integer.valueOf(parts[2]);
+						List<String> result = dbConnector.getNotiSubs(subID, status);
+						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: GET_NOTIFICATIONS_SUB format.");
+					}
+					break;
+				case "GET_NOTIFICATIONS_LIB":
+					if (parts.length == 2) {
+						int status = Integer.valueOf(parts[1]);
+						List<String> result = dbConnector.getNotiLib(status);
+						client.sendToClient(result);
+					} else {
+						client.sendToClient("ERROR: GET_NOTIFICATIONS_LIB format.");
+					}
+					break;
 				case "CHECK_BOOK_AVAILABILITY":
 					if (parts.length == 2) {
 						String bookCode = parts[1];
