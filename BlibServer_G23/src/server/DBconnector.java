@@ -38,271 +38,279 @@ public class DBconnector {
 		}
 		return dbConnection;
 	}
+
 	public String processBorrow(int bookId, int copyId, int subscriberId, LocalDate returnDate) {
-	    String copyStatusQuery = "SELECT status FROM CopyOfBook WHERE book_code = ? AND copy_id = ?";
-	    String reservationCheckQuery = "SELECT * FROM Reserved WHERE book_code = ? AND copy_id = ? AND sub_id = ? AND order_status = 'waiting'";
-	    String updateReservationQuery = "UPDATE Reserved SET order_status = 'borrowed' WHERE order_id = ?";
-	    String updateCopyStatusQuery = "UPDATE CopyOfBook SET status = 'borrowed' WHERE book_code = ? AND copy_id = ?";
-	    String decreaseReservationCountQuery = "UPDATE Book SET amount_of_reservations = amount_of_reservations - 1 WHERE book_code = ?";
-	    String insertBorrowQuery = "INSERT INTO Borrow (sub_id, book_code, copy_id, borrow_date, return_max_date, status) VALUES (?, ?, ?, ?, ?, ?)";
-	    String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES (?, ?, ?, ?)";
+		String copyStatusQuery = "SELECT status FROM CopyOfBook WHERE book_code = ? AND copy_id = ?";
+		String reservationCheckQuery = "SELECT * FROM Reserved WHERE book_code = ? AND copy_id = ? AND sub_id = ? AND order_status = 'waiting'";
+		String updateReservationQuery = "UPDATE Reserved SET order_status = 'borrowed' WHERE order_id = ?";
+		String updateCopyStatusQuery = "UPDATE CopyOfBook SET status = 'borrowed' WHERE book_code = ? AND copy_id = ?";
+		String decreaseReservationCountQuery = "UPDATE Book SET amount_of_reservations = amount_of_reservations - 1 WHERE book_code = ?";
+		String insertBorrowQuery = "INSERT INTO Borrow (sub_id, book_code, copy_id, borrow_date, return_max_date, status) VALUES (?, ?, ?, ?, ?, ?)";
+		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES (?, ?, ?, ?)";
 
-	    try {
-	        // Check the copy's current status
-	        try (PreparedStatement copyStatusPs = dbConnection.prepareStatement(copyStatusQuery)) {
-	            copyStatusPs.setInt(1, bookId);
-	            copyStatusPs.setInt(2, copyId);
-	            ResultSet rsCopyStatus = copyStatusPs.executeQuery();
+		try {
+			// Check the copy's current status
+			try (PreparedStatement copyStatusPs = dbConnection.prepareStatement(copyStatusQuery)) {
+				copyStatusPs.setInt(1, bookId);
+				copyStatusPs.setInt(2, copyId);
+				ResultSet rsCopyStatus = copyStatusPs.executeQuery();
 
-	            if (rsCopyStatus.next()) {
-	                String copyStatus = rsCopyStatus.getString("status");
+				if (rsCopyStatus.next()) {
+					String copyStatus = rsCopyStatus.getString("status");
 
-	                if ("reserved".equals(copyStatus)) {
-	                    // Check if there's a matching reservation for this subscriber and copy
-	                    try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
-	                        reservationCheckPs.setInt(1, bookId);
-	                        reservationCheckPs.setInt(2, copyId);
-	                        reservationCheckPs.setInt(3, subscriberId);
-	                        ResultSet rsReservationCheck = reservationCheckPs.executeQuery();
+					if ("reserved".equals(copyStatus)) {
+						// Check if there's a matching reservation for this subscriber and copy
+						try (PreparedStatement reservationCheckPs = dbConnection
+								.prepareStatement(reservationCheckQuery)) {
+							reservationCheckPs.setInt(1, bookId);
+							reservationCheckPs.setInt(2, copyId);
+							reservationCheckPs.setInt(3, subscriberId);
+							ResultSet rsReservationCheck = reservationCheckPs.executeQuery();
 
-	                        if (rsReservationCheck.next()) {
-	                            int orderId = rsReservationCheck.getInt("order_id");
+							if (rsReservationCheck.next()) {
+								int orderId = rsReservationCheck.getInt("order_id");
 
-	                            // Update reservation status to 'borrowed'
-	                            try (PreparedStatement updateReservationPs = dbConnection.prepareStatement(updateReservationQuery)) {
-	                                updateReservationPs.setInt(1, orderId);
-	                                updateReservationPs.executeUpdate();
-	                            }
+								// Update reservation status to 'borrowed'
+								try (PreparedStatement updateReservationPs = dbConnection
+										.prepareStatement(updateReservationQuery)) {
+									updateReservationPs.setInt(1, orderId);
+									updateReservationPs.executeUpdate();
+								}
 
-	                            // Update the copy's status to 'borrowed'
-	                            try (PreparedStatement updateCopyStatusPs = dbConnection.prepareStatement(updateCopyStatusQuery)) {
-	                                updateCopyStatusPs.setInt(1, bookId);
-	                                updateCopyStatusPs.setInt(2, copyId);
-	                                updateCopyStatusPs.executeUpdate();
-	                            }
+								// Update the copy's status to 'borrowed'
+								try (PreparedStatement updateCopyStatusPs = dbConnection
+										.prepareStatement(updateCopyStatusQuery)) {
+									updateCopyStatusPs.setInt(1, bookId);
+									updateCopyStatusPs.setInt(2, copyId);
+									updateCopyStatusPs.executeUpdate();
+								}
 
-	                            // Decrease the amount_of_reservations in the Book table
-	                            try (PreparedStatement decreaseReservationCountPs = dbConnection.prepareStatement(decreaseReservationCountQuery)) {
-	                                decreaseReservationCountPs.setInt(1, bookId);
-	                                decreaseReservationCountPs.executeUpdate();
-	                            }
+								// Decrease the amount_of_reservations in the Book table
+								try (PreparedStatement decreaseReservationCountPs = dbConnection
+										.prepareStatement(decreaseReservationCountQuery)) {
+									decreaseReservationCountPs.setInt(1, bookId);
+									decreaseReservationCountPs.executeUpdate();
+								}
 
-	                            // Insert a borrow record
-	                            try (PreparedStatement insertBorrowPs = dbConnection.prepareStatement(insertBorrowQuery)) {
-	                                insertBorrowPs.setInt(1, subscriberId);
-	                                insertBorrowPs.setInt(2, bookId);
-	                                insertBorrowPs.setInt(3, copyId);
-	                                insertBorrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-	                                insertBorrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
-	                                insertBorrowPs.setString(6, "borrowed");
-	                                insertBorrowPs.executeUpdate();
-	                            }
+								// Insert a borrow record
+								try (PreparedStatement insertBorrowPs = dbConnection
+										.prepareStatement(insertBorrowQuery)) {
+									insertBorrowPs.setInt(1, subscriberId);
+									insertBorrowPs.setInt(2, bookId);
+									insertBorrowPs.setInt(3, copyId);
+									insertBorrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
+									insertBorrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
+									insertBorrowPs.setString(6, "borrowed");
+									insertBorrowPs.executeUpdate();
+								}
 
-	                            // Insert a record in the Records table
-	                            try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                                insertRecordPs.setString(1, "borrowed");
-	                                insertRecordPs.setInt(2, subscriberId);
-	                                insertRecordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-	                                insertRecordPs.setInt(4, bookId);
-	                                insertRecordPs.executeUpdate();
-	                            }
+								// Insert a record in the Records table
+								try (PreparedStatement insertRecordPs = dbConnection
+										.prepareStatement(insertRecordQuery)) {
+									insertRecordPs.setString(1, "borrowed");
+									insertRecordPs.setInt(2, subscriberId);
+									insertRecordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+									insertRecordPs.setInt(4, bookId);
+									insertRecordPs.executeUpdate();
+								}
 
-	                            return "Borrow process completed successfully.";
-	                        } else {
-	                            return "ERROR: No matching reservation found for this subscriber.";
-	                        }
-	                    }
-	                } else if ("exists".equals(copyStatus)) {
-	                    // Handle normal borrowing process if the copy status is 'exists'
+								return "Borrow process completed successfully.";
+							} else {
+								return "ERROR: No matching reservation found for this subscriber.";
+							}
+						}
+					} else if ("exists".equals(copyStatus)) {
+						// Handle normal borrowing process if the copy status is 'exists'
 
-	                    // Update the copy's status to 'borrowed'
-	                    try (PreparedStatement updateCopyStatusPs = dbConnection.prepareStatement(updateCopyStatusQuery)) {
-	                        updateCopyStatusPs.setInt(1, bookId);
-	                        updateCopyStatusPs.setInt(2, copyId);
-	                        updateCopyStatusPs.executeUpdate();
-	                    }
+						// Update the copy's status to 'borrowed'
+						try (PreparedStatement updateCopyStatusPs = dbConnection
+								.prepareStatement(updateCopyStatusQuery)) {
+							updateCopyStatusPs.setInt(1, bookId);
+							updateCopyStatusPs.setInt(2, copyId);
+							updateCopyStatusPs.executeUpdate();
+						}
 
-	                    // Insert a borrow record
-	                    try (PreparedStatement insertBorrowPs = dbConnection.prepareStatement(insertBorrowQuery)) {
-	                        insertBorrowPs.setInt(1, subscriberId);
-	                        insertBorrowPs.setInt(2, bookId);
-	                        insertBorrowPs.setInt(3, copyId);
-	                        insertBorrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
-	                        insertBorrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
-	                        insertBorrowPs.setString(6, "borrowed");
-	                        insertBorrowPs.executeUpdate();
-	                    }
+						// Insert a borrow record
+						try (PreparedStatement insertBorrowPs = dbConnection.prepareStatement(insertBorrowQuery)) {
+							insertBorrowPs.setInt(1, subscriberId);
+							insertBorrowPs.setInt(2, bookId);
+							insertBorrowPs.setInt(3, copyId);
+							insertBorrowPs.setDate(4, java.sql.Date.valueOf(LocalDate.now()));
+							insertBorrowPs.setDate(5, java.sql.Date.valueOf(returnDate));
+							insertBorrowPs.setString(6, "borrowed");
+							insertBorrowPs.executeUpdate();
+						}
 
-	                    // Insert a record in the Records table
-	                    try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                        insertRecordPs.setString(1, "borrowed");
-	                        insertRecordPs.setInt(2, subscriberId);
-	                        insertRecordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-	                        insertRecordPs.setInt(4, bookId);
-	                        insertRecordPs.executeUpdate();
-	                    }
+						// Insert a record in the Records table
+						try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+							insertRecordPs.setString(1, "borrowed");
+							insertRecordPs.setInt(2, subscriberId);
+							insertRecordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+							insertRecordPs.setInt(4, bookId);
+							insertRecordPs.executeUpdate();
+						}
 
-	                    return "Borrow process completed successfully.";
-	                } else {
-	                    return "ERROR: Copy is not available for borrowing.";
-	                }
-	            } else {
-	                return "ERROR: Copy does not exist.";
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return "ERROR: " + e.getMessage();
-	    }
+						return "Borrow process completed successfully.";
+					} else {
+						return "ERROR: Copy is not available for borrowing.";
+					}
+				} else {
+					return "ERROR: Copy does not exist.";
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "ERROR: " + e.getMessage();
+		}
 	}
 
-	
 	public String processReturnBook(int bookId, int copyId) {
-	    String borrowQuery = "SELECT * FROM Borrow WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
-	    String updateBorrowQuery = "UPDATE Borrow SET status = 'returned' WHERE book_code = ? AND copy_id = ?";
-	    String reservationQuery = "SELECT * FROM Reserved WHERE book_code = ? AND order_status = 'waiting' AND copy_id IS NULL ORDER BY res_date ASC, res_time ASC LIMIT 1";
-	    String updateReservationQuery = "UPDATE Reserved SET copy_id = ? WHERE order_id = ?";
-	    String updateCopyToReservedQuery = "UPDATE CopyOfBook SET status = 'reserved' WHERE book_code = ? AND copy_id = ?";
-	    String updateCopyToExistsQuery = "UPDATE CopyOfBook SET status = 'exists' WHERE book_code = ? AND copy_id = ?";
-	    String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES (?, ?, ?, ?)";
+		String borrowQuery = "SELECT * FROM Borrow WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
+		String updateBorrowQuery = "UPDATE Borrow SET status = 'returned' WHERE book_code = ? AND copy_id = ?";
+		String reservationQuery = "SELECT * FROM Reserved WHERE book_code = ? AND order_status = 'waiting' AND copy_id IS NULL ORDER BY res_date ASC, res_time ASC LIMIT 1";
+		String updateReservationQuery = "UPDATE Reserved SET copy_id = ? WHERE order_id = ?";
+		String updateCopyToReservedQuery = "UPDATE CopyOfBook SET status = 'reserved' WHERE book_code = ? AND copy_id = ?";
+		String updateCopyToExistsQuery = "UPDATE CopyOfBook SET status = 'exists' WHERE book_code = ? AND copy_id = ?";
+		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES (?, ?, ?, ?)";
 
-	    try {
-	        // Check if the borrow record exists with status 'borrowed'
-	        try (PreparedStatement borrowPs = dbConnection.prepareStatement(borrowQuery)) {
-	            borrowPs.setInt(1, bookId);
-	            borrowPs.setInt(2, copyId);
-	            ResultSet rsBorrow = borrowPs.executeQuery();
+		try {
+			// Check if the borrow record exists with status 'borrowed'
+			try (PreparedStatement borrowPs = dbConnection.prepareStatement(borrowQuery)) {
+				borrowPs.setInt(1, bookId);
+				borrowPs.setInt(2, copyId);
+				ResultSet rsBorrow = borrowPs.executeQuery();
 
-	            if (rsBorrow.next()) {
-	                int subscriberId = rsBorrow.getInt("sub_id");
+				if (rsBorrow.next()) {
+					int subscriberId = rsBorrow.getInt("sub_id");
 
-	                // Mark the borrow record as returned
-	                try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-	                    updateBorrowPs.setInt(1, bookId);
-	                    updateBorrowPs.setInt(2, copyId);
-	                    updateBorrowPs.executeUpdate();
-	                }
+					// Mark the borrow record as returned
+					try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+						updateBorrowPs.setInt(1, bookId);
+						updateBorrowPs.setInt(2, copyId);
+						updateBorrowPs.executeUpdate();
+					}
 
-	                boolean reserved = false;
+					boolean reserved = false;
 
-	                // Check for reservations
-	                try (PreparedStatement reservationPs = dbConnection.prepareStatement(reservationQuery)) {
-	                    reservationPs.setInt(1, bookId);
-	                    ResultSet rsReservation = reservationPs.executeQuery();
+					// Check for reservations
+					try (PreparedStatement reservationPs = dbConnection.prepareStatement(reservationQuery)) {
+						reservationPs.setInt(1, bookId);
+						ResultSet rsReservation = reservationPs.executeQuery();
 
-	                    if (rsReservation.next()) {
-	                        reserved = true;
-	                        int orderId = rsReservation.getInt("order_id");
+						if (rsReservation.next()) {
+							reserved = true;
+							int orderId = rsReservation.getInt("order_id");
 
-	                        // Update reservation with the returned copy ID
-	                        try (PreparedStatement updateReservationPs = dbConnection.prepareStatement(updateReservationQuery)) {
-	                            updateReservationPs.setInt(1, copyId);
-	                            updateReservationPs.setInt(2, orderId);
-	                            updateReservationPs.executeUpdate();
-	                        }
+							// Update reservation with the returned copy ID
+							try (PreparedStatement updateReservationPs = dbConnection
+									.prepareStatement(updateReservationQuery)) {
+								updateReservationPs.setInt(1, copyId);
+								updateReservationPs.setInt(2, orderId);
+								updateReservationPs.executeUpdate();
+							}
 
-	                        // Update the copy's status to 'reserved'
-	                        try (PreparedStatement updateCopyPs = dbConnection.prepareStatement(updateCopyToReservedQuery)) {
-	                            updateCopyPs.setInt(1, bookId);
-	                            updateCopyPs.setInt(2, copyId);
-	                            updateCopyPs.executeUpdate();
-	                        }
+							// Update the copy's status to 'reserved'
+							try (PreparedStatement updateCopyPs = dbConnection
+									.prepareStatement(updateCopyToReservedQuery)) {
+								updateCopyPs.setInt(1, bookId);
+								updateCopyPs.setInt(2, copyId);
+								updateCopyPs.executeUpdate();
+							}
 
-	                        
-	                    }
-	                }
+						}
+					}
 
-	                // If no reservation exists, update the copy's status to 'exists'
-	                if (!reserved) {
-	                    try (PreparedStatement updateCopyPs = dbConnection.prepareStatement(updateCopyToExistsQuery)) {
-	                        updateCopyPs.setInt(1, bookId);
-	                        updateCopyPs.setInt(2, copyId);
-	                        updateCopyPs.executeUpdate();
-	                    }
-	                }
+					// If no reservation exists, update the copy's status to 'exists'
+					if (!reserved) {
+						try (PreparedStatement updateCopyPs = dbConnection.prepareStatement(updateCopyToExistsQuery)) {
+							updateCopyPs.setInt(1, bookId);
+							updateCopyPs.setInt(2, copyId);
+							updateCopyPs.executeUpdate();
+						}
+					}
 
-	                // Always record the return action in the Records table
-	                try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                    recordPs.setString(1, "returned");
-	                    recordPs.setInt(2, subscriberId);
-	                    recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-	                    recordPs.setInt(4, bookId);
-	                    recordPs.executeUpdate();
-	                }
+					// Always record the return action in the Records table
+					try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+						recordPs.setString(1, "returned");
+						recordPs.setInt(2, subscriberId);
+						recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+						recordPs.setInt(4, bookId);
+						recordPs.executeUpdate();
+					}
 
-	                return "Book returned successfully.";
-	            } else {
-	                return "ERROR: No active borrow record found for this copy.";
-	            }
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return "ERROR: " + e.getMessage();
-	    }
+					return "Book returned successfully.";
+				} else {
+					return "ERROR: No active borrow record found for this copy.";
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "ERROR: " + e.getMessage();
+		}
 	}
-	
+
 	public String extendBorrow(int borrowId) {
-	    String reservationCheckQuery = "SELECT b.amount_of_reservations FROM Book b JOIN Borrow bo ON b.book_code = bo.book_code WHERE bo.borrow_id = ?";
-	    String extendBorrowQuery = "UPDATE Borrow SET return_max_date = return_max_date + INTERVAL 7 DAY WHERE borrow_id = ?";
-	    String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES ('extend', ?, ?, ?)";
+		String reservationCheckQuery = "SELECT b.amount_of_reservations FROM Book b JOIN Borrow bo ON b.book_code = bo.book_code WHERE bo.borrow_id = ?";
+		String extendBorrowQuery = "UPDATE Borrow SET return_max_date = return_max_date + INTERVAL 7 DAY WHERE borrow_id = ?";
+		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) VALUES ('extend', ?, ?, ?)";
 
-	    try {
-	        // Check if the book has active reservations
-	        try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
-	            reservationCheckPs.setInt(1, borrowId);
-	            ResultSet rs = reservationCheckPs.executeQuery();
+		try {
+			// Check if the book has active reservations
+			try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
+				reservationCheckPs.setInt(1, borrowId);
+				ResultSet rs = reservationCheckPs.executeQuery();
 
-	            if (rs.next()) {
-	                int amountOfReservations = rs.getInt("amount_of_reservations");
+				if (rs.next()) {
+					int amountOfReservations = rs.getInt("amount_of_reservations");
 
-	                if (amountOfReservations > 0) {
-	                    return "ERROR: Cannot extend borrow. The book has active reservations.";
-	                }
-	            } else {
-	                return "ERROR: Borrow record not found.";
-	            }
-	        }
+					if (amountOfReservations > 0) {
+						return "ERROR: Cannot extend borrow. The book has active reservations.";
+					}
+				} else {
+					return "ERROR: Borrow record not found.";
+				}
+			}
 
-	        // Extend the borrow period
-	        try (PreparedStatement extendBorrowPs = dbConnection.prepareStatement(extendBorrowQuery)) {
-	            extendBorrowPs.setInt(1, borrowId);
-	            int rowsAffected = extendBorrowPs.executeUpdate();
+			// Extend the borrow period
+			try (PreparedStatement extendBorrowPs = dbConnection.prepareStatement(extendBorrowQuery)) {
+				extendBorrowPs.setInt(1, borrowId);
+				int rowsAffected = extendBorrowPs.executeUpdate();
 
-	            if (rowsAffected == 0) {
-	                return "ERROR: Failed to extend borrow period.";
-	            }
-	        }
+				if (rowsAffected == 0) {
+					return "ERROR: Failed to extend borrow period.";
+				}
+			}
 
-	        // Insert a record in the Records table
-	        String subscriberQuery = "SELECT sub_id, book_code FROM Borrow WHERE borrow_id = ?";
-	        try (PreparedStatement subscriberPs = dbConnection.prepareStatement(subscriberQuery)) {
-	            subscriberPs.setInt(1, borrowId);
-	            ResultSet rs = subscriberPs.executeQuery();
+			// Insert a record in the Records table
+			String subscriberQuery = "SELECT sub_id, book_code FROM Borrow WHERE borrow_id = ?";
+			try (PreparedStatement subscriberPs = dbConnection.prepareStatement(subscriberQuery)) {
+				subscriberPs.setInt(1, borrowId);
+				ResultSet rs = subscriberPs.executeQuery();
 
-	            if (rs.next()) {
-	                int subscriberId = rs.getInt("sub_id");
-	                int bookCode = rs.getInt("book_code");
+				if (rs.next()) {
+					int subscriberId = rs.getInt("sub_id");
+					int bookCode = rs.getInt("book_code");
 
-	                try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                    insertRecordPs.setInt(1, subscriberId);
-	                    insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
-	                    insertRecordPs.setInt(3, bookCode);
-	                    insertRecordPs.executeUpdate();
-	                }
-	            } else {
-	                return "ERROR: Failed to retrieve subscriber or book information for the borrow record.";
-	            }
-	        }
+					try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+						insertRecordPs.setInt(1, subscriberId);
+						insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+						insertRecordPs.setInt(3, bookCode);
+						insertRecordPs.executeUpdate();
+					}
+				} else {
+					return "ERROR: Failed to retrieve subscriber or book information for the borrow record.";
+				}
+			}
 
-	        return "Borrow period extended successfully.";
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return "ERROR: " + e.getMessage();
-	    }
+			return "Borrow period extended successfully.";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "ERROR: " + e.getMessage();
+		}
 	}
 
-  public List<Book> getAllBooks() throws SQLException{
-		List<Book> booksList=new ArrayList<>();
+	public List<Book> getAllBooks() throws SQLException {
+		List<Book> booksList = new ArrayList<>();
 		Book book;
 		String query = "SELECT * FROM book";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
@@ -770,69 +778,69 @@ public class DBconnector {
 		return noti;
 
 	}
+
 	public String extendBorrow(int borrowId, LocalDate newReturnDate) {
-	    String reservationCheckQuery = "SELECT amount_of_reservations FROM Book " +
-	                                   "WHERE book_code = (SELECT book_code FROM Borrow WHERE borrow_id = ?)";
-	    String updateBorrowQuery = "UPDATE Borrow SET return_max_date = ? WHERE borrow_id = ?";
-	    String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) " +
-	                                "VALUES ('extend', ?, ?, ?)";
+		String reservationCheckQuery = "SELECT amount_of_reservations FROM Book "
+				+ "WHERE book_code = (SELECT book_code FROM Borrow WHERE borrow_id = ?)";
+		String updateBorrowQuery = "UPDATE Borrow SET return_max_date = ? WHERE borrow_id = ?";
+		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) "
+				+ "VALUES ('extend', ?, ?, ?)";
 
-	    try {
-	        // Check if there are reservations for the book
-	        try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
-	            reservationCheckPs.setInt(1, borrowId);
-	            ResultSet rs = reservationCheckPs.executeQuery();
+		try {
+			// Check if there are reservations for the book
+			try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
+				reservationCheckPs.setInt(1, borrowId);
+				ResultSet rs = reservationCheckPs.executeQuery();
 
-	            if (rs.next()) {
-	                int reservations = rs.getInt("amount_of_reservations");
+				if (rs.next()) {
+					int reservations = rs.getInt("amount_of_reservations");
 
-	                if (reservations > 0) {
-	                    return "ERROR: Cannot extend borrow period. There are reservations for this book.";
-	                }
-	            } else {
-	                return "ERROR: Borrow record not found.";
-	            }
-	        }
+					if (reservations > 0) {
+						return "ERROR: Cannot extend borrow period. There are reservations for this book.";
+					}
+				} else {
+					return "ERROR: Borrow record not found.";
+				}
+			}
 
-	        // Extend the borrow period
-	        try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-	            updateBorrowPs.setDate(1, java.sql.Date.valueOf(newReturnDate));
-	            updateBorrowPs.setInt(2, borrowId);
-	            int rowsUpdated = updateBorrowPs.executeUpdate();
+			// Extend the borrow period
+			try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+				updateBorrowPs.setDate(1, java.sql.Date.valueOf(newReturnDate));
+				updateBorrowPs.setInt(2, borrowId);
+				int rowsUpdated = updateBorrowPs.executeUpdate();
 
-	            if (rowsUpdated == 0) {
-	                return "ERROR: Failed to extend borrow period.";
-	            }
-	        }
+				if (rowsUpdated == 0) {
+					return "ERROR: Failed to extend borrow period.";
+				}
+			}
 
-	        // Insert a record into the Records table
-	        String subIdQuery = "SELECT sub_id, book_code FROM Borrow WHERE borrow_id = ?";
-	        try (PreparedStatement subIdPs = dbConnection.prepareStatement(subIdQuery)) {
-	            subIdPs.setInt(1, borrowId);
-	            ResultSet rs = subIdPs.executeQuery();
+			// Insert a record into the Records table
+			String subIdQuery = "SELECT sub_id, book_code FROM Borrow WHERE borrow_id = ?";
+			try (PreparedStatement subIdPs = dbConnection.prepareStatement(subIdQuery)) {
+				subIdPs.setInt(1, borrowId);
+				ResultSet rs = subIdPs.executeQuery();
 
-	            if (rs.next()) {
-	                int subId = rs.getInt("sub_id");
-	                int bookCode = rs.getInt("book_code");
+				if (rs.next()) {
+					int subId = rs.getInt("sub_id");
+					int bookCode = rs.getInt("book_code");
 
-	                try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                    insertRecordPs.setInt(1, subId);
-	                    insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
-	                    insertRecordPs.setInt(3, bookCode);
-	                    insertRecordPs.executeUpdate();
-	                }
-	            } else {
-	                return "ERROR: Failed to log the extension in the Records table.";
-	            }
-	        }
+					try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+						insertRecordPs.setInt(1, subId);
+						insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+						insertRecordPs.setInt(3, bookCode);
+						insertRecordPs.executeUpdate();
+					}
+				} else {
+					return "ERROR: Failed to log the extension in the Records table.";
+				}
+			}
 
-	        return "SUCCESS: Borrow period extended successfully.";
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	        return "ERROR: " + e.getMessage();
-	    }
+			return "SUCCESS: Borrow period extended successfully.";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "ERROR: " + e.getMessage();
+		}
 	}
-
 
 	public void readNotiSubs(int notiID) throws SQLException {
 		String query = "UPDATE subscribernotifications SET read_status = 1 WHERE noti_id = ?";
@@ -856,36 +864,32 @@ public class DBconnector {
 		ResultSet rs = ps.executeQuery();
 		return rs.next();
 	}
-	
+
 	public List<String> getActiveBorrows(int subId) {
-	    String query = "SELECT bo.borrow_id, bk.title, bo.copy_id, bo.return_max_date " +
-	                   "FROM borrow bo " +
-	                   "JOIN book bk ON bo.book_code = bk.book_code " +
-	                   "WHERE bo.sub_id = ? AND bo.status = 'borrowed'";
-	    List<String> activeBorrows = new ArrayList<>();
+		String query = "SELECT bo.borrow_id, bk.title, bo.copy_id, bo.return_max_date " + "FROM borrow bo "
+				+ "JOIN book bk ON bo.book_code = bk.book_code " + "WHERE bo.sub_id = ? AND bo.status = 'borrowed'";
+		List<String> activeBorrows = new ArrayList<>();
 
-	    try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
-	        ps.setInt(1, subId);
-	        ResultSet rs = ps.executeQuery();
+		try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+			ps.setInt(1, subId);
+			ResultSet rs = ps.executeQuery();
 
-	        while (rs.next()) {
-	            int borrowId = rs.getInt("borrow_id");
-	            String title = rs.getString("title");
-	            int copyId = rs.getInt("copy_id");
-	            Date returnDate = rs.getDate("return_max_date");
+			while (rs.next()) {
+				int borrowId = rs.getInt("borrow_id");
+				String title = rs.getString("title");
+				int copyId = rs.getInt("copy_id");
+				Date returnDate = rs.getDate("return_max_date");
 
-	            // Format the borrow details as a string
-	            activeBorrows.add(String.format("Borrow ID: %d | Title: %s | Copy ID: %d | Return Date: %s",
-	                    borrowId, title, copyId, returnDate));
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
+				// Format the borrow details as a string
+				activeBorrows.add(String.format("Borrow ID: %d | Title: %s | Copy ID: %d | Return Date: %s", borrowId,
+						title, copyId, returnDate));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-	    return activeBorrows;
+		return activeBorrows;
 	}
-
-	
 
 	public Object login(String userName, String password) throws SQLException {
 		if (!isUserExists(userName)) {

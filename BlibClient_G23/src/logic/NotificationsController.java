@@ -66,16 +66,16 @@ public class NotificationsController {
 		});
 		client.sendMessageToServer(msg); // Send the message to the server
 		latch.await(); // Wait for the response
-		if (response instanceof List<?>) {
+		if (response instanceof Map<?, ?>) {
 
 			try {
 				return (Map<String, Integer>) response;
 			} catch (ClassCastException e) {
-				System.err.println("Failed to cast response to List<Book>: " + e.getMessage());
+				System.err.println("Failed to cast response to Map<String, Integer>: " + e.getMessage());
 				return null;
 			}
 		} else {
-			System.err.println("Response is not of type List<Book>.");
+			System.err.println("Response is not of type Map<String, Integer>.");
 			return null;
 		}
 	}
@@ -95,7 +95,7 @@ public class NotificationsController {
 	}
 
 	public void markAsReadLib(Integer notificationId) throws InterruptedException {
-		String msg = "GET_NOTIFICATIONS_LIB," + notificationId;
+		String msg = "MARK_AS_READ_LIB," + notificationId;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
 		client.setMessageHandler((Object serverResponse) -> {

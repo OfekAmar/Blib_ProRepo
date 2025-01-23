@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
 <BorderPane style="-fx-background-color: #f4f4f4;"
 	xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
@@ -33,6 +34,16 @@
 				text="Return Book" />
 			<Button fx:id="reportsButton" onAction="#onReportsClick"
 				text="Reports" />
+			<HBox alignment="CENTER" spacing="20">
+				<StackPane>
+					<Button text="Notifications" fx:id="notiButton"
+						onAction="#onNotificationClick" />
+
+					<Label fx:id="notificationBubble" text="1"
+						style="-fx-background-color: red; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 2 6; -fx-font-size: 10; -fx-border-radius: 15; -fx-background-radius: 15;"
+						translateX="40" translateY="-15" visible="false" />
+				</StackPane>
+			</HBox>
 		</VBox>
 	</center>
 

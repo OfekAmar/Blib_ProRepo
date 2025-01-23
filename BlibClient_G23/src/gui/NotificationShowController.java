@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
+import logic.Librarian;
 import logic.LoginLogic;
 import logic.NotificationsController;
 import logic.ScreenLoader;
@@ -32,8 +33,11 @@ public class NotificationShowController {
 
 	private Stage stage;
 	private Subscriber sub;
+	private Librarian lib;
 	private ClientMain c;
 	private NotificationsController nc;
+	private SubscriberMainController smc;
+	private LibrarianMainController lmc;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -45,13 +49,23 @@ public class NotificationShowController {
 		setNotifications();
 	}
 
+	public void setLibrarian(Librarian l, NotificationsController nc) {
+		this.lib = l;
+		this.nc = nc;
+		setNotifications();
+	}
+
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
 
 	public void setNotifications() {
 		try {
-			this.notifications = nc.getNotificationsSub(sub.getId(), 0);
+			if (this.sub != null) {
+				this.notifications = nc.getNotificationsSub(sub.getId(), 0);
+			} else {
+				this.notifications = nc.getNotificationsLib(0);
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -59,10 +73,12 @@ public class NotificationShowController {
 		notificationListView.getItems().addAll(notifications.keySet());
 	}
 
-	private SubscriberMainController subscriberMainController;
-
 	public void setSubscriberMainController(SubscriberMainController controller) {
-		this.subscriberMainController = controller;
+		this.smc = controller;
+	}
+
+	public void setLibrarianMainController(LibrarianMainController controller) {
+		this.lmc = controller;
 	}
 
 	@FXML
@@ -73,27 +89,37 @@ public class NotificationShowController {
 			Integer notificationId = notifications.get(selectedNotification);
 
 			try {
-				nc.markAsReadSubs(notificationId);
-				setNotifications();
-				if (subscriberMainController != null) {
-					int newUnreadCount = nc.getNotificationsSub(sub.getId(), 0).size();
-					subscriberMainController.updateNotificationBubble(newUnreadCount);
+				if (this.sub != null) {
+					nc.markAsReadSubs(notificationId);
+					setNotifications();
+					if (smc != null) {
+						int newUnreadCount = nc.getNotificationsSub(sub.getId(), 0).size();
+						smc.updateNotificationBubble(newUnreadCount);
+					}
+				} else {
+					nc.markAsReadLib(notificationId);
+					setNotifications();
+					if (lmc != null) {
+						int newUnreadCount = nc.getNotificationsLib(0).size();
+						lmc.updateNotificationBubble(newUnreadCount);
+					}
 				}
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// implement mark as read logic !!!
-			System.out.println("Marking notification as read: ID = " + notificationId);
 		} else {
-			System.out.println("No notification selected.");
+			ScreenLoader.showAlert("Error", "No notification selected.");
 		}
 	}
 
 	@FXML
 	private void onShowAllClick() {
 		try {
-			this.notifications = nc.getNotificationsSub(sub.getId(), 1);
+			if (this.sub != null) {
+				this.notifications = nc.getNotificationsSub(sub.getId(), 1);
+			} else {
+				this.notifications = nc.getNotificationsLib(1);
+			}
 			notificationListView.getItems().clear();
 			notificationListView.getItems().addAll(notifications.keySet());
 		} catch (InterruptedException e) {
