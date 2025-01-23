@@ -123,13 +123,13 @@ public class SubscriberMainController {
 
 	@FXML
 	private void onExtendBorrowClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
-			if (controller instanceof ExtendBorrowController) {
-				((ExtendBorrowController) controller).setStage(stage);
-				((ExtendBorrowController) controller).setSubscriber(sub);
-				((ExtendBorrowController) controller).setClient(cm);
-			}
-		});
+		 ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
+		        if (controller instanceof ExtendBorrowController) {
+		            ((ExtendBorrowController) controller).setStage(stage);
+		           // ((ExtendBorrowController) controller).setSubscriber(sub); // Setting Subscriber
+		            ((ExtendBorrowController) controller).setClient(cm,sub);      // Setting ClientMain
+		        }
+		    });
 	}
 
 	@FXML
