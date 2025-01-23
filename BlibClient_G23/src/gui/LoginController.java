@@ -71,10 +71,11 @@ public class LoginController {
 						controller -> {
 							if (controller instanceof LibrarianMainController) {
 								((LibrarianMainController) controller).setStage(new Stage());
-								((LibrarianMainController) controller).setClient(c);
 								((LibrarianMainController) controller).setLibrarian(lib);
+								((LibrarianMainController) controller).setClient(c);
+
 							}
-						}, 250, 400);
+						}, 250, 500);
 
 			} else if (response instanceof String) {
 				ScreenLoader.showAlert("Error: ", (String) response);

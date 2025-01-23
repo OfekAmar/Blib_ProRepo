@@ -503,75 +503,71 @@ public class ServerMain extends AbstractServer {
 					break;
 
 				case "PROCESS_BORROW":
-				    if (parts.length == 5) {
-				        try {
-				            int bookId = Integer.parseInt(parts[1]);
-				            int copyId = Integer.parseInt(parts[2]);
-				            int subscriberId = Integer.parseInt(parts[3]);
-				            LocalDate returnDate = LocalDate.parse(parts[4]);
+					if (parts.length == 5) {
+						try {
+							int bookId = Integer.parseInt(parts[1]);
+							int copyId = Integer.parseInt(parts[2]);
+							int subscriberId = Integer.parseInt(parts[3]);
+							LocalDate returnDate = LocalDate.parse(parts[4]);
 
-				            String result = dbConnector.processBorrow(bookId, copyId, subscriberId, returnDate);
-				            client.sendToClient(result);
-				        } catch (Exception e) {
-				            client.sendToClient("ERROR: Invalid data format. " + e.getMessage());
-				        }
-				    } else {
-				        client.sendToClient("ERROR: Invalid PROCESS_BORROW format.");
-				    }
-				    break;
-				    
+							String result = dbConnector.processBorrow(bookId, copyId, subscriberId, returnDate);
+							client.sendToClient(result);
+						} catch (Exception e) {
+							client.sendToClient("ERROR: Invalid data format. " + e.getMessage());
+						}
+					} else {
+						client.sendToClient("ERROR: Invalid PROCESS_BORROW format.");
+					}
+					break;
+
 				case "RETURN_BOOK":
-				    if (parts.length == 3) {
-				        try {
-				            int bookId = Integer.parseInt(parts[1]);
-				            int copyId = Integer.parseInt(parts[2]);
+					if (parts.length == 3) {
+						try {
+							int bookId = Integer.parseInt(parts[1]);
+							int copyId = Integer.parseInt(parts[2]);
 
-				            String result = dbConnector.processReturnBook(bookId, copyId);
-				            client.sendToClient(result);
-				        } catch (Exception e) {
-				            client.sendToClient("ERROR: " + e.getMessage());
-				        }
-				    } else {
-				        client.sendToClient("ERROR: Invalid RETURN_BOOK format.");
-				    }
-				    break;
+							String result = dbConnector.processReturnBook(bookId, copyId);
+							client.sendToClient(result);
+						} catch (Exception e) {
+							client.sendToClient("ERROR: " + e.getMessage());
+						}
+					} else {
+						client.sendToClient("ERROR: Invalid RETURN_BOOK format.");
+					}
+					break;
 				case "GET_ACTIVE_BORROWED":
-				    if (parts.length == 2) {
-				        try {
-				            int subId = Integer.parseInt(parts[1]);
-				            List<String> activeBorrows = dbConnector.getActiveBorrows(subId);
-				            client.sendToClient(activeBorrows);
-				        } catch (Exception e) {
-				            List<String> errorResponse = new ArrayList<>();
-				            errorResponse.add("ERROR: " + e.getMessage());
-				            client.sendToClient(errorResponse);
-				        }
-				    } else {
-				        List<String> errorResponse = new ArrayList<>();
-				        errorResponse.add("ERROR: Invalid GET_ACTIVE_BORROWED format.");
-				        client.sendToClient(errorResponse);
-				    }
-				    break;
-					
-				
-				    
+					if (parts.length == 2) {
+						try {
+							int subId = Integer.parseInt(parts[1]);
+							List<String> activeBorrows = dbConnector.getActiveBorrows(subId);
+							client.sendToClient(activeBorrows);
+						} catch (Exception e) {
+							List<String> errorResponse = new ArrayList<>();
+							errorResponse.add("ERROR: " + e.getMessage());
+							client.sendToClient(errorResponse);
+						}
+					} else {
+						List<String> errorResponse = new ArrayList<>();
+						errorResponse.add("ERROR: Invalid GET_ACTIVE_BORROWED format.");
+						client.sendToClient(errorResponse);
+					}
+					break;
+
 				case "EXTEND_BORROW":
-				    if (parts.length == 3) {
-				        try {
-				            int borrowId = Integer.parseInt(parts[1]);
-				            LocalDate newReturnDate = LocalDate.parse(parts[2]);
+					if (parts.length == 3) {
+						try {
+							int borrowId = Integer.parseInt(parts[1]);
+							LocalDate newReturnDate = LocalDate.parse(parts[2]);
 
-				            String result = dbConnector.extendBorrow(borrowId, newReturnDate);
-				            client.sendToClient(result);
-				        } catch (Exception e) {
-				            client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
-				        }
-				    } else {
-				        client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
-				    }
-				    break;
-
-
+							String result = dbConnector.extendBorrow(borrowId, newReturnDate);
+							client.sendToClient(result);
+						} catch (Exception e) {
+							client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
+						}
+					} else {
+						client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
+					}
+					break;
 
 				case "VIEW_SUBSCRIBER_CARD":
 					if (parts.length == 2) {
@@ -614,8 +610,6 @@ public class ServerMain extends AbstractServer {
 
 		System.out.println("Finished processing message from client: " + msg);
 	}
-	
-	
 
 	@Override
 	protected void clientConnected(ConnectionToClient client) {
