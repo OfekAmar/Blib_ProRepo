@@ -1,5 +1,7 @@
 package logic;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import client.ClientMain;
@@ -9,42 +11,42 @@ public class LoginLogic {
 	private ClientMain client;
 	private Object response;
 	private CountDownLatch latch;
-	
+
 	public LoginLogic(ClientMain client) {
-		this.client=client;
+		this.client = client;
 	}
-	
+
 	public synchronized Object login(String userName, String password) throws InterruptedException {
-		String msg="LOGIN,"+userName+","+password;
-		latch=new CountDownLatch(1);
-		
+		String msg = "LOGIN," + userName + "," + password;
+		latch = new CountDownLatch(1);
+
 		client.setMessageHandler((Object serverResponse) -> {
-			if(serverResponse instanceof Subscriber) {
+			if (serverResponse instanceof Subscriber) {
 				try {
-					Subscriber sub=(Subscriber)serverResponse;
-					this.response=sub;
-				}catch(ClassCastException e) {
-					System.err.println("Failed to cast response to Subscriber: "+e.getMessage());
+					Subscriber sub = (Subscriber) serverResponse;
+					this.response = sub;
+				} catch (ClassCastException e) {
+					System.err.println("Failed to cast response to Subscriber: " + e.getMessage());
 				}
-			}else if(serverResponse instanceof Librarian) {
+			} else if (serverResponse instanceof Librarian) {
 				try {
-					Librarian lib=(Librarian)serverResponse;
-					this.response=lib;
-				}catch(ClassCastException e) {
-					System.err.println("Failed to cast response to Librarian: "+e.getMessage());
+					Librarian lib = (Librarian) serverResponse;
+					this.response = lib;
+				} catch (ClassCastException e) {
+					System.err.println("Failed to cast response to Librarian: " + e.getMessage());
 				}
-			}else if(serverResponse instanceof String) {
-				String str=(String)serverResponse;
-				this.response=str;
-			}
-			else {
-				System.err.println("Unexpected response type from server: "+serverResponse.getClass().getName());
+			} else if (serverResponse instanceof String) {
+				String str = (String) serverResponse;
+				this.response = str;
+			} else {
+				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
 			}
 			latch.countDown();
 		});
-		
+
 		client.sendMessageToServer(msg);
 		latch.await();
 		return response;
 	}
+
 }

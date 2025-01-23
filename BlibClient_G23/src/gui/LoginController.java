@@ -32,7 +32,7 @@ public class LoginController {
 	private Stage stage;
 	private ClientMain c;
 	private Object response;
-	private LoginLogic loginLogic;
+	private LoginLogic lg;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -40,6 +40,7 @@ public class LoginController {
 
 	public void setClient(ClientMain c) {
 		this.c = c;
+		lg = new LoginLogic(c);
 	}
 
 	@FXML
@@ -53,14 +54,14 @@ public class LoginController {
 		}
 
 		try {
-			Object response = new LoginLogic(c).login(userName, password);
+			Object response = lg.login(userName, password);
 			if (response instanceof Subscriber) {
 				Subscriber sub = (Subscriber) response;
 				ScreenLoader.openScreenWithSize("/gui/SubscriberMainScreen.fxml", "Subscriber Screen", event,
 						controller -> {
 							if (controller instanceof SubscriberMainController) {
-								((SubscriberMainController) controller).setClient(c);
 								((SubscriberMainController) controller).setSubscriber(sub);
+								((SubscriberMainController) controller).setClient(c);
 							}
 						}, 400, 250);
 

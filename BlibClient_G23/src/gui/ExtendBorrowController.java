@@ -35,7 +35,7 @@ public class ExtendBorrowController {
 	private List<String> borrowedBooks; // This should be fetched from the database
 	private Stage stage;
 	private Subscriber sub;
-	 LocalDate currentDate = LocalDate.now();
+	LocalDate currentDate = LocalDate.now();
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -44,6 +44,7 @@ public class ExtendBorrowController {
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 	}
+
 	private ClientMain cm;
 	public void setClient(ClientMain cm,Subscriber s) {
 		this.cm = cm;
@@ -72,8 +73,7 @@ public class ExtendBorrowController {
 	        });
 	    }
 	}
-	
-	@FXML
+
 	private void onRequestExtendClick(ActionEvent event) {
 	    String selectedBook = booksListView.getSelectionModel().getSelectedItem();
 	    LocalDate selectedDate = datePicker.getValue();
@@ -145,9 +145,6 @@ public class ExtendBorrowController {
 	    }
 	    return -1; // Return -1 if parsing fails
 	}
-
-
-   
 	@FXML
 	private void onCloseClick(ActionEvent event) {
 		ScreenLoader.closeWindow(closeButton);
