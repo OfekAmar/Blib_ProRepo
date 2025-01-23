@@ -79,6 +79,7 @@ public class ManagmentSubscriberController {
 				if (controller instanceof ReaderCardController) {
 					((ReaderCardController) controller).setStage(stage);
 					((ReaderCardController) controller).setClientAndSubscriber(searchedsubs, c);
+					((ReaderCardController) controller).setLibrarian(lib);
 				}
 			}, 450, 300);
 		} else {
@@ -92,8 +93,6 @@ public class ManagmentSubscriberController {
 			ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 				if (controller instanceof SubscriberDetailsController) {
 					((SubscriberDetailsController) controller).setStage(new Stage(), null);
-					// !!!! suppose to be setStage(new Stage(), ClientMain Client) !!!!!!! need to
-					// adapt later on
 					((SubscriberDetailsController) controller).setSubscriber(searchedsubs);
 				}
 			});

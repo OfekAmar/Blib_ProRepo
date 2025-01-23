@@ -9,8 +9,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import gui.*;
+
+import javafx.geometry.Rectangle2D;
 import java.util.function.Consumer;
 import javafx.scene.control.Alert;
 
@@ -130,6 +133,19 @@ public class ScreenLoader {
 				e.printStackTrace();
 			}
 		});
+	}
+
+	public static void resizeCenterWindow(ActionEvent event, int width, int height) {
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.setWidth(width);
+		stage.setHeight(height);
+
+		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+		double centerX = (screenBounds.getWidth() - stage.getWidth()) / 2;
+		double centerY = (screenBounds.getHeight() - stage.getHeight()) / 2;
+
+		stage.setX(centerX);
+		stage.setY(centerY);
 	}
 
 	public static void showAlert(String title, String content) {

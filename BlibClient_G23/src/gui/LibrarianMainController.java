@@ -36,7 +36,6 @@ public class LibrarianMainController {
 
 	private Stage stage;
 	private ClientMain c;
-	private String librarianName;
 	private Librarian lib;
 
 	public void setClient(ClientMain c) {
@@ -58,6 +57,7 @@ public class LibrarianMainController {
 			if (controller instanceof ManagmentSubscriberController) {
 				((ManagmentSubscriberController) controller).setStage(stage);
 				((ManagmentSubscriberController) controller).setClient(c);
+				((ManagmentSubscriberController) controller).setLibrarian(lib);
 			}
 		});
 	}
@@ -68,6 +68,7 @@ public class LibrarianMainController {
 			if (controller instanceof BorrowBookController) {
 				((BorrowBookController) controller).setStage(stage);
 				((BorrowBookController) controller).setClient(c);
+				((BorrowBookController) controller).setLibrarian(lib);
 			}
 		}, 500, 350);
 
@@ -79,6 +80,7 @@ public class LibrarianMainController {
 			if (controller instanceof ReturnBookController) {
 				((ReturnBookController) controller).setStage(stage);
 				((ReturnBookController) controller).setClient(c);
+				((ReturnBookController) controller).setLibrarian(lib);
 			}
 		}, 400, 300);
 	}
@@ -89,6 +91,7 @@ public class LibrarianMainController {
 			if (controller instanceof ReportsController) {
 				((ReportsController) controller).setStage(stage);
 				((ReportsController) controller).setClient(c);
+				((ReportsController) controller).setLibrarian(lib);
 			}
 		});
 	}

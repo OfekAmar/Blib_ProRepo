@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -11,6 +12,8 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.stream.IntStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import logic.ExtendedRecord;
+import logic.Librarian;
 import logic.ReportController;
 import logic.ScreenLoader;
 import logic.Record;
@@ -35,6 +39,10 @@ public class ReportsController {
 
 	@FXML
 	private Button backButton;
+
+	@FXML
+	private Button makeReportsButton;
+
 	@FXML
 	private PieChart borrowingPieChart;
 
@@ -55,18 +63,25 @@ public class ReportsController {
 
 	@FXML
 	private NumberAxis lineChartYAxis;
+	@FXML
+	private ComboBox<String> monthComboBox;
+
+	@FXML
+	private ComboBox<Integer> yearComboBox;
 
 	private Stage stage;
 	private ClientMain c;
+	private Librarian lib;
 	private ReportController r;
 	private List<ExtendedRecord> monthleyBorrowReport;
 	private List<Record> monthlyStatusReport;
 	private Map<String, Integer> statusStatistics;
+	private boolean selected = false;
 
 	public void setClient(ClientMain c) {
 		this.c = c;
 		this.r = new ReportController(c);
-		initializeReportData();
+		initializeComboBox();
 
 	}
 
@@ -74,24 +89,48 @@ public class ReportsController {
 		this.stage = stage;
 	}
 
-	private void initializeReportData() {
-		LocalDate d = LocalDate.now();
+	public void setLibrarian(Librarian lib) {
+		this.lib = lib;
+	}
+
+	private void initializeComboBox() {
+		monthComboBox.getItems().addAll("January", "February", "March", "April", "May", "June", "July", "August",
+				"September", "October", "November", "December");
+		IntStream.rangeClosed(2020, 2025).forEach(year -> yearComboBox.getItems().add(year));
+
+	}
+
+	private void initializeReportData(int month, int year) {
 		try {
-			monthleyBorrowReport = r.getMonthlyBorrowReport(d.getMonthValue(), d.getYear());
-			monthlyStatusReport = r.getMonthlyStatusReport(d.getMonthValue(), d.getYear());
+			monthleyBorrowReport = r.getMonthlyBorrowReport(month, year);
+			monthlyStatusReport = r.getMonthlyStatusReport(month, year);
 			statusStatistics = r.getStatusStatistics();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
+	private void onMakeReportsClick() {
+		int selectedMonth = monthComboBox.getSelectionModel().getSelectedIndex();
+		Integer selectedYear = yearComboBox.getValue();
+
+		if (selectedMonth == -1 || selectedYear == null) {
+			ScreenLoader.showAlert("Error", "Please select both month and year.");
+			return;
+		}
+
+		selected = true;
+		initializeReportData(selectedMonth + 1, selectedYear);
+	}
+
+	@FXML
 	private void onBorrowingDurationClick(ActionEvent event) {
 
-		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(800);
-		st.setHeight(1200);
+		if (!selected)
+			return;
+
+		ScreenLoader.resizeCenterWindow(event, 800, 1200);
 
 		statusLineChart.setVisible(false);
 		statusLineChart.setManaged(false);
@@ -113,6 +152,7 @@ public class ReportsController {
 			pieData.add(new PieChart.Data(entry.getKey(), entry.getValue()));
 		}
 		borrowingPieChart.setData(pieData);
+		borrowingPieChart.setTitle("Monthly Returened Book Status Distribution");
 
 		Map<Integer, Integer> borrowCounts = new HashMap<>();
 		for (ExtendedRecord record : monthleyBorrowReport) {
@@ -128,13 +168,16 @@ public class ReportsController {
 		}
 		subscriberBarChart.getData().clear();
 		subscriberBarChart.getData().add(series);
+		subscriberBarChart.setTitle("Monthly Amount Of Borrowing Per Subscriber");
 	}
 
 	@FXML
 	private void onSubscribersStatusClick(ActionEvent event) {
-		Stage st = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		st.setWidth(800);
-		st.setHeight(1200);
+
+		if (!selected)
+			return;
+
+		ScreenLoader.resizeCenterWindow(event, 800, 1200);
 
 		statusLineChart.setVisible(true);
 		statusLineChart.setManaged(true);
@@ -185,7 +228,7 @@ public class ReportsController {
 		}
 
 		statusLineChart.getData().addAll(freezeSeries, unfreezeSeries);
-		statusLineChart.setTitle("Cumulative Freeze and Unfreeze Actions");
+		statusLineChart.setTitle("Monthly Freeze and Unfreeze Actions");
 	}
 
 	@FXML
@@ -194,6 +237,7 @@ public class ReportsController {
 			if (controller instanceof LibrarianMainController) {
 				((LibrarianMainController) controller).setStage(new Stage());
 				((LibrarianMainController) controller).setClient(c);
+				((LibrarianMainController) controller).setLibrarian(lib);
 			}
 		});
 	}
