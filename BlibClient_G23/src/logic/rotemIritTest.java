@@ -28,11 +28,11 @@ public class rotemIritTest {
 			// SubscriberController s = new SubscriberController(c);
 			// ArrayList<String> result = (ArrayList<String>) s.viewBorrowHistory("1");
 
-			ReportController r = new ReportController(c);
-			List<Record> result = r.getMonthlyStatusReport(1, 2025);
-			System.out.println(result);
-			Map<String, Integer> re = r.getStatusStatistics();
-			System.out.println(re);
+			//ReportController r = new ReportController(c);
+			//List<Record> result = r.getMonthlyStatusReport(1, 2025);
+			//System.out.println(result);
+			//Map<String, Integer> re = r.getStatusStatistics();
+			//System.out.println(re);
 			// if (result.isEmpty()) {
 			// System.out.println("No data found for the subscriber.");
 			// } else {
@@ -47,6 +47,9 @@ public class rotemIritTest {
 
 			// SubscriberController sc=new SubscriberController(c);
 			// System.out.println(sc.getAllSubscribers());
+			
+			BookController bc=new BookController(c);
+			System.out.println(bc.getAllBookCopies(5));
 
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());

@@ -1,20 +1,20 @@
 package logic;
 
-public class CopyOfBook extends Book {
+import java.io.Serializable;
+
+public class CopyOfBook implements Serializable {
 	private static final long serialVersionUID = 2L;
-	private String copyID;
+	private int copyID;
 	private String location;
 	private String status;
 
-	public CopyOfBook(String title, int id, String author, String subject, String description, int totalCopies,
-			String copyID, String location, String status) {
-		super(title, id, author, subject, description, totalCopies);
+	public CopyOfBook(int bookCode,int copyID, String location, String status) {
 		this.copyID = copyID;
 		this.location = location;
 		this.status = status;
 	}
 
-	public String getCopyID() {
+	public int getCopyID() {
 		return copyID;
 	}
 
@@ -32,6 +32,12 @@ public class CopyOfBook extends Book {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+
+	@Override
+	public String toString() {
+		return "copy id=" + copyID + ", location=" + location + ", status=" + status;
 	}
 
 }

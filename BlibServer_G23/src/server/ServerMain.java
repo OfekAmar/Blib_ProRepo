@@ -1,5 +1,6 @@
 package server;
 
+import java.net.Inet4Address;
 import java.sql.PreparedStatement;
 
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import logic.Book;
+import logic.CopyOfBook;
 import logic.Subscriber;
 import logic.ExtendedRecord;
 import logic.Librarian;
@@ -101,21 +103,31 @@ public class ServerMain extends AbstractServer {
 
 				switch (command) {
 				case "ADD_BOOK":
-					if (parts.length == 6) {
-						String bookCode = parts[1];
-						String author = parts[2];
-						String title = parts[3];
-						String subject = parts[4];
-						String description = parts[5];
-						dbConnector.updateQuery(
-								"INSERT INTO book (book_code, author, title, subject, description) VALUES ('" + bookCode
-										+ "', '" + author + "', '" + title + "', '" + subject + "', '" + description
-										+ "')");
-						client.sendToClient("Book added successfully: " + title);
-					} else {
+					if (parts.length == 5) {
+						String author=parts[1];
+						String title=parts[2];
+						String subject=parts[3];
+						String description=parts[4];
+						dbConnector.addBook(author, title, subject, description);
+						client.sendToClient("New book added successfuly:\nauthor: "+author+"\ntitle: "+title+"\nsubject: "+subject+"\ndescription: "+description);
+					}
+					else {
 						client.sendToClient("ERROR: Invalid ADD_BOOK format.");
 					}
 					break;
+
+				case "ADD_COPY_OF_BOOK":
+					if(parts.length==3) {
+						int bookId=Integer.valueOf(parts[1]);
+						String location=parts[2];
+						dbConnector.addCopyOfBook(bookId,location);
+						client.sendToClient("New copy of book added successfuly:\nbook id: "+bookId+"\nlocation: "+location);
+					}
+					else {
+						client.sendToClient("ERROR: Invalid ADD_COPY_OF_BOOK format.");
+					}
+					break;
+						
 				case "ADD_SUBSCRIBER":
 					if (parts.length == 6) {
 						String name = parts[1];
@@ -128,8 +140,37 @@ public class ServerMain extends AbstractServer {
 								+ phone + "\nemail: " + email + "\nuserName: " + userName);
 					} else {
 						client.sendToClient("ERROR: Invalid ADD_SUBSCRIBER format.");
+					}	
+					break;
+					
+				case "GET_ALL_BOOKS":
+					List<Book> booksList=dbConnector.getAllBooks();
+					client.sendToClient(new ArrayList<>(booksList));
+					break;
+					
+				case "GET_ALL_BOOK_COPIES":
+					if(parts.length==2) {
+						int bookCode=Integer.valueOf(parts[1]);
+						List<CopyOfBook> copiesList=dbConnector.getAllBookCopies(bookCode);
+						client.sendToClient(new ArrayList<>(copiesList));
+					}else {
+						client.sendToClient("ERROR: Invalid GET_ALL_BOOK_COPIES format.");
 					}
 					break;
+				
+				case "EDIT_COPY_OF_BOOK":
+					if(parts.length==5) {
+						int bookCode=Integer.valueOf(parts[1]);
+						int copyId=Integer.valueOf(parts[2]);
+						String location=parts[3];
+						String status=parts[4];
+						dbConnector.editCopyOfBook(bookCode, copyId, location, status);
+						client.sendToClient("edit copy of book successfuly: \nbook code: "+bookCode+"\ncopy id: "+copyId+"\nlocation: "+location+"\nstatus: "+status);
+					}else {
+						client.sendToClient("ERROR: Invalid EDIT_COPY_OF_BOOK format.");
+					}
+					break;
+					
 				case "EDIT_SUBSCRIBER":
 					if (parts.length == 5) {
 						int id = Integer.parseInt(parts[1]);
