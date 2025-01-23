@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import logic.Book;
+import logic.CopyOfBook;
 import logic.ExtendedRecord;
 import logic.Librarian;
 import logic.Record;
@@ -37,7 +38,70 @@ public class DBconnector {
 		}
 		return dbConnection;
 	}
+	
+	public List<Book> getAllBooks() throws SQLException{
+		List<Book> booksList=new ArrayList<>();
+		Book book;
+		String query="SELECT * FROM book";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			book=new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"),  rs.getString("subject"), rs.getString("description"), rs.getInt("amount_of_copies"));
+			booksList.add(book);
+		}
+		return booksList;
+	}
+	
+	public List<CopyOfBook> getAllBookCopies(int bookCode) throws SQLException{
+		List<CopyOfBook> copiesList = new ArrayList<>();
+		CopyOfBook cb;
+		String query = "SELECT * FROM copyofbook WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			cb = new CopyOfBook(rs.getInt("book_code"), rs.getInt("copy_id"), rs.getString("location"), rs.getString("status"));
+			copiesList.add(cb);
+		}
+		return copiesList;
+	}
+	
+	public void addBook(String author, String title, String subject, String description) throws SQLException{
+		String query = "INSERT INTO book (author, title, subject, description, amount_of_copies) VALUES (?, ?, ?, ?, ?)";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, author);
+		ps.setString(2, title);
+		ps.setString(3, subject);
+		ps.setString(4, description);
+		ps.setInt(5, 0);
+		ps.executeUpdate();
+	}
+	
+	public void addCopyOfBook(int bookCode, String location) throws SQLException{
+		String query = "INSERT INTO copyofbook (book_code, copy_id, location, status) SELECT ?, COALESCE(MAX(copy_id),0)+1, ?, 'exists' FROM copyofbook WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ps.setString(2, location);
+		ps.setInt(3, bookCode);
+		ps.executeUpdate();
+		query="UPDATE book SET amount_of_copies = amount_of_copies+1 WHERE book_code = ?";
+		ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ps.executeUpdate();
+	}
+			
+	public void editCopyOfBook(int bookCode, int copyId, String newLocation, String newStatus) throws SQLException{
+		String query = "UPDATE copyofbook SET location = ?, status = ? WHERE book_code =? AND copy_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, newLocation);
+		ps.setString(2, newStatus);
+		ps.setInt(3, bookCode);
+		ps.setInt(4, copyId);
+		ps.executeUpdate();
+	}	
+	
 
+	
 	// Read subscribers
 	public List<Subscriber> getAllSubscribers() throws SQLException {
 		List<Subscriber> subscribersList = new ArrayList<>();

@@ -52,6 +52,11 @@ public class LibrarianMainController {
 	}
 
 	@FXML
+	private void onManageBooksClick(ActionEvent event) {
+
+	}
+
+	@FXML
 	private void onManageSubscriberClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Subscriber Managemnt", event, controller -> {
 			if (controller instanceof ManagmentSubscriberController) {
