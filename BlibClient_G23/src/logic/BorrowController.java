@@ -20,29 +20,28 @@ public class BorrowController {
 		this.subscriberController = subscriberController;
 		this.client = client;
 	}
-	
-	
+
 	public synchronized List<String> showBorrowes(int subID) throws InterruptedException {
-	    String msg = "GET_ACTIVE_BORROWED," + subID;
-	    latch = new CountDownLatch(1);
+		String msg = "GET_ACTIVE_BORROWED," + subID;
+		latch = new CountDownLatch(1);
 
-	    client.setMessageHandler((Object serverResponse) -> {
-	        this.response = serverResponse; // Save the server's response
-	        latch.countDown(); // Release the latch
-	    });
+		client.setMessageHandler((Object serverResponse) -> {
+			this.response = serverResponse; // Save the server's response
+			latch.countDown(); // Release the latch
+		});
 
-	    client.sendMessageToServer(msg);
-	    latch.await();
+		client.sendMessageToServer(msg);
+		latch.await();
 
-	    if (response instanceof List) {
-	        return (List<String>) response;
-	    } else if (response instanceof String) {
-	        List<String> errorResponse = new ArrayList<>();
-	        errorResponse.add((String) response);
-	        return errorResponse;
-	    } else {
-	        throw new IllegalStateException("Invalid server response for GET_ACTIVE_BORROWED");
-	    }
+		if (response instanceof List) {
+			return (List<String>) response;
+		} else if (response instanceof String) {
+			List<String> errorResponse = new ArrayList<>();
+			errorResponse.add((String) response);
+			return errorResponse;
+		} else {
+			throw new IllegalStateException("Invalid server response for GET_ACTIVE_BORROWED");
+		}
 	}
 
 	public synchronized String processBorrow(String bookId, String copyId, String subscriberId, LocalDate returnDate)
@@ -75,11 +74,9 @@ public class BorrowController {
 
 	}
 
-	
-	
-	public synchronized String extendBorrow(String borrowId,String selecteDate) throws InterruptedException {
+	public synchronized String extendBorrow(String borrowId, String selecteDate) throws InterruptedException {
 		// Send the request to ServerMain
-		String msg = "EXTEND_BORROW," + borrowId+","+selecteDate;
+		String msg = "EXTEND_BORROW," + borrowId + "," + selecteDate;
 		latch = new CountDownLatch(1);
 		client.setMessageHandler((Object serverResponse) -> {
 			this.response = serverResponse; // Save the server's response
@@ -91,9 +88,9 @@ public class BorrowController {
 		return (String) (response);
 	}
 
-	public synchronized void extendBorrowManualy(int subscriberID, int borrowID, LocalDate date)
+	public synchronized void extendBorrowManualy(int subscriberID, int borrowID, LocalDate date, String description)
 			throws InterruptedException {
-		String msg = "UPDATE_BORROW_RETURN," + subscriberID + "," + borrowID + "," + date;
+		String msg = "UPDATE_BORROW_RETURN," + subscriberID + "," + borrowID + "," + date + "," + description;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
 		client.setMessageHandler((Object serverResponse) -> {

@@ -616,29 +616,38 @@ public class DBconnector {
 		}
 	}
 
-	public ArrayList<String> BorrowHistoryByID(int subscriberID) throws SQLException {
-		List<String> borrowdList = new ArrayList<String>();
-		String query = "SELECT b.book_code, bk.title, b.borrow_date, b.return_max_date " + "FROM borrow b "
+	public Map<Integer, Map<String, String>> BorrowByID(int subscriberID) throws SQLException {
+		Map<Integer, Map<String, String>> borrowHistory = new HashMap<>();
+
+		String query = "SELECT b.borrow_id, b.book_code, bk.title, b.borrow_date, b.return_max_date " + "FROM borrow b "
 				+ "JOIN book bk ON b.book_code = bk.book_code " + "WHERE b.sub_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, subscriberID);
 		ResultSet rs = ps.executeQuery();
+
 		while (rs.next()) {
-			String s = rs.getString("title") + " borrowed at: " + rs.getDate("borrow_date") + ", return date: "
-					+ rs.getDate("return_max_date");
-			borrowdList.add(s);
+			int borrowId = rs.getInt("borrow_id");
+
+			Map<String, String> record = new HashMap<>();
+			record.put("title", rs.getString("title"));
+			record.put("borrowDate", rs.getDate("borrow_date").toString());
+			record.put("returnDate", rs.getDate("return_max_date").toString());
+
+			borrowHistory.put(borrowId, record);
 		}
-		return (ArrayList<String>) borrowdList;
+
+		return borrowHistory;
 	}
 
-	public void recordActivity(String recordType, int subID, int bookID) throws SQLException {
+	public void recordActivity(String recordType, int subID, int bookID, String description) throws SQLException {
 		LocalDate today = LocalDate.now();
-		String query = "INSERT INTO records (record_type, sub_id, record_date, book_code) VALUES (?, ?, ?, ?)";
+		String query = "INSERT INTO records (record_type, sub_id, record_date, book_code, description) VALUES (?, ?, ?, ?, ?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setString(1, recordType);
 		ps.setInt(2, subID);
 		ps.setDate(3, Date.valueOf(today));
 		ps.setInt(4, bookID);
+		ps.setString(5, description);
 		ps.executeUpdate();
 	}
 
@@ -689,7 +698,7 @@ public class DBconnector {
 		ps.setDate(3, Date.valueOf(today));
 		ps.setTime(4, Time.valueOf(now));
 		ps.executeUpdate();
-		recordActivity("reserved", subID, bookCode);
+		recordActivity("reserved", subID, bookCode, null);
 	}
 
 	public boolean checkFrozenSubscriber(int subID) throws SQLException {

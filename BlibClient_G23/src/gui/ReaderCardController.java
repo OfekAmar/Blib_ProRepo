@@ -1,8 +1,10 @@
 package gui;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import client.ClientMain;
 import javafx.beans.property.SimpleObjectProperty;
@@ -31,48 +33,35 @@ import logic.ReportController;
 public class ReaderCardController {
 
 	@FXML
-	private TextField searchField;
-
-	@FXML
 	private TextField borrowIdField;
 
 	@FXML
 	private DatePicker dueDatePicker;
 
 	@FXML
-	private Button backButton;
-
-	@FXML
-	private Button editButton;
-
-	@FXML
-	private Button borrowHistoryButton;
-
-	@FXML
-	private Button activityRecordsButton;
+	private Button backButton, editButton, borrowHistoryButton, activityRecordsButton;
 
 	@FXML
 	private HBox editHBox;
 
 	@FXML
-	private ListView<String> resultsListView;
-	@FXML
-	private TableView<Record> resultsTableView;
+	private TableView<Map.Entry<Integer, Map<String, String>>> borrowHistoryTableView;
 
 	@FXML
-	private TableColumn<Record, Integer> recordIdColumn;
+	private TableColumn<Map.Entry<Integer, Map<String, String>>, Integer> borrowIdColumn;
 
 	@FXML
-	private TableColumn<Record, String> recordTypeColumn;
+	private TableColumn<Map.Entry<Integer, Map<String, String>>, String> titleColumn, borrowDateColumn,
+			returnDateColumn;
 
 	@FXML
-	private TableColumn<Record, Integer> subscriberIDColumn;
+	private TableView<Record> activityRecordsTableView;
 
 	@FXML
-	private TableColumn<Record, String> recordDateColumn;
+	private TableColumn<Record, Integer> recordIdColumn, subscriberIDColumn, bookCodeColumn;
 
 	@FXML
-	private TableColumn<Record, Integer> bookCodeColumn;
+	private TableColumn<Record, String> recordTypeColumn, recordDateColumn;
 
 	private ObservableList<Record> recordData;
 
@@ -107,53 +96,66 @@ public class ReaderCardController {
 		sc = new SubscriberController(c);
 		rc = new ReportController(c);
 		bc = new BorrowController(sc, c);
-		updateBorrowHistoryList();
+		updateBorrowHistoryTable();
 	}
 
-	private void updateBorrowHistoryList() {
-		resultsListView.setPrefWidth(420);
+	private void updateBorrowHistoryTable() {
+		borrowIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getKey()));
+		titleColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("title")));
+		borrowDateColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("borrowDate")));
+		returnDateColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("returnDate")));
+
+		Map<Integer, Map<String, String>> result;
 		try {
-			ArrayList<String> result = (ArrayList<String>) sc.viewBorrowHistory(String.valueOf(sub.getId()));
-			obslist = FXCollections.observableArrayList();
-			resultsListView.setItems(obslist);
-			if (result != null) {
-				for (String rs : result) {
-					obslist.add(rs);
-				}
+			result = sc.viewBorrowsOfSub(sub.getId());
+
+			if (result != null && !result.isEmpty()) {
+				ObservableList<Map.Entry<Integer, Map<String, String>>> borrowList = FXCollections
+						.observableArrayList(result.entrySet());
+				borrowHistoryTableView.setItems(borrowList);
 			} else {
-				obslist.add("No Books Borrowed");
+				borrowHistoryTableView.setItems(FXCollections.observableArrayList());
+				ScreenLoader.showAlert("Info", "No Books Borrowed");
 			}
 		} catch (InterruptedException e) {
-			System.err.println("Error fetching subscriber data: " + e.getMessage());
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	private void updateActivityRecordsTable() {
-		resultsListView.setPrefWidth(420);
+		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
+		recordTypeColumn
+				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
+		subscriberIDColumn
+				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
+		recordDateColumn
+				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));
+		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
+
 		try {
 			List<Record> result = rc.getAllRecordsByID(sub.getId());
-			recordData = FXCollections.observableArrayList();
-			resultsTableView.setItems(recordData);
-			if (result != null) {
-				for (Record r : result) {
-					recordData.add(r);
-				}
+			if (result != null && !result.isEmpty()) {
+				ObservableList<Record> recordList = FXCollections.observableArrayList(result);
+				activityRecordsTableView.setItems(recordList);
 			} else {
+				activityRecordsTableView.setItems(FXCollections.observableArrayList());
 				ScreenLoader.showAlert("Error", "No Records to show");
 			}
 		} catch (InterruptedException e) {
-			System.err.println("Error fetching subscriber data: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
 	@FXML
 	public void initialize() {
-		resultsTableView.setVisible(false);
-		resultsTableView.setManaged(false);
-		resultsListView.setVisible(false);
-		resultsListView.setManaged(false);
+		borrowHistoryTableView.setVisible(false);
+		borrowHistoryTableView.setManaged(false);
+		activityRecordsTableView.setVisible(false);
+		activityRecordsTableView.setManaged(false);
 		editHBox.setVisible(false);
 		editHBox.setManaged(false);
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
@@ -172,36 +174,39 @@ public class ReaderCardController {
 
 	@FXML
 	private void onEditClick(ActionEvent event) throws InterruptedException {
-		Integer borrowId = Integer.valueOf(borrowIdField.getText());
 		LocalDate dueDate = dueDatePicker.getValue();
 
-		if (borrowId == null || dueDate == null) {
-			ScreenLoader.showAlert("Error", "Please fill all the fields before editing.");
-			return;
+		Map.Entry<Integer, Map<String, String>> selectedItem = borrowHistoryTableView.getSelectionModel()
+				.getSelectedItem();
+		if (selectedItem != null && dueDate != null) {
+			Integer borrowId = selectedItem.getKey();
+			System.out.println("Selected Borrow ID: " + borrowId);
+			bc.extendBorrowManualy(sub.getId(), borrowId, dueDate, "Manualy extend by: " + lib.getName());
+		} else {
+			ScreenLoader.showAlert("Error", "Please chose a row and fill the date field before editing.");
 		}
-		bc.extendBorrowManualy(sub.getId(), borrowId, dueDate);
-		updateBorrowHistoryList();
+		updateBorrowHistoryTable();
 	}
 
 	@FXML
 	private void onBorrowHistoryClick(ActionEvent event) {
-		ScreenLoader.resizeCenterWindow(event, 700, 500);
-		resultsTableView.setVisible(false);
-		resultsTableView.setManaged(false);
-		resultsListView.setVisible(true);
-		resultsListView.setManaged(true);
+		ScreenLoader.resizeCenterWindow(event, 800, 600);
+		borrowHistoryTableView.setVisible(true);
+		borrowHistoryTableView.setManaged(true);
+		activityRecordsTableView.setVisible(false);
+		activityRecordsTableView.setManaged(false);
 		editHBox.setVisible(true);
 		editHBox.setManaged(true);
-		updateBorrowHistoryList();
+		updateBorrowHistoryTable();
 	}
 
 	@FXML
 	private void onActivityRecordsClick(ActionEvent event) {
-		ScreenLoader.resizeCenterWindow(event, 700, 500);
-		resultsListView.setVisible(false);
-		resultsListView.setManaged(false);
-		resultsTableView.setVisible(true);
-		resultsTableView.setManaged(true);
+		ScreenLoader.resizeCenterWindow(event, 800, 600);
+		activityRecordsTableView.setVisible(true);
+		activityRecordsTableView.setManaged(true);
+		borrowHistoryTableView.setVisible(false);
+		borrowHistoryTableView.setManaged(false);
 		editHBox.setVisible(false);
 		editHBox.setManaged(false);
 		updateActivityRecordsTable();

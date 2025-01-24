@@ -3,7 +3,10 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +16,7 @@ import logic.Subscriber;
 import logic.SubscriberController;
 
 import java.util.List;
+import java.util.Map;
 
 import client.ClientMain;
 
@@ -27,8 +31,14 @@ public class BorrowHistoryController {
 	private Button searchButton;
 
 	@FXML
-	private ListView<String> resultsListView;
+	private TableView<Map.Entry<Integer, Map<String, String>>> borrowHistoryTableView;
 
+	@FXML
+	private TableColumn<Map.Entry<Integer, Map<String, String>>, Integer> borrowIdColumn;
+
+	@FXML
+	private TableColumn<Map.Entry<Integer, Map<String, String>>, String> titleColumn, borrowDateColumn,
+			returnDateColumn;
 	@FXML
 	private Button backButton;
 	@FXML
@@ -40,6 +50,7 @@ public class BorrowHistoryController {
 	private Stage stage;
 	private ArrayList<String> result;
 	private ClientMain c;
+	private SubscriberController sc;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -58,27 +69,33 @@ public class BorrowHistoryController {
 		this.sub = s;
 		backButton.setText("close");
 		this.c = c;
+		sc = new SubscriberController(c);
 		updateList();
 	}
 
 	private void updateList() {
-		resultsListView.setPrefWidth(420);
-		SubscriberController sc = new SubscriberController(c);
-		try {
+		borrowIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getKey()));
+		titleColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("title")));
+		borrowDateColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("borrowDate")));
+		returnDateColumn.setCellValueFactory(
+				cellData -> new SimpleObjectProperty<>(cellData.getValue().getValue().get("returnDate")));
 
-			ArrayList<String> result = (ArrayList<String>) sc.viewBorrowHistory(String.valueOf(sub.getId()));
-			obslist = FXCollections.observableArrayList();
-			resultsListView.setItems(obslist);
-			if (result != null) {
-				for (String rs : result) {
-					obslist.add(rs);
-				}
+		Map<Integer, Map<String, String>> result;
+		try {
+			result = sc.viewBorrowsOfSub(sub.getId());
+
+			if (result != null && !result.isEmpty()) {
+				ObservableList<Map.Entry<Integer, Map<String, String>>> borrowList = FXCollections
+						.observableArrayList(result.entrySet());
+				borrowHistoryTableView.setItems(borrowList);
 			} else {
-				obslist.add("No Books borrowed");
+				borrowHistoryTableView.setItems(FXCollections.observableArrayList());
+				ScreenLoader.showAlert("Info", "No Books Borrowed");
 			}
 		} catch (InterruptedException e) {
-
-			System.err.println("Error fetching subscriber data: " + e.getMessage());
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
