@@ -122,6 +122,7 @@ public class ManagmentSubscriberController {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
 			if (controller instanceof LibrarianMainController) {
 				((LibrarianMainController) controller).setStage(new Stage());
+				((LibrarianMainController) controller).setClient(c);
 				((LibrarianMainController) controller).setLibrarian(lib);
 			}
 		});
