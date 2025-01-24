@@ -54,10 +54,7 @@ public class ReturnBookController {
 		String bookInfo = bookField.getText();
 		if (bookInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
-		} else {
-			// need to verify that there is copy of the book enterd to borrow
-			// delete the show alert afte the implemention !!!
-			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
+		
 		}
 	}
 

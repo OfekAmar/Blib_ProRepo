@@ -558,20 +558,31 @@ public class ServerMain extends AbstractServer {
 					break;
 
 				case "EXTEND_BORROW":
-					if (parts.length == 3) {
-						try {
-							int borrowId = Integer.parseInt(parts[1]);
-							LocalDate requestedDate = LocalDate.parse(parts[2]);
+				    if (parts.length == 3) {
+				        try {
+				            int borrowId = Integer.parseInt(parts[1]);
+				            LocalDate selectedDate = LocalDate.parse(parts[2]);
 
-							String result = dbConnector.extendBorrow(borrowId, requestedDate);
-							client.sendToClient(result);
-						} catch (Exception e) {
-							client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
-						}
-					} else {
-						client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
-					}
-					break;
+				            // Call DBconnector to process the extension
+				            String result = dbConnector.extendBorrow(borrowId, selectedDate);
+
+				            // Send the result back to the client
+				            client.sendToClient(result);
+
+				            // If the extension was successful, send a notification to the librarian
+				            if (result.startsWith("SUCCESS:")) {
+				                String description = "The borrow period for Borrow ID: " + borrowId +
+				                                     " has been extended to " + selectedDate + ".";
+				                dbConnector.sendNotificationToLibrarian(description);
+				                System.out.println("Librarian notified: " + description);
+				            }
+				        } catch (Exception e) {
+				            client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
+				        }
+				    } else {
+				        client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
+				    }
+				    break;
 
 				case "VIEW_SUBSCRIBER_CARD":
 					if (parts.length == 2) {
