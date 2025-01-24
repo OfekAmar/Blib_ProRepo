@@ -71,19 +71,15 @@ public class BorrowBookController {
 		String subscriberInfo = subscriberField.getText();
 		if (subscriberInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
-		} else {
-			// need to verify in database that therre is subscriber like entered
-			// delete the show alert afte the implemention !!!
-			ScreenLoader.showAlert("Success", "Subscriber information submitted: " + subscriberInfo);
-		}
+			return;
+		} 
+		
 		String bookInfo = bookField.getText();
 		if (bookInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
-		} else {
-			// need to verify that there is copy of the book enterd to borrow
-			// delete the show alert afte the implemention !!!
-			ScreenLoader.showAlert("Success", "Book information submitted: " + bookInfo);
-		}
+			return;
+		} 
+		
 
 		// Check for date selection
 		LocalDate selectedDate = datePicker.getValue();
@@ -98,6 +94,11 @@ public class BorrowBookController {
 			ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
 			return;
 		}
+		 // Validate the bookInfo format (book_code/copy_id)
+	    if (!bookInfo.matches("^\\d+/\\d+$")) {
+	        ScreenLoader.showAlert("Error", "Invalid book information format. Please use the format: book_code/copy_id (e.g., 123/1).");
+	        return;
+	    }
 
 		// Validate that the selected date is not more than 14 days from the current
 		// date
@@ -120,7 +121,8 @@ public class BorrowBookController {
 
 		BorrowController borrowController = new BorrowController(sc, cm);
 		try {
-			borrowController.processBorrow(bookCode, copyId, subscriberInfo, selectedDate);
+			String response = borrowController.processBorrow(bookCode, copyId, subscriberInfo, selectedDate);
+			ScreenLoader.showAlert("Allert", response);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
