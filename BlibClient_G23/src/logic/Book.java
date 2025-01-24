@@ -19,52 +19,52 @@ public class Book implements Serializable {
 		this.subject = subject;
 		this.description = description;
 		this.totalCopies = totalCopies;
-
 	}
 	
 	public String getTitle() {
 		return title;
 	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
+	
 	public int getId() {
 		return id;
 	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
+	
 	public String getAuthor() {
 		return author;
 	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
+	
 	public String getSubject() {
 		return subject;
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	public int getTotalCopies() {
+		return totalCopies;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	public String getDescription() {
-		return description;
-	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public int getTotalCopies() {
-		return totalCopies;
-	}
-
+	
 	public void setTotalCopies(int totalCopies) {
 		this.totalCopies = totalCopies;
 	}
