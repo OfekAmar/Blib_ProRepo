@@ -7,11 +7,17 @@ public class CopyOfBook implements Serializable {
 	private int copyID;
 	private String location;
 	private String status;
+	private int bookCode;
 
 	public CopyOfBook(int bookCode,int copyID, String location, String status) {
 		this.copyID = copyID;
 		this.location = location;
 		this.status = status;
+	}
+	
+	public CopyOfBook(int bookCode, String location) {
+		this.bookCode=bookCode;
+		this.location=location;	
 	}
 
 	public int getCopyID() {

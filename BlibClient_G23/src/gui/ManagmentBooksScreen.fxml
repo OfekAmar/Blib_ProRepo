@@ -17,36 +17,61 @@
 			<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
 				<TextField fx:id="searchField" promptText="Enter book id" />
 				<Button fx:id="searchButton" onAction="#onSearchBookClick" text="Search Book" />
-   			<Button fx:id="scanBookBarcodeButton" onAction="#onScanBookBarcodeClick" text="Scan Book Barcode" />
+				<Button fx:id="scanBookBarcodeButton" onAction="#onScanBookBarcodeClick" text="Scan Book Barcode" />
 			</HBox>
-         <TableView fx:id="booksTable">
-           <columns>
-           	 <TableColumn fx:id="titleColumn" prefWidth="115.0" text="Title" />
-             <TableColumn fx:id="bookCodeColumn" prefWidth="64.0" text="Book code" />
-             <TableColumn fx:id="authorColumn" prefWidth="135.0" text="Author" />
-             <TableColumn fx:id="subjectColumn" prefWidth="171.0" text="Subject" />
-             <TableColumn fx:id="descriptionColumn" prefWidth="218.0" text="Description" />
-             <TableColumn fx:id="copiesColumn" prefWidth="218.0" text="Copies" />
-           </columns>
-         </TableView>
 		</VBox>
 	</top>
 
 	<center>
 
-		<VBox alignment="CENTER" prefHeight="547.0" prefWidth="794.0" spacing="20" style="-fx-padding: 20;" />
+   		<VBox alignment="CENTER" prefHeight="547.0" prefWidth="794.0" spacing="20" style="-fx-padding: 20;">
+			<HBox>
+				<children>
+					<TableView fx:id="booksTable">
+						<columns>
+							<TableColumn fx:id="titleColumn" prefWidth="194.0" text="title" />
+							<TableColumn fx:id="idColumn" prefWidth="51.0" text="id" />
+							<TableColumn fx:id="authorColumn" prefWidth="117.0" text="author" />
+							<TableColumn fx:id="subjectColumn" prefWidth="110.0" text="subject" />
+							<TableColumn fx:id="descriptionColumn" prefWidth="209.0" text="description" />
+							<TableColumn fx:id="totalCopiesColumn" minWidth="4.0" prefWidth="72.0" text="totalCopies" />
+						</columns>
+					</TableView>
+				</children>
+			</HBox>
+			<HBox alignment="CENTER">
+				<children>
+					<TableView fx:id="copiesTable" managed="false" visible="false">
+						<columns>
+							<TableColumn fx:id="copyIDColumn" prefWidth="51.0" text="copyID" />
+							<TableColumn fx:id="locationColumn" prefWidth="117.0" text="location" />
+							<TableColumn fx:id="statusColumn" prefWidth="110.0" text="status" />
+						</columns>
+					</TableView>
+				</children>
+			</HBox>
+         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="30.0">
+            <children>
+      
+      			<Button fx:id="addNewBookButton" onAction="#onAddBookClick" text="Add New Book" />
+      				<Button fx:id="viewCopiesButton" onAction="#onViewCopiesClick" text="View copies" />
+      				<Button fx:id="deleteBookButton" onAction="#onDeleteBookClick" text="delete book" />
+            </children>
+         </HBox>
+         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
+            <children>
+               <Button fx:id="addCopyButton" managed="false" visible="false" onAction="#onAddCopyClick" text="Add copy" />
+               <Button fx:id="editCopyButton" managed="false" visible="false" onAction="#onEditCopyClick" text="Edit copy" />
+            </children>
+         </HBox>
+		</VBox>
 	</center>
 
 	<bottom>
 		<HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
 
-			<HBox alignment="CENTER" spacing="10">
-				<Button fx:id="deleteBookButton" onAction="#onDeleteBookClick" text="delete book" />
-				<Button fx:id="viewCopiesButton" onAction="#onViewCopiesClick" text="View copies" />
-			</HBox>
+			<HBox alignment="CENTER" spacing="10" />
 			<Button fx:id="backButton" onAction="#onBackClick" text="Back to main" />
-
-			<Button fx:id="addNewBookButton" onAction="#onAddBookClick" text="Add New Book" />
 		</HBox>
 	</bottom>
 </BorderPane>

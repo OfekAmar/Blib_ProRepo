@@ -21,7 +21,7 @@ public class IritRotemTest {
 			// System.out.println(db.getMonthlyFreezeAndUnfreezeRecords(1, 2025));
 			// System.out.println(db.getSubscriberStatusCounts());
 			// System.out.println(db.login("L1", "pas"));
-			db.addCopyOfBook(6,"ShelfF2");
+			System.out.println(db.getAllBooks());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
