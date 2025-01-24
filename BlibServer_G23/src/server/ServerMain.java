@@ -278,13 +278,13 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid SEARCH_BOOK_BY_FREE_TEXT format.");
 					}
 					break;
-				case "BORROW_HISTORY_BY_ID":
+				case "BORROW_BY_ID":
 					if (parts.length == 2) {
 						int id = Integer.valueOf(parts[1]);
-						List<String> result = dbConnector.BorrowHistoryByID(id);
-						client.sendToClient(new ArrayList<>(result));
+						Map<Integer, Map<String, String>> result = dbConnector.BorrowByID(id);
+						client.sendToClient(result);
 					} else {
-						client.sendToClient(new ArrayList<>());
+						client.sendToClient("ERROR: Invalid BORROW_BY_ID format.");
 					}
 					break;
 				case "GET_RECORDS_BY_ID":
@@ -353,13 +353,14 @@ public class ServerMain extends AbstractServer {
 					break;
 
 				case "UPDATE_BORROW_RETURN":
-					if (parts.length == 4) {
+					if (parts.length == 5) {
 						int subID = Integer.valueOf(parts[1]);
 						int borrowID = Integer.valueOf(parts[2]);
 						LocalDate date = LocalDate.parse(parts[3]);
+						String desc = parts[4];
 						int bookID = dbConnector.getBookFromBorrow(borrowID);
 						dbConnector.updateBorrowReturn(borrowID, date);
-						dbConnector.recordActivity("manual extend", subID, bookID);
+						dbConnector.recordActivity("extend", subID, bookID, desc);
 						client.sendToClient("Update Completed Successfuly");
 					} else {
 						client.sendToClient("ERROR: STATUS_STATISTICS format.");
