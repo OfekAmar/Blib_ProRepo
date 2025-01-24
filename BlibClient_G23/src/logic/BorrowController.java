@@ -77,9 +77,9 @@ public class BorrowController {
 
 	
 	
-	public synchronized String extendBorrow(String borrowId) throws InterruptedException {
+	public synchronized String extendBorrow(String borrowId,String selecteDate) throws InterruptedException {
 		// Send the request to ServerMain
-		String msg = "EXTEND_BORROW," + borrowId;
+		String msg = "EXTEND_BORROW," + borrowId+","+selecteDate;
 		latch = new CountDownLatch(1);
 		client.setMessageHandler((Object serverResponse) -> {
 			this.response = serverResponse; // Save the server's response

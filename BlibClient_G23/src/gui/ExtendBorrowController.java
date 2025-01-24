@@ -108,7 +108,7 @@ public class ExtendBorrowController {
 
 	        // Use BorrowController to send the request to extend the borrow period
 	        BorrowController borrowController = new BorrowController(null,cm);
-	        String response = borrowController.extendBorrow(String.valueOf(borrowId));
+	        String response = borrowController.extendBorrow(String.valueOf(borrowId),String.valueOf(selectedDate));
 
 	        // Handle the server response
 	        
