@@ -34,8 +34,9 @@ public class ClientUIController {
 		this.client = client;
 		try {
 			client.openConnection();
-			client.setMessageHandler(this::processServerMessage); // the messagehandler insted of value it points to the
-																	// method processServerMessage
+			// client.setMessageHandler(this::processServerMessage); // the messagehandler
+			// insted of value it points to the
+			// method processServerMessage
 			loadSubscribers(); // in order to fatch all the subscribers from the database
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());
@@ -76,27 +77,23 @@ public class ClientUIController {
 		return result;
 	}
 
-	// the method send message to the server using the keyword "SHOW" that is
-	// familiar by the server
-	// in order to get back subscriber identified by his id
-	@FXML
-	public void editSubscriber() {
-		String selectedSubscriber = subscriberList.getSelectionModel().getSelectedItem();
-
-		if (selectedSubscriber != null) {
-			String[] parts = selectedSubscriber.split(",");
-			String subscriberId = parts[0];// Assuming ID is the first field
-			client.sendMessageToServer("SHOW," + subscriberId); // send the server "SHOW" keyword
-			client.setMessageHandler(response -> {
-				if (response.startsWith(parts[0])) {
-					String details = response.replace("SHOW_RESPONSE,", "");
-					openSubscriberDetailsGUI(details);// call the method to open new GUI in order to edit subscriber
-														// details
-				}
-			});
-		}
-	}
-
+	/*
+	 * // the method send message to the server using the keyword "SHOW" that is //
+	 * familiar by the server // in order to get back subscriber identified by his
+	 * id
+	 * 
+	 * @FXML public void editSubscriber() { String selectedSubscriber =
+	 * subscriberList.getSelectionModel().getSelectedItem();
+	 * 
+	 * if (selectedSubscriber != null) { String[] parts =
+	 * selectedSubscriber.split(","); String subscriberId = parts[0];// Assuming ID
+	 * is the first field client.sendMessageToServer("SHOW," + subscriberId); //
+	 * send the server "SHOW" keyword client.setMessageHandler(response -> { if
+	 * (response.startsWith(parts[0])) { String details =
+	 * response.replace("SHOW_RESPONSE,", ""); openSubscriberDetailsGUI(details);//
+	 * call the method to open new GUI in order to edit subscriber // details } });
+	 * } }
+	 */
 	// load new FXML file in order to open the subscriber GUI
 	// using Platfrom.runLater() - JavaFX tool operats like Thread
 	// because we are using another thread of JavaFx we need to return to the main
