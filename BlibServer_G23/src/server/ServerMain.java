@@ -37,59 +37,58 @@ public class ServerMain extends AbstractServer {
 		startDailyOverdueCheck();
 	}
 
-	
-
 	private void startDailyOverdueCheck() {
-	    scheduler.scheduleAtFixedRate(() -> {
-	        try {
-	            // Check and freeze overdue subscribers
-	            dbConnector.checkAndFreezeOverdueSubscribers();
+		scheduler.scheduleAtFixedRate(() -> {
+			try {
+				// Check and freeze overdue subscribers
+				dbConnector.checkAndFreezeOverdueSubscribers();
 
-	            // Check for borrows due tomorrow and send notifications
-	            checkAndNotifyDueTomorrow();
-	        } catch (Exception e) {
-	            System.err.println("Error during daily checks: " + e.getMessage());
-	        }
-	    }, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
+				// Check for borrows due tomorrow and send notifications
+				checkAndNotifyDueTomorrow();
+			} catch (Exception e) {
+				System.err.println("Error during daily checks: " + e.getMessage());
+			}
+		}, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
 	}
-	
+
 	private void checkAndNotifyDueTomorrow() {
-	    System.out.println("Running due-tomorrow notification check...");
+		System.out.println("Running due-tomorrow notification check...");
 
-	    try {
-	        // Fetch data from DBconnector
-	        List<Map<String, String>> notifications = dbConnector.getBorrowsDueTomorrow();
+		try {
+			// Fetch data from DBconnector
+			List<Map<String, String>> notifications = dbConnector.getBorrowsDueTomorrow();
 
-	        for (Map<String, String> notification : notifications) {
-	            // Prepare notification description
-	            String description = "Remain 1 day to return the book: " + notification.get("book_name");
+			for (Map<String, String> notification : notifications) {
+				// Prepare notification description
+				String description = "Remain 1 day to return the book: " + notification.get("book_name");
 
-	            // Send notification using DBconnector
-	            try {
-	                dbConnector.sendNotificationToSubscriber(Integer.parseInt(notification.get("sub_id")), description);
-	            } catch (SQLException e) {
-	                System.err.println("Error while sending notification to Subscriber ID " + notification.get("sub_id") + ": " + e.getMessage());
-	            }
-	        }
-	    } catch (Exception e) {
-	        System.err.println("Error during due-tomorrow notifications: " + e.getMessage());
-	    }
+				// Send notification using DBconnector
+				try {
+					dbConnector.sendNotificationToSubscriber(Integer.parseInt(notification.get("sub_id")), description);
+				} catch (SQLException e) {
+					System.err.println("Error while sending notification to Subscriber ID " + notification.get("sub_id")
+							+ ": " + e.getMessage());
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error during due-tomorrow notifications: " + e.getMessage());
+		}
 	}
+
 	private void sendNotificationToSubscriber(int subId, String description) {
-	    System.out.println("Sending notification to Subscriber ID " + subId + ": " + description);
-	    
-	    // Add the logic to store the notification in the database
-	    String notificationQuery = "INSERT INTO subscribernotifications (sub_id, description, read_status) VALUES (?, ?, 'unread')";
+		System.out.println("Sending notification to Subscriber ID " + subId + ": " + description);
 
-	    try (PreparedStatement ps = dbConnector.getDbConnection().prepareStatement(notificationQuery)) {
-	        ps.setInt(1, subId);
-	        ps.setString(2, description);
-	        ps.executeUpdate();
-	    } catch (SQLException e) {
-	        System.err.println("Error while sending notification: " + e.getMessage());
-	    }
+		// Add the logic to store the notification in the database
+		String notificationQuery = "INSERT INTO subscribernotifications (sub_id, description, read_status) VALUES (?, ?, 'unread')";
+
+		try (PreparedStatement ps = dbConnector.getDbConnection().prepareStatement(notificationQuery)) {
+			ps.setInt(1, subId);
+			ps.setString(2, description);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.err.println("Error while sending notification: " + e.getMessage());
+		}
 	}
-
 
 	@Override
 	protected void finalize() throws Throwable {
