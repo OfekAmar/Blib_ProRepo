@@ -300,15 +300,21 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 3) {
 						int subID = Integer.valueOf(parts[1]);
 						int bookCode = Integer.valueOf(parts[2]);
+						System.out.println("1");
 						boolean available = dbConnector.findCopyToOrder(bookCode);
+						System.out.println("2");
 						String checkforexistcopy = dbConnector.findExistCopy(bookCode);
 						if (checkforexistcopy != null) {
+							System.out.println("3");
 							client.sendToClient(checkforexistcopy);
 						} else if (dbConnector.checkFrozenSubscriber(subID)) {
+							System.out.println("4");
 							client.sendToClient("Subscriber is frozen unable to order");
 						} else if (!available) {
+							System.out.println("5");
 							client.sendToClient("All book copies are reserved try again in a few days");
 						} else {
+							System.out.println("6");
 							dbConnector.orderBook(subID, bookCode);
 							client.sendToClient("Order logged in succesfully");
 						}
@@ -558,31 +564,31 @@ public class ServerMain extends AbstractServer {
 					break;
 
 				case "EXTEND_BORROW":
-				    if (parts.length == 3) {
-				        try {
-				            int borrowId = Integer.parseInt(parts[1]);
-				            LocalDate selectedDate = LocalDate.parse(parts[2]);
+					if (parts.length == 3) {
+						try {
+							int borrowId = Integer.parseInt(parts[1]);
+							LocalDate selectedDate = LocalDate.parse(parts[2]);
 
-				            // Call DBconnector to process the extension
-				            String result = dbConnector.extendBorrow(borrowId, selectedDate);
+							// Call DBconnector to process the extension
+							String result = dbConnector.extendBorrow(borrowId, selectedDate);
 
-				            // Send the result back to the client
-				            client.sendToClient(result);
+							// Send the result back to the client
+							client.sendToClient(result);
 
-				            // If the extension was successful, send a notification to the librarian
-				            if (result.startsWith("SUCCESS:")) {
-				                String description = "The borrow period for Borrow ID: " + borrowId +
-				                                     " has been extended to " + selectedDate + ".";
-				                dbConnector.sendNotificationToLibrarian(description);
-				                System.out.println("Librarian notified: " + description);
-				            }
-				        } catch (Exception e) {
-				            client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
-				        }
-				    } else {
-				        client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
-				    }
-				    break;
+							// If the extension was successful, send a notification to the librarian
+							if (result.startsWith("SUCCESS:")) {
+								String description = "The borrow period for Borrow ID: " + borrowId
+										+ " has been extended to " + selectedDate + ".";
+								dbConnector.sendNotificationToLibrarian(description);
+								System.out.println("Librarian notified: " + description);
+							}
+						} catch (Exception e) {
+							client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
+						}
+					} else {
+						client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
+					}
+					break;
 
 				case "VIEW_SUBSCRIBER_CARD":
 					if (parts.length == 2) {

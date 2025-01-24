@@ -2,6 +2,7 @@ package server;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -678,15 +679,17 @@ public class DBconnector {
 
 	public void orderBook(int subID, int bookCode) throws SQLException {
 		LocalDate today = LocalDate.now();
+		LocalTime now = LocalTime.now();
 		String query;
 		PreparedStatement ps;
-		query = "INSERT INTO reserved (book_code, sub_id, res_date, status) VALUES (?, ?, ?, ?, 'wait')";
+		query = "INSERT INTO reserved (book_code, sub_id, res_date, res_time, order_status) VALUES (?, ?, ?, ?, 'waiting')";
 		ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
 		ps.setInt(2, subID);
 		ps.setDate(3, Date.valueOf(today));
+		ps.setTime(4, Time.valueOf(now));
 		ps.executeUpdate();
-		recordActivity("order", subID, bookCode);
+		recordActivity("reserved", subID, bookCode);
 	}
 
 	public boolean checkFrozenSubscriber(int subID) throws SQLException {
@@ -704,12 +707,12 @@ public class DBconnector {
 	}
 
 	public boolean findCopyToOrder(int bookCode) throws SQLException {
-		String query = "SELECT amount_of_copies, amount_of_reservation FROM book WHERE book_code = ?";
+		String query = "SELECT amount_of_copies, amount_of_reservations FROM book WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservation") > 0) {
+			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservations") > 0) {
 				return true;
 			}
 		}
@@ -738,9 +741,9 @@ public class DBconnector {
 				+ "CASE WHEN r2.record_id IS NOT NULL THEN 'Returned' "
 				+ "WHEN r3.record_id IS NOT NULL THEN 'Late Returned' " + "ELSE 'Not Returned' END AS return_status "
 				+ "FROM records r1 "
-				+ "LEFT JOIN record r2 ON r1.book_code = r2.book_code AND r1.subscriber_id = r2.subscriber_id AND r2.record_type = 'return' "
-				+ "LEFT JOIN record r3 ON r1.book_code = r3.book_code AND r1.subscriber_id = r3.subscriber_id AND r3.record_type = 'lateReturned' "
-				+ "WHERE r1.record_type = 'borrow' AND MONTH(r1.record_date) = ? AND YEAR(r1.record_date) = ?";
+				+ "LEFT JOIN records r2 ON r1.book_code = r2.book_code AND r1.sub_id = r2.sub_id AND r2.record_type = 'return' "
+				+ "LEFT JOIN records r3 ON r1.book_code = r3.book_code AND r1.sub_id = r3.sub_id AND r3.record_type = 'late' "
+				+ "WHERE r1.record_type = 'borrowed' AND MONTH(r1.record_date) = ? AND YEAR(r1.record_date) = ?";
 
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, month);
@@ -749,9 +752,9 @@ public class DBconnector {
 		ResultSet rs = ps.executeQuery();
 		List<ExtendedRecord> records = new ArrayList<>();
 		while (rs.next()) {
-			records.add(new ExtendedRecord(rs.getInt("borrow_id"), "borrow", // תמיד recordType = borrow לפי השאילתה
-					rs.getInt("subscriber_id"), rs.getString("borrow_date"), rs.getInt("book_code"),
-					rs.getString("return_date"), rs.getString("return_status")));
+			records.add(new ExtendedRecord(rs.getInt("borrow_id"), "borrow", rs.getInt("sub_id"),
+					rs.getString("borrow_date"), rs.getInt("book_code"), rs.getString("return_date"),
+					rs.getString("return_status")));
 		}
 		return records;
 	}
@@ -791,7 +794,7 @@ public class DBconnector {
 
 	public void setCopyToReservedTable(int resID, int copyID) throws SQLException {
 		LocalDate today = LocalDate.now();
-		String query = "UPDATE reserved SET copy_id = ?, res_max_date = ?, status = 'wait' WHERE res_id = ?";
+		String query = "UPDATE reserved SET copy_id = ?, res_max_date = ?, order_status = 'waiting' WHERE res_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, copyID);
 		ps.setDate(2, Date.valueOf(today.plusDays(2)));
@@ -809,14 +812,21 @@ public class DBconnector {
 	}
 
 	public void decreaseAmountOfReservation(int bookID) throws SQLException {
-		String query = "UPDATE book SET amount_of_reservation = amount_of_reservation - 1 WHERE book_code = ?";
+		String query = "UPDATE book SET amount_of_reservations = amount_of_reservations - 1 WHERE book_code = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookID);
+		ps.executeUpdate();
+	}
+
+	public void encreaseAmountOfReservation(int bookID) throws SQLException {
+		String query = "UPDATE book SET amount_of_reservations = amount_of_reservations + 1 WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookID);
 		ps.executeUpdate();
 	}
 
 	public void allocateReturnedCopyToReserved(int bookID, int copyID) throws SQLException {
-		String query = "SELECT sub_id,res_id FROM reserved WHERE book_code = ? AND status = 'wait' ORDER BY res_date ASC LIMIT 1";
+		String query = "SELECT sub_id,res_id FROM reserved WHERE book_code = ? AND order_status = 'waiting' ORDER BY res_date ASC LIMIT 1";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookID);
 		ResultSet rs = ps.executeQuery();
@@ -825,7 +835,7 @@ public class DBconnector {
 			int resid = rs.getInt("res_id");
 			setCopyToReservedTable(resid, copyID);
 			changeStatusOfCopyOfBook(bookID, copyID, "reserved");
-			decreaseAmountOfReservation(bookID);
+			encreaseAmountOfReservation(bookID);
 			String desc = searchBookByID(bookID)
 					+ "is wating for you to borrow\n The reservation wiil be exired in 2 days";
 			sendNotificationToSubscriber(subid, desc);
