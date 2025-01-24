@@ -1,7 +1,9 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -92,13 +94,13 @@ public class SubscriberController {
 		TimeUnit.MILLISECONDS.sleep(500);
 	}
 
-	public List<String> viewBorrowHistory(String subscriberId) throws InterruptedException {
-		String msg = "BORROW_HISTORY_BY_ID," + subscriberId;
+	public Map<Integer, Map<String, String>> viewBorrowsOfSub(int subscriberId) throws InterruptedException {
+		String msg = "BORROW_BY_ID," + subscriberId;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
 
 		client.setMessageHandler((Object serverResponse) -> {
-			if (serverResponse instanceof ArrayList) {
-				this.response = (ArrayList<String>) serverResponse; // ישירות ל-ArrayList
+			if (serverResponse instanceof Map<?, ?>) {
+				this.response = (Map<Integer, Map<String, String>>) serverResponse; // ישירות ל-ArrayList
 			} else {
 				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
 				this.response = null; // אם זה לא ArrayList
@@ -111,10 +113,10 @@ public class SubscriberController {
 
 		if (response == null) {
 			System.err.println("Failed to retrieve subscriber card. Response is null or invalid.");
-			return new ArrayList<>();
+			return new HashMap<Integer, Map<String, String>>();
 		}
 		System.out.println(response.toString());
-		return (List<String>) response;
+		return (Map<Integer, Map<String, String>>) response;
 	}
 
 	public synchronized List<Subscriber> getAllSubscribers() throws InterruptedException {
