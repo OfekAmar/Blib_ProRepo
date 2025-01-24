@@ -74,6 +74,7 @@ public class ExtendBorrowController {
 	    }
 	}
 
+	@FXML
 	private void onRequestExtendClick(ActionEvent event) {
 	    String selectedBook = booksListView.getSelectionModel().getSelectedItem();
 	    LocalDate selectedDate = datePicker.getValue();
@@ -96,44 +97,35 @@ public class ExtendBorrowController {
 	        return;
 	    }
 
-	    // Validate that the selected date is not more than 7 days from the current date
-	    if (selectedDate.isAfter(currentDate.plusDays(7))) {
-	        ScreenLoader.showAlert("Error", "The selected due date cannot be more than 7 days from today.");
-	        return;
-	    }
-
 	    try {
-	        // Extract borrow ID from the selectedBook string
-	        // Assuming `selectedBook` has a format like "Borrow ID: 123 | Title: ...", extract borrow ID.
+	        // Extract borrow ID from the selected book string
+	        // Assuming `selectedBook` has a format like "Borrow ID: 123 | Title: ..."
 	        int borrowId = extractBorrowIdFromSelectedBook(selectedBook);
 	        if (borrowId == -1) {
 	            ScreenLoader.showAlert("Error", "Invalid selected book format.");
 	            return;
 	        }
 
-	        // Send the request to extend the borrow period to the server
-	        String msg = "EXTEND_BORROW," + borrowId + "," + selectedDate.toString();
-	        cm.setMessageHandler((response) -> {
-	            Platform.runLater(() -> {
-	                if (response instanceof String) {
-	                    String serverResponse = (String) response;
-	                    if (serverResponse.startsWith("SUCCESS")) {
-	                        ScreenLoader.showAlert("Success",
-	                                "The borrow period for the selected book has been extended to " + selectedDate + ".");
-	                    } else {
-	                        ScreenLoader.showAlert("Error", serverResponse);
-	                    }
-	                } else {
-	                    ScreenLoader.showAlert("Error", "Failed to process the request. Invalid server response.");
-	                }
-	            });
-	        });
+	        // Use BorrowController to send the request to extend the borrow period
+	        BorrowController borrowController = new BorrowController(null,cm);
+	        String response = borrowController.extendBorrow(String.valueOf(borrowId));
 
-	        cm.sendMessageToServer(msg);
+	        // Handle the server response
+	        
+	         if (response.startsWith("SUCCESS")) {
+	                ScreenLoader.showAlert("Success", "The borrow period for the selected book has been extended.");
+	            } else {
+	                ScreenLoader.showAlert("Error", response);
+	            }
+	        
 	    } catch (Exception e) {
-	        ScreenLoader.showAlert("Error", "Failed to send the request: " + e.getMessage());
+	        Platform.runLater(() -> {
+	            ScreenLoader.showAlert("Error", "Failed to extend the borrow period: " + e.getMessage());
+	        });
 	    }
 	}
+	
+	
 	private int extractBorrowIdFromSelectedBook(String selectedBook) {
 	    try {
 	        String[] parts = selectedBook.split("\\|");

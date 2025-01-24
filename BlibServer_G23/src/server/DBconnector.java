@@ -11,6 +11,7 @@ import logic.Book;
 import logic.CopyOfBook;
 import logic.ExtendedRecord;
 import logic.Librarian;
+import logic.NotificationData;
 import logic.Record;
 import logic.Subscriber;
 
@@ -728,15 +729,76 @@ public class DBconnector {
 			sendNotificationToSubscriber(subid, desc);
 		}
 	}
+	public void checkAndFreezeOverdueSubscribers() {
+	    System.out.println("Running daily overdue check...");
 
-	public void sendNotificationToSubscriber(int subID, String description) throws SQLException {
-		String query = "INSERT INTO subscribernotifications (sub_id, description) VALUES (?, ?)";
-		PreparedStatement ps = dbConnection.prepareStatement(query);
-		ps.setInt(1, subID);
-		ps.setString(2, description);
-		ps.executeUpdate();
+	    String overdueQuery = "SELECT sub_id, borrow_id FROM Borrow WHERE status = 'borrowed' AND return_max_date < ?";
+	    String updateBorrowQuery = "UPDATE Borrow SET status = 'late' WHERE borrow_id = ?";
+	    String freezeSubscriberQuery = "UPDATE Subscriber SET status = 'frozen' WHERE sub_id = ?";
+
+	    try (PreparedStatement overduePs = dbConnection.prepareStatement(overdueQuery)) {
+	        overduePs.setDate(1, java.sql.Date.valueOf(LocalDate.now().minusDays(7)));
+	        ResultSet rs = overduePs.executeQuery();
+
+	        while (rs.next()) {
+	            int subscriberId = rs.getInt("sub_id");
+	            int borrowId = rs.getInt("borrow_id");
+
+	            // Update the Borrow status to 'late'
+	            try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+	                updateBorrowPs.setInt(1, borrowId);
+	                int rowsAffected = updateBorrowPs.executeUpdate();
+	                if (rowsAffected > 0) {
+	                    System.out.println("Borrow ID " + borrowId + " status updated to 'late'.");
+	                }
+	            }
+
+	            // Freeze the subscriber
+	            try (PreparedStatement freezeSubscriberPs = dbConnection.prepareStatement(freezeSubscriberQuery)) {
+	                freezeSubscriberPs.setInt(1, subscriberId);
+	                int rowsAffected = freezeSubscriberPs.executeUpdate();
+	                if (rowsAffected > 0) {
+	                    System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error during overdue check: " + e.getMessage());
+	    }
 	}
 
+	public void sendNotificationToSubscriber(int subID, String description) throws SQLException {
+	    // Get the current date
+	    LocalDate currentDate = LocalDate.now();
+
+	    // Include the current date in the description
+	    String updatedDescription = description + " (Date: " + currentDate + ")";
+
+	    // Check if the notification already exists for today and the same description
+	    String checkQuery = "SELECT COUNT(*) FROM subscribernotifications WHERE sub_id = ? AND description = ? AND noti_date = ?";
+	    try (PreparedStatement checkPs = dbConnection.prepareStatement(checkQuery)) {
+	        checkPs.setInt(1, subID);
+	        checkPs.setString(2, updatedDescription);
+	        checkPs.setDate(3, java.sql.Date.valueOf(currentDate));
+	        ResultSet rs = checkPs.executeQuery();
+
+	        if (rs.next() && rs.getInt(1) > 0) {
+	            System.out.println("Notification already exists for Subscriber ID " + subID + ": " + updatedDescription);
+	            return; // Do not send duplicate notification
+	        }
+	    }
+
+	    // Insert the notification if it doesn't exist
+	    String insertQuery = "INSERT INTO subscribernotifications (noti_date, sub_id, description, read_status) VALUES (?, ?, ?, 'unread')";
+	    try (PreparedStatement ps = dbConnection.prepareStatement(insertQuery)) {
+	        ps.setDate(1, java.sql.Date.valueOf(currentDate));
+	        ps.setInt(2, subID);
+	        ps.setString(3, updatedDescription);
+	        ps.executeUpdate();
+	        System.out.println("Notification sent to Subscriber ID " + subID + ": " + updatedDescription);
+	    }
+	}
+	
 	public void sendNotificationToLibrarian(String description) throws SQLException {
 		String query = "INSERT INTO librariannotifications (description) VALUES (?)";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
@@ -749,7 +811,7 @@ public class DBconnector {
 		Map<String, Integer> noti = new HashMap<String, Integer>();
 		String query;
 		if (status == 0) {
-			query = "SELECT noti_id,description FROM subscribernotifications WHERE sub_id = ? AND read_status = 0";
+			query = "SELECT noti_id,description FROM subscribernotifications WHERE sub_id = ? AND read_status = 'unread'";
 		} else {
 			query = "SELECT noti_id,description FROM subscribernotifications WHERE sub_id = ?";
 		}
@@ -761,12 +823,12 @@ public class DBconnector {
 		}
 		return noti;
 	}
-
+	
 	public Map<String, Integer> getNotiLib(int status) throws SQLException {
 		Map<String, Integer> noti = new HashMap<String, Integer>();
 		String query;
 		if (status == 0) {
-			query = "SELECT noti_id,description FROM librariannotifications WHERE read_status = 0";
+			query = "SELECT noti_id,description FROM librariannotifications WHERE read_status = 'unread'";
 		} else {
 			query = "SELECT noti_id,description FROM librariannotifications";
 		}
@@ -779,78 +841,118 @@ public class DBconnector {
 
 	}
 
-	public String extendBorrow(int borrowId, LocalDate newReturnDate) {
-		String reservationCheckQuery = "SELECT amount_of_reservations FROM Book "
-				+ "WHERE book_code = (SELECT book_code FROM Borrow WHERE borrow_id = ?)";
-		String updateBorrowQuery = "UPDATE Borrow SET return_max_date = ? WHERE borrow_id = ?";
-		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) "
-				+ "VALUES ('extend', ?, ?, ?)";
+	
+	public List<Map<String, String>> getBorrowsDueTomorrow() {
+	    String dueTomorrowQuery = "SELECT b.sub_id, bk.title AS book_name " +
+	                              "FROM Borrow b " +
+	                              "JOIN Book bk ON b.book_code = bk.book_code " +
+	                              "WHERE b.status = 'borrowed' AND b.return_max_date = ?";
+	    List<Map<String, String>> notifications = new ArrayList<>();
 
-		try {
-			// Check if there are reservations for the book
-			try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
-				reservationCheckPs.setInt(1, borrowId);
-				ResultSet rs = reservationCheckPs.executeQuery();
+	    try (PreparedStatement ps = dbConnection.prepareStatement(dueTomorrowQuery)) {
+	        ps.setDate(1, java.sql.Date.valueOf(LocalDate.now().plusDays(1)));
+	        ResultSet rs = ps.executeQuery();
 
-				if (rs.next()) {
-					int reservations = rs.getInt("amount_of_reservations");
+	        while (rs.next()) {
+	            Map<String, String> notification = new HashMap<>();
+	            notification.put("sub_id", String.valueOf(rs.getInt("sub_id")));
+	            notification.put("book_name", rs.getString("book_name"));
+	            notifications.add(notification);
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error fetching due-tomorrow notifications: " + e.getMessage());
+	    }
 
-					if (reservations > 0) {
-						return "ERROR: Cannot extend borrow period. There are reservations for this book.";
-					}
-				} else {
-					return "ERROR: Borrow record not found.";
-				}
-			}
-
-			// Extend the borrow period
-			try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-				updateBorrowPs.setDate(1, java.sql.Date.valueOf(newReturnDate));
-				updateBorrowPs.setInt(2, borrowId);
-				int rowsUpdated = updateBorrowPs.executeUpdate();
-
-				if (rowsUpdated == 0) {
-					return "ERROR: Failed to extend borrow period.";
-				}
-			}
-
-			// Insert a record into the Records table
-			String subIdQuery = "SELECT sub_id, book_code FROM Borrow WHERE borrow_id = ?";
-			try (PreparedStatement subIdPs = dbConnection.prepareStatement(subIdQuery)) {
-				subIdPs.setInt(1, borrowId);
-				ResultSet rs = subIdPs.executeQuery();
-
-				if (rs.next()) {
-					int subId = rs.getInt("sub_id");
-					int bookCode = rs.getInt("book_code");
-
-					try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-						insertRecordPs.setInt(1, subId);
-						insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
-						insertRecordPs.setInt(3, bookCode);
-						insertRecordPs.executeUpdate();
-					}
-				} else {
-					return "ERROR: Failed to log the extension in the Records table.";
-				}
-			}
-
-			return "SUCCESS: Borrow period extended successfully.";
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return "ERROR: " + e.getMessage();
-		}
+	    return notifications;
 	}
 
+	
+	public String extendBorrow(int borrowId, LocalDate requestedDate) {
+	    String borrowQuery = "SELECT return_max_date, book_code, sub_id FROM Borrow WHERE borrow_id = ?";
+	    String reservationCheckQuery = "SELECT amount_of_reservations FROM Book WHERE book_code = ?";
+	    String updateBorrowQuery = "UPDATE Borrow SET return_max_date = ? WHERE borrow_id = ?";
+	    String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code) " +
+	                                "VALUES ('extend', ?, ?, ?)";
+
+	    try {
+	        LocalDate maxReturnDate;
+	        int bookCode;
+	        int subId;
+
+	        // Fetch max_return_date and book_code from the Borrow table
+	        try (PreparedStatement borrowPs = dbConnection.prepareStatement(borrowQuery)) {
+	            borrowPs.setInt(1, borrowId);
+	            ResultSet rs = borrowPs.executeQuery();
+
+	            if (rs.next()) {
+	                maxReturnDate = rs.getDate("return_max_date").toLocalDate();
+	                bookCode = rs.getInt("book_code");
+	                subId = rs.getInt("sub_id");
+	            } else {
+	                return "ERROR: Borrow record not found.";
+	            }
+	        }
+
+	        // Check if there is more than 7 days remaining to the return_max_date from today
+	        if (maxReturnDate.isAfter(LocalDate.now().plusDays(7))) {
+	            return "ERROR: Cannot extend borrow period. There are more than 7 days remaining to the current return date (" + maxReturnDate + ").";
+	        }
+
+	        // Validate that the requested date is not more than 7 days from the max_return_date
+	        if (requestedDate.isAfter(maxReturnDate.plusDays(7))) {
+	            return "ERROR: The selected due date cannot be more than 7 days from the current max return date (" + maxReturnDate + ").";
+	        }
+
+	        // Check if there are reservations for the book
+	        try (PreparedStatement reservationCheckPs = dbConnection.prepareStatement(reservationCheckQuery)) {
+	            reservationCheckPs.setInt(1, bookCode);
+	            ResultSet rs = reservationCheckPs.executeQuery();
+
+	            if (rs.next()) {
+	                int reservations = rs.getInt("amount_of_reservations");
+
+	                if (reservations > 0) {
+	                    return "ERROR: Cannot extend borrow period. There are reservations for this book.";
+	                }
+	            }
+	        }
+
+	        // Update the borrow period
+	        try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+	            updateBorrowPs.setDate(1, java.sql.Date.valueOf(requestedDate));
+	            updateBorrowPs.setInt(2, borrowId);
+	            int rowsUpdated = updateBorrowPs.executeUpdate();
+
+	            if (rowsUpdated == 0) {
+	                return "ERROR: Failed to extend borrow period.";
+	            }
+	        }
+
+	        // Insert a record into the Records table
+	        try (PreparedStatement insertRecordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+	            insertRecordPs.setInt(1, subId);
+	            insertRecordPs.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+	            insertRecordPs.setInt(3, bookCode);
+	            insertRecordPs.executeUpdate();
+	        }
+
+	        return "SUCCESS: Borrow period extended successfully.";
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return "ERROR: " + e.getMessage();
+	    }
+	}
+
+
 	public void readNotiSubs(int notiID) throws SQLException {
-		String query = "UPDATE subscribernotifications SET read_status = 1 WHERE noti_id = ?";
+		String query = "UPDATE subscribernotifications SET read_status = 'read' WHERE noti_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, notiID);
 		ps.executeUpdate();
 	}
 
 	public void readNotiLib(int notiID) throws SQLException {
-		String query = "UPDATE librariannotifications SET read_status = 1 WHERE noti_id = ?";
+		String query = "UPDATE librariannotifications SET read_status = 'read' WHERE noti_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, notiID);
 		ps.executeUpdate();

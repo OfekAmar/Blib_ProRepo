@@ -4,6 +4,7 @@ import java.net.Inet4Address;
 import java.sql.PreparedStatement;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import logic.CopyOfBook;
 import logic.Subscriber;
 import logic.ExtendedRecord;
 import logic.Librarian;
+import logic.NotificationData;
 import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -35,56 +37,59 @@ public class ServerMain extends AbstractServer {
 		startDailyOverdueCheck();
 	}
 
+	
+
 	private void startDailyOverdueCheck() {
-		scheduler.scheduleAtFixedRate(() -> {
-			try {
-				checkAndFreezeOverdueSubscribers();
-			} catch (Exception e) {
-				System.err.println("Error during overdue subscriber check: " + e.getMessage());
-			}
-		}, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
+	    scheduler.scheduleAtFixedRate(() -> {
+	        try {
+	            // Check and freeze overdue subscribers
+	            dbConnector.checkAndFreezeOverdueSubscribers();
+
+	            // Check for borrows due tomorrow and send notifications
+	            checkAndNotifyDueTomorrow();
+	        } catch (Exception e) {
+	            System.err.println("Error during daily checks: " + e.getMessage());
+	        }
+	    }, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
+	}
+	
+	private void checkAndNotifyDueTomorrow() {
+	    System.out.println("Running due-tomorrow notification check...");
+
+	    try {
+	        // Fetch data from DBconnector
+	        List<Map<String, String>> notifications = dbConnector.getBorrowsDueTomorrow();
+
+	        for (Map<String, String> notification : notifications) {
+	            // Prepare notification description
+	            String description = "Remain 1 day to return the book: " + notification.get("book_name");
+
+	            // Send notification using DBconnector
+	            try {
+	                dbConnector.sendNotificationToSubscriber(Integer.parseInt(notification.get("sub_id")), description);
+	            } catch (SQLException e) {
+	                System.err.println("Error while sending notification to Subscriber ID " + notification.get("sub_id") + ": " + e.getMessage());
+	            }
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Error during due-tomorrow notifications: " + e.getMessage());
+	    }
+	}
+	private void sendNotificationToSubscriber(int subId, String description) {
+	    System.out.println("Sending notification to Subscriber ID " + subId + ": " + description);
+	    
+	    // Add the logic to store the notification in the database
+	    String notificationQuery = "INSERT INTO subscribernotifications (sub_id, description, read_status) VALUES (?, ?, 'unread')";
+
+	    try (PreparedStatement ps = dbConnector.getDbConnection().prepareStatement(notificationQuery)) {
+	        ps.setInt(1, subId);
+	        ps.setString(2, description);
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        System.err.println("Error while sending notification: " + e.getMessage());
+	    }
 	}
 
-	private void checkAndFreezeOverdueSubscribers() {
-		System.out.println("Running daily overdue check...");
-
-		// Update overdue borrows to 'late' and freeze subscribers
-		String overdueQuery = "SELECT sub_id, borrow_id FROM Borrow WHERE status = 'borrowed' AND return_max_date < ?";
-		String updateBorrowQuery = "UPDATE Borrow SET status = 'late' WHERE borrow_id = ?";
-		String freezeSubscriberQuery = "UPDATE Subscriber SET status = 'frozen' WHERE sub_id = ?";
-
-		try (PreparedStatement overduePs = dbConnector.getDbConnection().prepareStatement(overdueQuery)) {
-			overduePs.setDate(1, java.sql.Date.valueOf(LocalDate.now().minusDays(7)));
-			ResultSet rs = overduePs.executeQuery();
-
-			while (rs.next()) {
-				int subscriberId = rs.getInt("sub_id");
-				int borrowId = rs.getInt("borrow_id");
-
-				// Update the Borrow status to 'late'
-				try (PreparedStatement updateBorrowPs = dbConnector.getDbConnection()
-						.prepareStatement(updateBorrowQuery)) {
-					updateBorrowPs.setInt(1, borrowId);
-					int rowsAffected = updateBorrowPs.executeUpdate();
-					if (rowsAffected > 0) {
-						System.out.println("Borrow ID " + borrowId + " status updated to 'late'.");
-					}
-				}
-
-				// Freeze the subscriber
-				try (PreparedStatement freezeSubscriberPs = dbConnector.getDbConnection()
-						.prepareStatement(freezeSubscriberQuery)) {
-					freezeSubscriberPs.setInt(1, subscriberId);
-					int rowsAffected = freezeSubscriberPs.executeUpdate();
-					if (rowsAffected > 0) {
-						System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
-					}
-				}
-			}
-		} catch (Exception e) {
-			System.err.println("Error during overdue check: " + e.getMessage());
-		}
-	}
 
 	@Override
 	protected void finalize() throws Throwable {
@@ -554,20 +559,20 @@ public class ServerMain extends AbstractServer {
 					break;
 
 				case "EXTEND_BORROW":
-					if (parts.length == 3) {
-						try {
-							int borrowId = Integer.parseInt(parts[1]);
-							LocalDate newReturnDate = LocalDate.parse(parts[2]);
+				    if (parts.length == 3) {
+				        try {
+				            int borrowId = Integer.parseInt(parts[1]);
+				            LocalDate requestedDate = LocalDate.parse(parts[2]);
 
-							String result = dbConnector.extendBorrow(borrowId, newReturnDate);
-							client.sendToClient(result);
-						} catch (Exception e) {
-							client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
-						}
-					} else {
-						client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
-					}
-					break;
+				            String result = dbConnector.extendBorrow(borrowId, requestedDate);
+				            client.sendToClient(result);
+				        } catch (Exception e) {
+				            client.sendToClient("ERROR: Invalid EXTEND_BORROW request. " + e.getMessage());
+				        }
+				    } else {
+				        client.sendToClient("ERROR: Invalid EXTEND_BORROW format.");
+				    }
+				    break;
 
 				case "VIEW_SUBSCRIBER_CARD":
 					if (parts.length == 2) {
