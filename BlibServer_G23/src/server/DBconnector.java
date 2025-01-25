@@ -17,10 +17,22 @@ import logic.Record;
 import logic.Subscriber;
 
 public class DBconnector {
+	private static volatile DBconnector instance;
 	private Connection dbConnection;
 
-	public DBconnector() {
+	private DBconnector() {
 		connectToDatabase();
+	}
+
+	public static DBconnector getInstance() {
+		if (instance == null) {
+			synchronized (DBconnector.class) {
+				if (instance == null) {
+					instance = new DBconnector();
+				}
+			}
+		}
+		return instance;
 	}
 
 	private void connectToDatabase() {

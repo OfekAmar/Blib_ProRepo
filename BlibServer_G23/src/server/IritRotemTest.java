@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 public class IritRotemTest {
 	public static void main(String[] args) throws SQLException {
-		DBconnector db = new DBconnector();
+		DBconnector db = DBconnector.getInstance();
 		try {
 			// db.editSubscriber(7,"3333444466","irit@gmail.com","password");
 			// System.out.println(db.earliestReturnDate(3));
