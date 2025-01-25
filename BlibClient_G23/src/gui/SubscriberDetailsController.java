@@ -49,9 +49,8 @@ public class SubscriberDetailsController {
 	private Subscriber sub;
 	private String subscriberId;
 	private SubscriberController sc;
-	
-	private Consumer<Subscriber> onEditSubscriberCallback;
 
+	private Consumer<Subscriber> onEditSubscriberCallback;
 
 	// initialize stage to further operations
 	public void setStage(Stage stage) {
@@ -67,9 +66,9 @@ public class SubscriberDetailsController {
 		subscriberId = String.valueOf(sub.getId());
 		setDetails();
 	}
-	
+
 	public void setOnEditSubscriberCallback(Consumer<Subscriber> callback) {
-		this.onEditSubscriberCallback=callback;
+		this.onEditSubscriberCallback = callback;
 	}
 
 	// the method uses the data recived by the server in order to present it in the
@@ -92,29 +91,29 @@ public class SubscriberDetailsController {
 	// need update
 	@FXML
 	public void onSaveClick() {
-		String phone=phoneField.getText();
-		String email=emailField.getText();
-		
-		if(phone.isEmpty() || email.isEmpty()) {
+		String phone = phoneField.getText();
+		String email = emailField.getText();
+
+		if (phone.isEmpty() || email.isEmpty()) {
 			ScreenLoader.showAlert("Error", "All fields are required");
 			return;
-		}else {
+		} else {
 			ScreenLoader.closeWindow(cancelButton);
 		}
-		
-		
-		SubscriberController sc=new SubscriberController(c);
+
+		SubscriberController sc = new SubscriberController(c);
 		try {
-			String result=sc.editSubscriber(String.valueOf(sub.getId()), phone, email, sub.getPassword());
-			ScreenLoader.showAlert("subscriber edited",result);
-			
-			Subscriber editedSub=new Subscriber(sub.getId(),sub.getName(),sub.getPhone(),sub.getStatus(),sub.getEmail(),sub.getPassword(),sub.getUserName());
-			if(onEditSubscriberCallback!=null) {
+			String result = sc.editSubscriber(String.valueOf(sub.getId()), phone, email, sub.getPassword());
+			ScreenLoader.showAlert("subscriber edited", result);
+
+			Subscriber editedSub = new Subscriber(sub.getId(), sub.getName(), sub.getPhone(), sub.getStatus(),
+					sub.getEmail(), sub.getPassword(), sub.getUserName());
+			if (onEditSubscriberCallback != null) {
 				onEditSubscriberCallback.accept(editedSub);
 			}
 			Stage currentStage = (Stage) saveButton.getScene().getWindow();
-	        currentStage.close();
-		}catch(InterruptedException e) {
+			currentStage.close();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			ScreenLoader.showAlert("Error", "Failed to edit subscriber.");
 		}

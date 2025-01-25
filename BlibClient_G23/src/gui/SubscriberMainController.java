@@ -138,8 +138,9 @@ public class SubscriberMainController {
 	private void onViewProfileClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
-				((SubscriberDetailsController) controller).setStage(new Stage(), cm);
+				((SubscriberDetailsController) controller).setStage(stage);
 				((SubscriberDetailsController) controller).setSubscriber(sub);
+				((SubscriberDetailsController) controller).setClient(cm);
 			}
 		});
 	}
