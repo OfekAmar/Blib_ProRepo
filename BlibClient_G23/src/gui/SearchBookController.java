@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
 import java.awt.TextArea;
+import java.awt.print.PrinterException;
 import java.util.List;
 
 import client.ClientMain;
@@ -124,8 +125,17 @@ public class SearchBookController {
 			SearchBookLogic searchLogic = new SearchBookLogic(c);
 			if (!searchbuttonflag) {
 				int selectedIndex = searchResultList.getSelectionModel().getSelectedIndex();
-				String titlesearch = books.get(selectedIndex).getTitle();
-				ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(titlesearch));
+				if (selectedIndex != -1) {
+					String titlesearch = books.get(selectedIndex).getTitle();
+					ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(titlesearch));
+					searchbuttonflag = true;
+				} else {
+					searchbuttonflag = true;
+					updateListVisibility(false);
+					onSearchBookClick(event);
+					return;
+				}
+
 			} else {
 				switch (searchBy) {
 				case "Title":
@@ -172,6 +182,7 @@ public class SearchBookController {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Error during book search: " + e.getMessage());
 			ScreenLoader.showAlert("Error", "An error occurred during the search. Please try again later.");
 		}

@@ -27,8 +27,12 @@ public class ClientConnectController {
 
 	@FXML
 	public void connectToServer(ActionEvent event) {
-		String port = portField.getText();
-		String host = hostField.getText();
+		// auto connect for testing purposes
+		// String port = portField.getText();
+		// String host = hostField.getText();
+
+		String port = "5555";
+		String host = "localhost";
 
 		if (port == null || port.isEmpty() || host == null || host.isEmpty()) {
 			System.out.println("IP or Port is empty. Please enter valid details.");

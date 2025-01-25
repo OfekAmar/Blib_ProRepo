@@ -1,6 +1,5 @@
 package server;
 
-import java.net.Inet4Address;
 import java.sql.PreparedStatement;
 
 import java.sql.ResultSet;
@@ -19,7 +18,6 @@ import logic.CopyOfBook;
 import logic.Subscriber;
 import logic.ExtendedRecord;
 import logic.Librarian;
-import logic.NotificationData;
 import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
@@ -300,23 +298,17 @@ public class ServerMain extends AbstractServer {
 					if (parts.length == 3) {
 						int subID = Integer.valueOf(parts[1]);
 						int bookCode = Integer.valueOf(parts[2]);
-						System.out.println("1");
 						boolean available = dbConnector.findCopyToOrder(bookCode);
-						System.out.println("2");
 						String checkforexistcopy = dbConnector.findExistCopy(bookCode);
 						if (checkforexistcopy != null) {
-							System.out.println("3");
 							client.sendToClient(checkforexistcopy);
 						} else if (dbConnector.checkFrozenSubscriber(subID)) {
-							System.out.println("4");
 							client.sendToClient("Subscriber is frozen unable to order");
 						} else if (!available) {
-							System.out.println("5");
 							client.sendToClient("All book copies are reserved try again in a few days");
 						} else {
-							System.out.println("6");
 							dbConnector.orderBook(subID, bookCode);
-							client.sendToClient("Order logged in succesfully");
+							client.sendToClient("The book is ordered for you !");
 						}
 
 					} else {

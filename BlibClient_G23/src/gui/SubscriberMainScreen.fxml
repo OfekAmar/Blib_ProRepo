@@ -32,10 +32,8 @@
 			<HBox alignment="CENTER" spacing="20">
 				<Button text="My Profile" fx:id="myProfileButton"
 					onAction="#onViewProfileClick" />
-				<Button text="My Borrow History" fx:id="borrowHistoryButton"
-					onAction="#borrowHistoryClick" />
-				<Button text="My History" fx:id="viewHistoryButton"
-					onAction="#onHistoryClick" />
+				<Button text="Reader Card" fx:id="readerCard"
+					onAction="#onReaderCardClick" />
 			</HBox>
 			<HBox alignment="CENTER" spacing="20">
 				<StackPane>
