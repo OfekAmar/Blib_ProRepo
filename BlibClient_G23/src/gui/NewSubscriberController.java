@@ -4,9 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+
+import java.util.function.Consumer;
+
 import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
+import logic.Book;
 import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.SubscriberController;
@@ -38,6 +42,8 @@ public class NewSubscriberController {
 	private Subscriber newSubs;
 
 	private ClientMain c;
+	
+	private Consumer<Subscriber> onSubscriberAddedCallback;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -45,6 +51,10 @@ public class NewSubscriberController {
 
 	public void setClient(ClientMain c) {
 		this.c = c;
+	}
+	
+	public void setOnSubscriberAddedCallback(Consumer<Subscriber> callback) {
+		this.onSubscriberAddedCallback=callback;
 	}
 
 	@FXML
@@ -62,12 +72,21 @@ public class NewSubscriberController {
 			// Implement logic to create a new subscriber here
 			ScreenLoader.closeWindow(cancelButton);
 		}
+		
 		SubscriberController s = new SubscriberController(c);
 		try {
-			ScreenLoader.showAlert("user added", s.addSubscriber(name, phone, email, password, userName));
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			String result=s.addSubscriber(name, phone, email, password,userName);
+			ScreenLoader.showAlert("subscriber added",result);
+			
+			Subscriber newSub=new Subscriber(0,name,phone,"active",email,password,userName);
+			if(onSubscriberAddedCallback!=null) {
+				onSubscriberAddedCallback.accept(newSub);
+			}
+			Stage currentStage = (Stage) confirmButton.getScene().getWindow();
+	        currentStage.close();
+		}catch(InterruptedException e) {
 			e.printStackTrace();
+			ScreenLoader.showAlert("Error", "Failed to add subscriber.");
 		}
 
 	}

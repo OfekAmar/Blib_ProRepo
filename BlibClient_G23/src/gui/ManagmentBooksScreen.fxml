@@ -56,7 +56,6 @@
       
       			<Button fx:id="addNewBookButton" onAction="#onAddBookClick" text="Add New Book" />
       				<Button fx:id="viewCopiesButton" onAction="#onViewCopiesClick" text="View copies" />
-      				<Button fx:id="deleteBookButton" onAction="#onDeleteBookClick" text="delete book" />
             </children>
          </HBox>
          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
