@@ -41,6 +41,8 @@ public class ServerMain extends AbstractServer {
 				// Check and freeze overdue subscribers
 				dbConnector.checkAndFreezeOverdueSubscribers();
 
+				System.out.println("Running expired reservations check...");
+				dbConnector.checkExpiredReservations();
 				// Check for borrows due tomorrow and send notifications
 				checkAndNotifyDueTomorrow();
 			} catch (Exception e) {
@@ -173,7 +175,7 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid EDIT_COPY_OF_BOOK format.");
 					}
 					break;
-					
+
 				case "GET_BOOK_BY_CODE":
 					if (parts.length == 2) {
 						int bookCode = Integer.valueOf(parts[1]);
@@ -360,12 +362,16 @@ public class ServerMain extends AbstractServer {
 						int borrowID = Integer.valueOf(parts[2]);
 						LocalDate date = LocalDate.parse(parts[3]);
 						String desc = parts[4];
+						String res = "";
 						int bookID = dbConnector.getBookFromBorrow(borrowID);
-						dbConnector.updateBorrowReturn(borrowID, date);
-						dbConnector.recordActivity("extend", subID, bookID, desc);
-						client.sendToClient("Update Completed Successfuly");
+						res = dbConnector.updateBorrowReturn(borrowID, bookID, date);
+						if (res.equals("The book extended successfully")) {
+							dbConnector.recordActivity("extend", subID, bookID, desc);
+						}
+						System.out.println(res);
+						client.sendToClient(res);
 					} else {
-						client.sendToClient("ERROR: STATUS_STATISTICS format.");
+						client.sendToClient("ERROR: UPDATE_BORROW_RETURN format.");
 					}
 					break;
 
