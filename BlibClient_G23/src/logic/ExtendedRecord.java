@@ -10,7 +10,7 @@ public class ExtendedRecord extends Record implements Serializable {
 
 	public ExtendedRecord(int recordID, String recordType, int subscriberID, String recordDate, int bookCode,
 			String returnDate, String returnStatus) {
-		super(recordID, recordType, subscriberID, recordDate, bookCode);
+		super(recordID, recordType, subscriberID, recordDate, bookCode, "");
 		this.returnDate = returnDate;
 		this.returnStatus = returnStatus;
 	}

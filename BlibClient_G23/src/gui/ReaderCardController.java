@@ -61,7 +61,7 @@ public class ReaderCardController {
 	private TableColumn<Record, Integer> recordIdColumn, subscriberIDColumn, bookCodeColumn;
 
 	@FXML
-	private TableColumn<Record, String> recordTypeColumn, recordDateColumn;
+	private TableColumn<Record, String> recordTypeColumn, recordDateColumn, descriptionColumn;
 
 	private ObservableList<Record> recordData;
 
@@ -136,6 +136,8 @@ public class ReaderCardController {
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));
 		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
+		descriptionColumn
+				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDescription()));
 
 		try {
 			List<Record> result = rc.getAllRecordsByID(sub.getId());

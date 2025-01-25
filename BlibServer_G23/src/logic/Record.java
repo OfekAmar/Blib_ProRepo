@@ -10,13 +10,17 @@ public class Record implements Serializable {
 	private int subscriberID;
 	private String recordDate;
 	private int bookCode;
+	private String description;
 
-	public Record(int recordID, String recordType, int subscriberID, String recordDate, int bookCode) {
+	public Record(int recordID, String recordType, int subscriberID, String recordDate, int bookCode,
+			String description) {
+		super();
 		this.recordID = recordID;
 		this.recordType = recordType;
 		this.subscriberID = subscriberID;
 		this.recordDate = recordDate;
 		this.bookCode = bookCode;
+		this.setDescription(description);
 	}
 
 	public static long getSerialversionuid() {
@@ -43,6 +47,10 @@ public class Record implements Serializable {
 		return bookCode;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
 	public void setRecordID(int recordID) {
 		this.recordID = recordID;
 	}
@@ -63,10 +71,14 @@ public class Record implements Serializable {
 		this.bookCode = bookCode;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	@Override
 	public String toString() {
 		return "Record [recordID=" + recordID + ", recordType=" + recordType + ", subscriberID=" + subscriberID
-				+ ", recordDate=" + recordDate + ", bookCode=" + bookCode + "]";
+				+ ", recordDate=" + recordDate + ", bookCode=" + bookCode + ", description=" + description + "]";
 	}
 
 }
