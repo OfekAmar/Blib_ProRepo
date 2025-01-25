@@ -94,6 +94,7 @@ public class ManagmentSubscriberController {
 				if (controller instanceof SubscriberDetailsController) {
 					((SubscriberDetailsController) controller).setStage(new Stage(), null);
 					((SubscriberDetailsController) controller).setSubscriber(searchedsubs);
+					
 				}
 			});
 		} else {

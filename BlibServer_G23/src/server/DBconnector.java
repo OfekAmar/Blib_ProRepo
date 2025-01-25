@@ -424,7 +424,7 @@ public class DBconnector {
 			return "ERROR: " + e.getMessage();
 		}
 	}
-	
+
 	public Book getBookByCode(int bookCode) throws SQLException {
 		String query = "SELECT * FROM book WHERE book_code = ?";
 		// Subscriber sub;
@@ -432,13 +432,13 @@ public class DBconnector {
 		ps.setInt(1, bookCode);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			return new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), 
+			return new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"),
 					rs.getString("subject"), rs.getString("description"), rs.getInt("amount_of_copies"));
 		} else {
 			throw new IllegalArgumentException("Book with code " + bookCode + "not found.");
 		}
 	}
-	
+
 	public List<Book> getAllBooks() throws SQLException {
 		List<Book> booksList = new ArrayList<>();
 		Book book;
@@ -704,12 +704,25 @@ public class DBconnector {
 		ps.executeUpdate();
 	}
 
-	public void updateBorrowReturn(int borrowID, LocalDate date) throws SQLException {
-		String query = "UPDATE borrow SET return_max_date = ? WHERE borrow_id = ?";
+	public String updateBorrowReturn(int borrowID, int bookID, LocalDate date) throws SQLException {
+		String query = "SELECT amount_of_copies, amount_of_reservations FROM book WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
-		ps.setDate(1, Date.valueOf(date));
-		ps.setInt(2, borrowID);
-		ps.executeUpdate();
+		ps.setInt(1, bookID);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservations") == 0) {
+				return "All copies are reserved, unable to make extend";
+			} else {
+				query = "UPDATE borrow SET return_max_date = ? WHERE borrow_id = ?";
+				ps = dbConnection.prepareStatement(query); // צור PreparedStatement חדש
+				ps.setDate(1, Date.valueOf(date));
+				ps.setInt(2, borrowID);
+				ps.executeUpdate();
+				return "The book extended successfully";
+			}
+		} else {
+			return "Book not found in the database";
+		}
 	}
 
 	public void orderBook(int subID, int bookCode) throws SQLException {
@@ -828,7 +841,7 @@ public class DBconnector {
 
 	public void setCopyToReservedTable(int resID, int copyID) throws SQLException {
 		LocalDate today = LocalDate.now();
-		String query = "UPDATE reserved SET copy_id = ?, res_max_date = ?, order_status = 'waiting' WHERE res_id = ?";
+		String query = "UPDATE reserved SET copy_id = ?, res_max_date = ?, order_status = 'waiting' WHERE order_id = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, copyID);
 		ps.setDate(2, Date.valueOf(today.plusDays(2)));
@@ -859,21 +872,66 @@ public class DBconnector {
 		ps.executeUpdate();
 	}
 
-	public void allocateReturnedCopyToReserved(int bookID, int copyID) throws SQLException {
-		String query = "SELECT sub_id,res_id FROM reserved WHERE book_code = ? AND order_status = 'waiting' ORDER BY res_date ASC LIMIT 1";
+	public void allocateReturnedCopyToReserved(int bookID, int copyID) throws SQLException, InterruptedException {
+		String query = "SELECT sub_id,order_id FROM reserved WHERE book_code = ? AND order_status = 'waiting' ORDER BY res_date ASC LIMIT 1";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookID);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
 			int subid = rs.getInt("sub_id");
-			int resid = rs.getInt("res_id");
+			int resid = rs.getInt("order_id");
 			setCopyToReservedTable(resid, copyID);
+			Thread.sleep(1000);
 			changeStatusOfCopyOfBook(bookID, copyID, "reserved");
+			Thread.sleep(1000);
 			encreaseAmountOfReservation(bookID);
-			String desc = searchBookByID(bookID)
-					+ "is wating for you to borrow\n The reservation wiil be exired in 2 days";
-			sendNotificationToSubscriber(subid, desc);
+			Thread.sleep(1000);
+			String bookName = searchBookByID(bookID);
+			LocalDate resMaxDate = LocalDate.now().plusDays(2);
+			String description = "The book you reserved (" + bookName
+					+ ") is now waiting for you. Please collect it by " + resMaxDate + ".";
+			sendNotificationToSubscriber(subid, description);
+			Thread.sleep(1000);
+		} else {
+			changeStatusOfCopyOfBook(bookID, copyID, "exists");
 		}
+	}
+
+	public void checkExpiredReservations() throws SQLException, InterruptedException {
+		List<Map<String, Object>> results = new ArrayList<>();
+		String query = "SELECT order_id, book_code, copy_id " + "FROM reserved "
+				+ "WHERE res_max_date = ? AND order_status = 'waiting'";
+		try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+			LocalDate yesterday = LocalDate.now().minusDays(1);
+			ps.setDate(1, Date.valueOf(yesterday));
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					Map<String, Object> row = new HashMap<>();
+					row.put("book_code", rs.getInt("book_code"));
+					row.put("copy_id", rs.getInt("copy_id"));
+					row.put("order_id", rs.getInt("order_id"));
+					results.add(row);
+				}
+			}
+		}
+
+		for (Map<String, Object> reservation : results) {
+			int orderId = (int) reservation.get("order_id");
+			int bookCode = (int) reservation.get("book_code");
+			int copyId = (int) reservation.get("copy_id");
+			setExpired(orderId);
+			Thread.sleep(1000);
+			allocateReturnedCopyToReserved(bookCode, copyId);
+			Thread.sleep(1000);
+		}
+
+	}
+
+	public void setExpired(int orderID) throws SQLException {
+		String query = "UPDATE reserved SET order_status = 'expired' WHERE order_id = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, orderID);
+		ps.executeUpdate();
 	}
 
 	public void checkAndFreezeOverdueSubscribers() {

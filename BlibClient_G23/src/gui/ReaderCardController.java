@@ -176,13 +176,14 @@ public class ReaderCardController {
 	@FXML
 	private void onEditClick(ActionEvent event) throws InterruptedException {
 		LocalDate dueDate = dueDatePicker.getValue();
-
+		String res = "";
 		Map.Entry<Integer, Map<String, String>> selectedItem = borrowHistoryTableView.getSelectionModel()
 				.getSelectedItem();
 		if (selectedItem != null && dueDate != null) {
 			Integer borrowId = selectedItem.getKey();
 			System.out.println("Selected Borrow ID: " + borrowId);
-			bc.extendBorrowManualy(sub.getId(), borrowId, dueDate, "Manualy extend by: " + lib.getName());
+			res = bc.extendBorrowManualy(sub.getId(), borrowId, dueDate, "Manualy extend by: " + lib.getName());
+			ScreenLoader.showAlert("Extend Borrow", res);
 		} else {
 			ScreenLoader.showAlert("Error", "Please chose a row and fill the date field before editing.");
 		}
