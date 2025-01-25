@@ -80,6 +80,7 @@ public class ReaderCardController {
 
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
+		backButton.setText("Back");
 	}
 
 	public void setSubscriber(Subscriber s) {
@@ -156,8 +157,6 @@ public class ReaderCardController {
 		borrowHistoryTableView.setManaged(false);
 		activityRecordsTableView.setVisible(false);
 		activityRecordsTableView.setManaged(false);
-		editHBox.setVisible(false);
-		editHBox.setManaged(false);
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 
 		recordTypeColumn
@@ -195,8 +194,10 @@ public class ReaderCardController {
 		borrowHistoryTableView.setManaged(true);
 		activityRecordsTableView.setVisible(false);
 		activityRecordsTableView.setManaged(false);
-		editHBox.setVisible(true);
-		editHBox.setManaged(true);
+		if (lib != null) {
+			editHBox.setVisible(true);
+			editHBox.setManaged(true);
+		}
 		updateBorrowHistoryTable();
 	}
 
@@ -214,13 +215,18 @@ public class ReaderCardController {
 
 	@FXML
 	private void onBackClick(ActionEvent event) {
-		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Managment Subscriber", event, controller -> {
-			if (controller instanceof ManagmentSubscriberController) {
-				((ManagmentSubscriberController) controller).setStage(new Stage());
-				((ManagmentSubscriberController) controller).setClient(c);
-				((ManagmentSubscriberController) controller).setLibrarian(lib);
-			}
-		});
+		if (lib != null) {
+			ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Managment Subscriber", event,
+					controller -> {
+						if (controller instanceof ManagmentSubscriberController) {
+							((ManagmentSubscriberController) controller).setStage(new Stage());
+							((ManagmentSubscriberController) controller).setClient(c);
+							((ManagmentSubscriberController) controller).setLibrarian(lib);
+						}
+					});
 
+		} else {
+			ScreenLoader.closeWindow(backButton);
+		}
 	}
 }

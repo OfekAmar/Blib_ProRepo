@@ -58,7 +58,7 @@
 			</TableView>
 
 			<HBox fx:id="editHBox" alignment="CENTER" spacing="10"
-				style="-fx-padding: 10;">
+				style="-fx-padding: 10;" visible="false" managed="false">
 				<Label text="Due Date:" />
 				<DatePicker fx:id="dueDatePicker" />
 				<Button text="Edit" fx:id="editButton"
@@ -70,7 +70,8 @@
 	<bottom>
 		<HBox alignment="CENTER_LEFT" spacing="10"
 			style="-fx-padding: 10;">
-			<Button text="Back" fx:id="backButton" onAction="#onBackClick" />
+			<Button text="Close" fx:id="backButton"
+				onAction="#onBackClick" />
 		</HBox>
 	</bottom>
 

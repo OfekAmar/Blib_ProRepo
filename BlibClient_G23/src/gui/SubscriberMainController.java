@@ -39,6 +39,9 @@ public class SubscriberMainController {
 	private Button viewHistoryButton;
 
 	@FXML
+	private Button readerCard;
+
+	@FXML
 	private Button exitButton;
 
 	@FXML
@@ -111,12 +114,12 @@ public class SubscriberMainController {
 	}
 
 	@FXML
-	private void borrowHistoryClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreenWithSize("/gui/BorrowHistoryScreen.fxml", "Borrow History", event, controller -> {
-			if (controller instanceof BorrowHistoryController) {
-				((BorrowHistoryController) controller).setStage(stage);
-				((BorrowHistoryController) controller).setClientAndSubscrber(sub, cm);
+	private void onReaderCardClick(ActionEvent event) {
 
+		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+			if (controller instanceof ReaderCardController) {
+				((ReaderCardController) controller).setStage(stage);
+				((ReaderCardController) controller).setClientAndSubscriber(sub, cm);
 			}
 		}, 450, 300);
 	}
