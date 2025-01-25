@@ -84,12 +84,18 @@ public class ManagmentBookController {
 	
 	@FXML
 	private Button editCopyButton;
+	
+	@FXML
+	private Button resetSearchButton;
+	
+	@FXML
+	private TextField searchField;
 
 	private Stage stage;
 	private ClientMain c;
 	private Librarian lib;
 	private BookController bc;
-	
+	private Book searchBook=null;
 	private ObservableList<Book> booksList=FXCollections.observableArrayList();
 	private ObservableList<CopyOfBook> copiesList=FXCollections.observableArrayList();
 
@@ -144,9 +150,8 @@ public class ManagmentBookController {
 	
 	@FXML
 	private void loadCopiesToTable() {
-		
 	}
-
+	
 	@FXML
 	private void onAddBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/NewBookScreen.fxml", "Add new book", event, controller -> {
@@ -216,9 +221,49 @@ public class ManagmentBookController {
 	}
 
 	@FXML
-	private void onSearchBookClick(ActionEvent event) {
-
+	private void onSearchBookClick(ActionEvent event) throws InterruptedException {
+		String bookCode= searchField.getText();
+		
+		if(bookCode.isEmpty()) {
+			ScreenLoader.showAlert("Error", "Enter book code.");
+			return;
+		}
+			
+		try {
+			searchBook=bc.getBookByCode(Integer.valueOf(bookCode));
+			
+			
+			if(searchBook!=null) {
+				booksList.clear();
+				booksList.add(searchBook);
+				booksTable.refresh();
+				System.out.println("Book found: " +searchBook);
+			}else {
+				ScreenLoader.showAlert("Error", "Book not found");
+			}
+		}catch(NumberFormatException e) {
+			ScreenLoader.showAlert("Error", "Book code must be a number.");
+		}catch(InterruptedException e) {
+			e.printStackTrace();
+			ScreenLoader.showAlert("Error", "Failed to fetch book.");
+		}
 	}
+	
+	@FXML
+	private void onResetSearchClick(ActionEvent event) {
+			try {
+				List<Book> books = bc.getAllBooks();
+				booksList.setAll(books);
+				searchField.setText("");
+				copiesTable.setVisible(false);
+				copiesTable.setManaged(false);
+				booksTable.refresh();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				ScreenLoader.showAlert("Error", "Failed to fetch");
+			}
+	}
+
 	
 	@FXML
 	private void onAddCopyClick(ActionEvent event) {
@@ -237,15 +282,25 @@ public class ManagmentBookController {
 				newCopyController.setBook(selectedBook);
 				
 				newCopyController.setOnCopyAddedCallback(newCopy -> {
-					if(booksList!=null) {
+					if(copiesList!=null) {
 						 copiesList.add(newCopy);
 			             Platform.runLater(() -> copiesTable.refresh()); 
 			             System.out.println("New copy added to table: " + newCopy);
+			             
+			             try {
+			            	 List<Book> updatedbooks=bc.getAllBooks();
+			            	 booksList.setAll(updatedbooks);
+			            	 Platform.runLater(()-> booksTable.refresh());
+			             }catch(InterruptedException e) {
+			            	 e.printStackTrace();
+			            	 ScreenLoader.showAlert("Error", "Failed to update book table");
+			             }
 					}else {
 						System.out.println("copiesList is null");
 					}
 	               
 	            });
+				
 			}
 		});
 	}

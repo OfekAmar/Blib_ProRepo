@@ -424,7 +424,21 @@ public class DBconnector {
 			return "ERROR: " + e.getMessage();
 		}
 	}
-
+	
+	public Book getBookByCode(int bookCode) throws SQLException {
+		String query = "SELECT * FROM book WHERE book_code = ?";
+		// Subscriber sub;
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setInt(1, bookCode);
+		ResultSet rs = ps.executeQuery();
+		if (rs.next()) {
+			return new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), 
+					rs.getString("subject"), rs.getString("description"), rs.getInt("amount_of_copies"));
+		} else {
+			throw new IllegalArgumentException("Book with code " + bookCode + "not found.");
+		}
+	}
+	
 	public List<Book> getAllBooks() throws SQLException {
 		List<Book> booksList = new ArrayList<>();
 		Book book;
