@@ -75,7 +75,7 @@ public class ManagmentSubscriberController {
 	@FXML
 	private void onReaderCardClick(ActionEvent event) {
 		if (searchedsubs != null) {
-			ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+			ScreenLoader.openPopUpScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 				if (controller instanceof ReaderCardController) {
 					((ReaderCardController) controller).setStage(stage);
 					((ReaderCardController) controller).setClientAndSubscriber(searchedsubs, c);

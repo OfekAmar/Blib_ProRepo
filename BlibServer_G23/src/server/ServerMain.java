@@ -30,7 +30,7 @@ public class ServerMain extends AbstractServer {
 
 	public ServerMain(int port) {
 		super(port);
-		this.dbConnector = new DBconnector();
+		this.dbConnector = DBconnector.getInstance();
 		this.scheduler = Executors.newScheduledThreadPool(1);
 		startDailyOverdueCheck();
 	}

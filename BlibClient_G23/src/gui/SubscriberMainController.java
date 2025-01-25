@@ -129,9 +129,7 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
 			if (controller instanceof ExtendBorrowController) {
 				((ExtendBorrowController) controller).setStage(stage);
-				// ((ExtendBorrowController) controller).setSubscriber(sub); // Setting
-				// Subscriber
-				((ExtendBorrowController) controller).setClient(cm, sub); // Setting ClientMain
+				((ExtendBorrowController) controller).setClient(cm, sub);
 			}
 		});
 	}
@@ -142,16 +140,6 @@ public class SubscriberMainController {
 			if (controller instanceof SubscriberDetailsController) {
 				((SubscriberDetailsController) controller).setStage(new Stage(), cm);
 				((SubscriberDetailsController) controller).setSubscriber(sub);
-			}
-		});
-	}
-
-	@FXML
-	private void onHistoryClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreen("/gui/HistoryScreen.fxml", "Search Book", event, controller -> {
-			if (controller instanceof HistoryController) {
-				((HistoryController) controller).setStage(stage);
-				((HistoryController) controller).setSubscriber(sub);
 			}
 		});
 	}
