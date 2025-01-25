@@ -82,7 +82,7 @@ public class ReturnBookController {
 		ReturnController returnController = new ReturnController(cm);
 		try {
 			ScreenLoader.showAlert("Success", returnController.returnBook(bookCode, copyId));
-			returnController.returnBook(bookCode, copyId);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
