@@ -729,7 +729,6 @@ public class DBconnector {
 	}
 
 	public String findExistCopy(int bookCode) throws SQLException {
-		String str;
 		String query = "SELECT copy_id, status, location FROM copyofbook WHERE book_code = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
 		ps.setInt(1, bookCode);
