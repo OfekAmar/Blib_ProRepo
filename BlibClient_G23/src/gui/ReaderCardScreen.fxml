@@ -54,6 +54,8 @@
 					<TableColumn fx:id="recordDateColumn"
 						text="Record Date" />
 					<TableColumn fx:id="bookCodeColumn" text="Book Code" />
+					<TableColumn fx:id="descriptionColumn"
+						text="description" />
 				</columns>
 			</TableView>
 

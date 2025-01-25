@@ -659,7 +659,7 @@ public class DBconnector {
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
 			Record r = new Record(rs.getInt("record_id"), rs.getString("record_type"), rs.getInt("sub_id"),
-					rs.getDate("record_date").toString(), rs.getInt("book_code"));
+					rs.getDate("record_date").toString(), rs.getInt("book_code"), rs.getString("description"));
 			records.add(r);
 		}
 		return records;
@@ -778,7 +778,7 @@ public class DBconnector {
 
 		while (rs.next()) {
 			Record record = new Record(rs.getInt("record_id"), rs.getString("record_type"), rs.getInt("sub_id"),
-					rs.getString("record_date"), rs.getInt("book_code"));
+					rs.getString("record_date"), rs.getInt("book_code"), rs.getString("description"));
 			records.add(record);
 		}
 
