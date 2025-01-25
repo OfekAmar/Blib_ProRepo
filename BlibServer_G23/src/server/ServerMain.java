@@ -175,6 +175,16 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid EDIT_COPY_OF_BOOK format.");
 					}
 					break;
+					
+				case "GET_BOOK_BY_CODE":
+					if (parts.length == 2) {
+						int bookCode = Integer.valueOf(parts[1]);
+						Book book = dbConnector.getBookByCode(bookCode);
+						client.sendToClient(book);
+					} else {
+						client.sendToClient("ERROR: Invalid GET_BOOK_BY_CODE format.");
+					}
+					break;
 
 				case "EDIT_SUBSCRIBER":
 					if (parts.length == 5) {

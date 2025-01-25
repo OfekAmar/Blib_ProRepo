@@ -49,7 +49,7 @@ public class rotemIritTest {
 			// System.out.println(sc.getAllSubscribers());
 			
 			BookController bc=new BookController(c);
-			System.out.println(bc.getAllBooks());
+			System.out.println(bc.getBookByCode(3));
 
 		} catch (IOException e) {
 			System.err.println("Failed to connect to server: " + e.getMessage());

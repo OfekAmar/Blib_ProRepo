@@ -135,6 +135,40 @@ public class BookController {
 			return null;
 		}
 	}
+    
+    public synchronized Book getBookByCode(int bookCode) throws InterruptedException {
+    	String msg = "GET_BOOK_BY_CODE,"+bookCode;
+    	latch = new CountDownLatch(1);
+
+    	client.setMessageHandler((Object serverResponse) -> {
+    		if (serverResponse instanceof Book) {
+    			try {
+    				Book book = (Book) serverResponse;
+    				this.response = book;
+    			} catch (ClassCastException e) {
+   					System.err.println("Failed to cast response to Book: " + e.getMessage());
+   				}
+   			} else {
+    				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
+    		}
+    		latch.countDown(); // Release the latch
+   		});
+   		client.sendMessageToServer(msg); // Send the message to the server
+   		latch.await(); // Wait for the response
+   		if (response instanceof Book) {
+    		try {
+    			return (Book) response;
+    		} catch (ClassCastException e) {
+   				System.err.println("Failed to cast response to Book: " + e.getMessage());
+   				return null;
+   			}
+   		} else {
+   			System.err.println("Response is not of type Book.");
+    		return null;
+   		}
+
+   	}
+    
   
        
     public synchronized void updateCopyStatus(String bookCode, String copyId, String status) throws InterruptedException {

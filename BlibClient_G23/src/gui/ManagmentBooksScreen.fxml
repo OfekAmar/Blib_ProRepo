@@ -18,6 +18,7 @@
 				<TextField fx:id="searchField" promptText="Enter book id" />
 				<Button fx:id="searchButton" onAction="#onSearchBookClick" text="Search Book" />
 				<Button fx:id="scanBookBarcodeButton" onAction="#onScanBookBarcodeClick" text="Scan Book Barcode" />
+            <Button fx:id="resetSearchButton" layoutX="372.0" layoutY="20.0" onAction="#onResetSearchClick" text="reset search" />
 			</HBox>
 		</VBox>
 	</top>
@@ -60,8 +61,8 @@
          </HBox>
          <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="40.0">
             <children>
-               <Button fx:id="addCopyButton" managed="false" visible="false" onAction="#onAddCopyClick" text="Add copy" />
-               <Button fx:id="editCopyButton" managed="false" visible="false" onAction="#onEditCopyClick" text="Edit copy" />
+               <Button fx:id="addCopyButton" managed="false" onAction="#onAddCopyClick" text="Add copy" visible="false" />
+               <Button fx:id="editCopyButton" managed="false" onAction="#onEditCopyClick" text="Edit copy" visible="false" />
             </children>
          </HBox>
 		</VBox>
