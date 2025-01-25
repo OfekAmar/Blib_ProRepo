@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -62,6 +63,9 @@ public class ReaderCardController {
 
 	@FXML
 	private TableColumn<Record, String> recordTypeColumn, recordDateColumn, descriptionColumn;
+	
+	@FXML
+	private Label idLabel;
 
 	private ObservableList<Record> recordData;
 
@@ -99,6 +103,10 @@ public class ReaderCardController {
 		bc = new BorrowController(sc, c);
 		updateBorrowHistoryTable();
 	}
+	
+	public void setDetails() {
+		idLabel.setText(Integer.toString(sub.getId()));
+	}
 
 	private void updateBorrowHistoryTable() {
 		borrowIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getKey()));
@@ -131,8 +139,8 @@ public class ReaderCardController {
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 		recordTypeColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
-		subscriberIDColumn
-				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
+		//subscriberIDColumn
+		//		.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));
 		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
@@ -164,8 +172,8 @@ public class ReaderCardController {
 		recordTypeColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
 
-		subscriberIDColumn
-				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
+		//subscriberIDColumn
+				//.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
 
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));

@@ -30,7 +30,7 @@ import logic.CopyOfBook;
 public class ManagmentBookController {
 	@FXML
 	private TableView<Book> booksTable;
-	
+
 	@FXML
 	private TableView<CopyOfBook> copiesTable;
 
@@ -51,21 +51,18 @@ public class ManagmentBookController {
 
 	@FXML
 	private TableColumn<Book, Integer> totalCopiesColumn;
-	
+
 	@FXML
 	private TableColumn<CopyOfBook, Integer> copyIDColumn;
-	
+
 	@FXML
 	private TableColumn<CopyOfBook, String> locationColumn;
-	
+
 	@FXML
 	private TableColumn<CopyOfBook, String> statusColumn;
 
 	@FXML
 	private Button addNewBookButton;
-
-	@FXML
-	private Button deleteBookButton;
 
 	@FXML
 	private Button viewCopiesButton;
@@ -78,16 +75,16 @@ public class ManagmentBookController {
 
 	@FXML
 	private Button backButton;
-	
+
 	@FXML
 	private Button addCopyButton;
-	
+
 	@FXML
 	private Button editCopyButton;
-	
+
 	@FXML
 	private Button resetSearchButton;
-	
+
 	@FXML
 	private TextField searchField;
 
@@ -95,10 +92,9 @@ public class ManagmentBookController {
 	private ClientMain c;
 	private Librarian lib;
 	private BookController bc;
-	private Book searchBook=null;
-	private ObservableList<Book> booksList=FXCollections.observableArrayList();
-	private ObservableList<CopyOfBook> copiesList=FXCollections.observableArrayList();
-
+	private Book searchBook = null;
+	private ObservableList<Book> booksList = FXCollections.observableArrayList();
+	private ObservableList<CopyOfBook> copiesList = FXCollections.observableArrayList();
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -109,7 +105,6 @@ public class ManagmentBookController {
 		bc = new BookController(c);
 		System.out.println("Setclient bookcontoller worked");
 		loadBooksToTable();
-		loadCopiesToTable();
 	}
 
 	public void setLibrarian(Librarian lib) {
@@ -131,14 +126,14 @@ public class ManagmentBookController {
 		subjectColumn.setCellValueFactory(new PropertyValueFactory<>("subject"));
 		descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
 		totalCopiesColumn.setCellValueFactory(new PropertyValueFactory<>("totalCopies"));
-		
+
 		booksTable.setItems(booksList);
 
 		Platform.runLater(() -> {
 			try {
 				List<Book> books = bc.getAllBooks();
 				System.out.println("Books fetched for table: " + books);
-				//booksTable.setItems(FXCollections.observableArrayList(books));
+				// booksTable.setItems(FXCollections.observableArrayList(books));
 				booksList.setAll(books);
 				System.out.println("books loaded into table");
 			} catch (InterruptedException e) {
@@ -147,36 +142,28 @@ public class ManagmentBookController {
 			}
 		});
 	}
-	
-	@FXML
-	private void loadCopiesToTable() {
-	}
-	
+
+
 	@FXML
 	private void onAddBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/NewBookScreen.fxml", "Add new book", event, controller -> {
 			if (controller instanceof NewBookController) {
-				NewBookController newBookController=(NewBookController)controller;
+				NewBookController newBookController = (NewBookController) controller;
 				((NewBookController) controller).setStage(new Stage());
 				((NewBookController) controller).setClient(c);
-				
+
 				newBookController.setOnBookAddedCallback(newBook -> {
-					if(booksList!=null) {
-						 booksList.add(newBook);
-			             Platform.runLater(() -> booksTable.refresh()); 
-			             System.out.println("New book added to table: " + newBook);
-					}else {
+					if (booksList != null) {
+						booksList.add(newBook);
+						Platform.runLater(() -> booksTable.refresh());
+						System.out.println("New book added to table: " + newBook);
+					} else {
 						System.out.println("bookList is null");
 					}
-	               
-	            });
+
+				});
 			}
 		});
-	}
-
-	@FXML
-	private void onDeleteBookClick(ActionEvent event) {
-
 	}
 
 	@FXML
@@ -184,31 +171,30 @@ public class ManagmentBookController {
 		copyIDColumn.setCellValueFactory(new PropertyValueFactory<>("copyID"));
 		locationColumn.setCellValueFactory(new PropertyValueFactory<>("location"));
 		statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-		
+
 		copiesTable.setItems(copiesList);
-		
-		Book selectedBook=booksTable.getSelectionModel().getSelectedItem();
-		
-		
-		if(selectedBook==null) {
+
+		Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+
+		if (selectedBook == null) {
 			ScreenLoader.showAlert("Error", "Select a book to view its copies.");
 			return;
 		}
 		copiesTable.setVisible(true);
 		copiesTable.setManaged(true);
-		
+
 		addCopyButton.setVisible(true);
 		addCopyButton.setManaged(true);
-		
+
 		editCopyButton.setVisible(true);
 		editCopyButton.setManaged(true);
-		
+
 		Platform.runLater(() -> {
 			try {
-				List<CopyOfBook> copies=bc.getAllBookCopies(selectedBook.getId());
+				List<CopyOfBook> copies = bc.getAllBookCopies(selectedBook.getId());
 				copiesList.setAll(copies);
-				System.out.println("Copies loaded into table: "+copies);
-			}catch(Exception e) {
+				System.out.println("Copies loaded into table: " + copies);
+			} catch (Exception e) {
 				e.printStackTrace();
 				ScreenLoader.showAlert("Error", "Failed to fetch");
 			}
@@ -222,92 +208,128 @@ public class ManagmentBookController {
 
 	@FXML
 	private void onSearchBookClick(ActionEvent event) throws InterruptedException {
-		String bookCode= searchField.getText();
-		
-		if(bookCode.isEmpty()) {
+		String bookId = searchField.getText();
+
+		if (bookId.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Enter book code.");
 			return;
 		}
-			
+
 		try {
-			searchBook=bc.getBookByCode(Integer.valueOf(bookCode));
-			
-			
-			if(searchBook!=null) {
+			searchBook = bc.getBookByCode(Integer.valueOf(bookId));
+
+			if (searchBook != null) {
 				booksList.clear();
 				booksList.add(searchBook);
 				booksTable.refresh();
-				System.out.println("Book found: " +searchBook);
-			}else {
+				System.out.println("Book found: " + searchBook);
+			} else {
 				ScreenLoader.showAlert("Error", "Book not found");
 			}
-		}catch(NumberFormatException e) {
-			ScreenLoader.showAlert("Error", "Book code must be a number.");
-		}catch(InterruptedException e) {
+		} catch (NumberFormatException e) {
+			ScreenLoader.showAlert("Error", "Book Id must be a number.");
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			ScreenLoader.showAlert("Error", "Failed to fetch book.");
 		}
 	}
-	
+
 	@FXML
 	private void onResetSearchClick(ActionEvent event) {
-			try {
-				List<Book> books = bc.getAllBooks();
-				booksList.setAll(books);
-				searchField.setText("");
-				copiesTable.setVisible(false);
-				copiesTable.setManaged(false);
-				booksTable.refresh();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				ScreenLoader.showAlert("Error", "Failed to fetch");
-			}
+		try {
+			List<Book> books = bc.getAllBooks();
+			booksList.setAll(books);
+			searchField.setText("");
+			copiesTable.setVisible(false);
+			copiesTable.setManaged(false);
+			booksTable.refresh();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			ScreenLoader.showAlert("Error", "Failed to fetch");
+		}
 	}
 
-	
 	@FXML
 	private void onAddCopyClick(ActionEvent event) {
-		Book selectedBook=booksTable.getSelectionModel().getSelectedItem();
-		if(selectedBook==null) {
+		Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+		if (selectedBook == null) {
 			ScreenLoader.showAlert("Error", "Select a book.");
 			return;
 		}
-		
+
 		ScreenLoader.openPopUpScreen("/gui/NewCopyScreen.fxml", "Add new copy", event, controller -> {
 			if (controller instanceof NewCopyController) {
-				NewCopyController newCopyController=(NewCopyController)controller;
-				((NewCopyController) controller).setStage(new Stage());
-				((NewCopyController) controller).setClient(c);
-				
+				NewCopyController newCopyController = (NewCopyController) controller;
+				newCopyController.setStage(new Stage());
+				newCopyController.setClient(c);
+
 				newCopyController.setBook(selectedBook);
-				
+
 				newCopyController.setOnCopyAddedCallback(newCopy -> {
-					if(copiesList!=null) {
-						 copiesList.add(newCopy);
-			             Platform.runLater(() -> copiesTable.refresh()); 
-			             System.out.println("New copy added to table: " + newCopy);
-			             
-			             try {
-			            	 List<Book> updatedbooks=bc.getAllBooks();
-			            	 booksList.setAll(updatedbooks);
-			            	 Platform.runLater(()-> booksTable.refresh());
-			             }catch(InterruptedException e) {
-			            	 e.printStackTrace();
-			            	 ScreenLoader.showAlert("Error", "Failed to update book table");
-			             }
-					}else {
+					if (copiesList != null) {
+						copiesList.add(newCopy);
+						Platform.runLater(() -> copiesTable.refresh());
+						System.out.println("New copy added to table: " + newCopy);
+
+						try {
+							List<Book> updatedbooks = bc.getAllBooks();
+							booksList.setAll(updatedbooks);
+							Platform.runLater(() -> booksTable.refresh());
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							ScreenLoader.showAlert("Error", "Failed to update book table");
+						}
+					} else {
 						System.out.println("copiesList is null");
 					}
-	               
-	            });
-				
+
+				});
+
 			}
 		});
 	}
-	
+
 	@FXML
 	private void onEditCopyClick(ActionEvent event) {
+		Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
+		CopyOfBook selectedCopy = copiesTable.getSelectionModel().getSelectedItem();
+		if (selectedCopy == null) {
+			ScreenLoader.showAlert("Error", "Select a copy.");
+			return;
+		}
+
+		ScreenLoader.openPopUpScreen("/gui/editCopyScreen.fxml", "Edit copy screen", event, controller -> {
+			if (controller instanceof EditCopyController) {
+				EditCopyController editCopyController = (EditCopyController) controller;
+				((EditCopyController) controller).setStage(new Stage());
+				((EditCopyController) controller).setClient(c);
 		
+
+				editCopyController.setBook(selectedCopy,selectedBook);
+
+				editCopyController.setOnCopyEditedCallback(editedCopy -> {
+					if (copiesList != null) {
+						copiesList.setAll(editedCopy);
+						Platform.runLater(() -> copiesTable.refresh());
+						System.out.println("Edit copy updated in table: " + editedCopy);
+						
+						try {
+							List<CopyOfBook> updatedCopies = bc.getAllBookCopies(selectedBook.getId());
+							copiesList.setAll(updatedCopies);
+							Platform.runLater(() -> copiesTable.refresh());
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							ScreenLoader.showAlert("Error", "Failed to update copies table");
+						}
+					} else {
+						System.out.println("copiesList is null");
+					}
+
+				});
+
+			}
+		});
+		booksTable.requestFocus();
 	}
 
 	@FXML
@@ -320,6 +342,5 @@ public class ManagmentBookController {
 			}
 		});
 	}
-	
-	
+
 }
