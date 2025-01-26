@@ -22,18 +22,42 @@ import logic.Record;
 import ocsf.server.AbstractServer;
 import ocsf.server.ConnectionToClient;
 
+/**
+ * The `ServerMain` class is the main server class that handles client
+ * communication, processes various commands, and performs scheduled tasks such
+ * as overdue checks and notifications. This class extends the `AbstractServer`
+ * class from the OCSF framework.
+ */
+
 public class ServerMain extends AbstractServer {
 
 	private final DBconnector dbConnector;
 
 	private final ScheduledExecutorService scheduler;
 
+	/**
+	 * Constructor for the `ServerMain` class.
+	 * 
+	 * @param port the port number on which the server will listen for client
+	 *             connections
+	 */
 	public ServerMain(int port) {
 		super(port);
 		this.dbConnector = DBconnector.getInstance();
 		this.scheduler = Executors.newScheduledThreadPool(1);
 		startDailyOverdueCheck();
 	}
+
+	/**
+	 * Starts a daily scheduled task to perform the following operations:
+	 * 
+	 * Check and freeze overdue subscribers.
+	 * 
+	 * Check and handle expired reservations.
+	 * 
+	 * Send notifications for borrows due tomorrow.
+	 * 
+	 */
 
 	private void startDailyOverdueCheck() {
 		scheduler.scheduleAtFixedRate(() -> {
@@ -51,6 +75,10 @@ public class ServerMain extends AbstractServer {
 		}, 0, 1, TimeUnit.DAYS); // Initial delay = 0, repeats every 1 day
 	}
 
+	/**
+	 * Checks for borrows that are due tomorrow and sends notifications to the
+	 * corresponding subscribers.
+	 */
 	private void checkAndNotifyDueTomorrow() {
 		System.out.println("Running due-tomorrow notification check...");
 
@@ -75,6 +103,12 @@ public class ServerMain extends AbstractServer {
 		}
 	}
 
+	/**
+	 * Sends a notification to a specific subscriber.
+	 *
+	 * @param subId       the ID of the subscriber
+	 * @param description the description of the notification
+	 */
 	private void sendNotificationToSubscriber(int subId, String description) {
 		System.out.println("Sending notification to Subscriber ID " + subId + ": " + description);
 
@@ -96,6 +130,14 @@ public class ServerMain extends AbstractServer {
 		super.finalize();
 	}
 
+	/**
+	 * Handles messages received from the client and processes the corresponding
+	 * commands. Using switch case and Strings commands received from server every
+	 * function in the DBconnector will operate.
+	 *
+	 * @param msg    the message received from the client
+	 * @param client the client connection from which the message was received
+	 */
 	@Override
 	protected synchronized void handleMessageFromClient(Object msg, ConnectionToClient client) {
 		System.out.println("Processing message from client: " + msg);
@@ -230,12 +272,8 @@ public class ServerMain extends AbstractServer {
 						String password = parts[2];
 						Object user = dbConnector.login(userName, password);
 						if (user instanceof Subscriber) {
-							// Subscriber sub=(Subscriber)user;
-							// client.sendToClient("Logged in as Subscriber: " + sub);
 							client.sendToClient(user);
 						} else if (user instanceof Librarian) {
-							// Librarian lib=(Librarian)user;
-							// client.sendToClient("Logged in as Librarian: " + lib);
 							client.sendToClient(user);
 						} else if (user instanceof String) {
 							client.sendToClient(user);

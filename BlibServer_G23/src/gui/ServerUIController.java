@@ -6,25 +6,24 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import ocsf.server.ConnectionToClient;
 import server.ServerMain;
-//this class is used to manage all the user input to the GUI window, its the connection 
-// between the GUI window and the code logic
+
+/**
+ * this class is used to manage all the user input to the GUI window, its the
+ * connection between the GUI window and the code logic
+ */
 public class ServerUIController {
 	@FXML
-	private ListView<String> connectionList; //FXML component to present list in the GUI
-	//JavaFX List that notifies when changes are made, it bound to the UI and keep it updated
-	private ObservableList<String> connections; 
-	private ServerMain server; // ServerMain instance 
+	private ListView<String> connectionList; // FXML component to present list in the GUI
+	private ObservableList<String> connections;
+	private ServerMain server; // ServerMain instance
 
-	//declaration of the lis and connect it to the GUI list
+	// declaration of the list and connect it to the GUI list
 	@FXML
 	public void initialize() {
 		connections = FXCollections.observableArrayList();
 		connectionList.setItems(connections);
 	}
 
-	//start the server if not working with "5555" port
-	//and override the clientConnected and clientDisconnected method 
-	//in order to update the status on the go while the GUI is on
 	@FXML
 	public void startServer() {
 		if (server == null) {
@@ -51,7 +50,7 @@ public class ServerUIController {
 		}
 	}
 
-	//the class close the server if it runs and clean the connection list
+	// the class close the server if it runs and clean the connection list
 	@FXML
 	public void stopServer() {
 		if (server != null) {

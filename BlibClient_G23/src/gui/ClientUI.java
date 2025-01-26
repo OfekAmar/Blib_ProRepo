@@ -6,12 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-//the class creat the GUI window for the client the clientConnect screen
-//while she extands Application (JavaFX)
+/**
+ * the class creat the GUI window for the client the clientConnect screen while
+ * she extands Application (JavaFX) ///
+ */
 public class ClientUI extends Application {
-
-	// this method called automaticly when using launch(in the main method)
-	// primaryStage - presents the main "stage" (GUI window) of the application
+	/**
+	 * this method called automaticly when using launch(in the main method)
+	 * primaryStage - presents the main "stage" (GUI window) of the application
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// FMXL loading stage, load the FXML file that have the UI(design)
@@ -20,7 +23,6 @@ public class ClientUI extends Application {
 		primaryStage.setScene(new Scene(root, 350, 350));
 		primaryStage.show();
 	}
-	// hello im here ofek
 
 	public static void main(String[] args) {
 		launch(args);

@@ -44,11 +44,8 @@ public class BorrowHistoryController {
 	@FXML
 	private Button editButton;
 
-	private ObservableList<String> obslist;
 	private Subscriber sub;
-	private List<String> subscribers; // Example list of subscribers (replace with database integration)
 	private Stage stage;
-	private ArrayList<String> result;
 	private ClientMain c;
 	private SubscriberController sc;
 
