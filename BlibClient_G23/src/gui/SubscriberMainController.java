@@ -158,7 +158,7 @@ public class SubscriberMainController {
 	@FXML
 	private void onReaderCardClick(ActionEvent event) {
 
-		ScreenLoader.openScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+		ScreenLoader.openPopUpScreenWithSize("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
 				((ReaderCardController) controller).setStage(stage);
 				((ReaderCardController) controller).setClientAndSubscriber(sub, cm);
