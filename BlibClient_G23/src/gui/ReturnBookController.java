@@ -42,16 +42,29 @@ public class ReturnBookController {
 	private Librarian lib; // The librarian currently managing the process.
 	private ClientMain cm;
 
+	/**
+	 * Sets the stage for the current screen.
+	 * 
+	 * @param stage the current {@link Stage}
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
-	// The client instance for communicating with the backend
-
+	/**
+	 * Sets the client instance for backend communication.
+	 * 
+	 * @param cm the client instance of type {@link ClientMain}
+	 */
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}
 
+	/**
+	 * Sets the librarian managing the return process.
+	 * 
+	 * @param lib the {@link Librarian} managing the process
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
@@ -114,6 +127,11 @@ public class ReturnBookController {
 		ScreenLoader.showAlert("Scan Book", "Scanning book...");
 	}
 
+	/**
+	 * Handles the action of navigating back to the Librarian Main Screen.
+	 *
+	 * @param event the ActionEvent triggered by the user
+	 */
 	@FXML
 	private void onBackToMain(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {

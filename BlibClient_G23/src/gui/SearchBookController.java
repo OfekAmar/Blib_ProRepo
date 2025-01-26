@@ -63,16 +63,31 @@ public class SearchBookController {
 	private boolean searchbuttonflag = true;
 	private List<Book> books;
 
+	/**
+	 * Sets the stage for the current screen.
+	 * 
+	 * @param stage the current {@link Stage}
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 
 	}
 
+	/**
+	 * Sets the login status and updates button visibility based on it.
+	 * 
+	 * @param l the logged-in status of the user
+	 */
 	public void setLoggedIn(boolean l) {
 		this.loggedIn = l;
 		updateButtonsVisibility();
 	}
 
+	/**
+	 * Sets the client instance used for communication.
+	 * 
+	 * @param c the client instance of type {@link ClientMain}
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
@@ -210,6 +225,12 @@ public class SearchBookController {
 		}
 	}
 
+	/**
+	 * Handles the action of going back to the previous screen when the "Back"
+	 * button is clicked.
+	 *
+	 * @param event the triggered event when the "Back" button is clicked
+	 */
 	@FXML
 	private void handleBack(ActionEvent event) {
 
@@ -221,6 +242,12 @@ public class SearchBookController {
 		});
 	}
 
+	/**
+	 * Handles the action of closing the current window when the "Close" button is
+	 * clicked.
+	 *
+	 * @param event the triggered event when the "Close" button is clicked
+	 */
 	@FXML
 	private void handleClose(ActionEvent event) {
 		ScreenLoader.closeWindow(closeButton);

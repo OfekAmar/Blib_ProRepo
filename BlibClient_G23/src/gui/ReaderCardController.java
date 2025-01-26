@@ -115,7 +115,7 @@ public class ReaderCardController {
 	/**
 	 * Sets the subscriber whose details are being viewed.
 	 *
-	 * @param s the {@link ClientMain} instance
+	 * @param c the {@link ClientMain} instance
 	 */
 	public void setClientMain(ClientMain c) {
 		this.c = c;

@@ -225,7 +225,7 @@ public class ScreenLoader {
 	/**
 	 * Closes the current window associated with the given button.
 	 *
-	 * @param button the button whose window is to be closed.
+	 * @param b the button whose window is to be closed.
 	 */
 
 	public static void closeWindow(Button b) {
