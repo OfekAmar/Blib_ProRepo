@@ -16,17 +16,24 @@ import logic.Librarian;
 import logic.ScreenLoader;
 import logic.SubscriberController;
 
+/**
+ * Controller for managing the borrowing of books in the library system.
+ */
 public class BorrowBookController {
-
+	 /**
+     * Field for entering subscriber details.
+     */
 	@FXML
 	private TextField subscriberField;
-
+	 /**
+     * Field for entering book details.
+     */
 	@FXML
 	private TextField bookField;
-
+	 
 	@FXML
 	private Button scanSubscriberButton;
-
+	
 	@FXML
 	private Button scanBookButton;
 
@@ -35,37 +42,46 @@ public class BorrowBookController {
 
 	@FXML
 	private Button backButton;
-
+	/**
+     * DatePicker to select the due date for borrowing.
+     */
 	@FXML
 	private DatePicker datePicker;
 
 	private Stage stage;
 	private Librarian lib;
-
+	/**
+     * Sets the stage for the controller.
+     * 
+     * @param stage the current stage
+     */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
-
+	/**
+     * Sets the librarian associated with the current session.
+     * 
+     * @param lib the librarian object
+     */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
 
-	@FXML
-	private void onEnterSubscriber(ActionEvent event) {
-
-	}
-
-	@FXML
-	private void onEnterBook(ActionEvent event) {
-
-	}
 
 	private ClientMain cm;
-
+	 /**
+     * Sets the client for communication with the server.
+     * 
+     * @param cm the client object
+     */
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}
-
+	  /**
+     * Handles the acceptance of a borrowing request.
+     * 
+     * @param event the action event
+     */
 	@FXML
 	private void onAcceptClick(ActionEvent event) {
 		String subscriberInfo = subscriberField.getText();
@@ -129,19 +145,32 @@ public class BorrowBookController {
 		}
 
 	}
+	/**
+     * Action event handler for scanning subscriber information.
+     * 
+     * @param event the action event
+     */
 
 	@FXML
 	private void onScanSubscriber(ActionEvent event) {
 		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Subscriber", "Scanning subscriber card...");
 	}
-
+	/**
+     * Action event handler for scanning book information.
+     * 
+     * @param event the action event
+     */
 	@FXML
 	private void onScanBook(ActionEvent event) {
 		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Book", "Scanning book...");
 	}
-
+	/**
+     * Navigates back to the librarian main screen.
+     * 
+     * @param event the action event
+     */
 	@FXML
 	private void onBackToMain(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
