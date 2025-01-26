@@ -101,16 +101,32 @@ public class ManagmentBookController {
 	private ObservableList<Book> booksList = FXCollections.observableArrayList();
 	private ObservableList<CopyOfBook> copiesList = FXCollections.observableArrayList();
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 * 
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller and loads the books into the
+	 * table.
+	 * 
+	 * @param c the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 		bc = new BookController(c);
 		loadBooksToTable();
 	}
 
+	/**
+	 * Loads the list of books into the table view by fetching data from the server.
+	 * Uses {@link BookController} to get the list of all books and populate the
+	 * table.
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 		// welcomeLabel.setText("Hello, " + lib.getName() + "!");
@@ -214,6 +230,11 @@ public class ManagmentBookController {
 		});
 	}
 
+	/**
+	 * Handles the scan book functionality. Searches for a book by its ID.
+	 *
+	 * @param event the event triggered by clicking the "Search" button
+	 */
 	@FXML
 	private void onScanBookBarcodeClick(ActionEvent event) {
 		ScreenLoader.showAlert("Scan Book", "Scan book please");
@@ -364,6 +385,12 @@ public class ManagmentBookController {
 		booksTable.requestFocus();
 	}
 
+	/**
+	 * Handles the "Back" button click event. Navigates back to the Librarian's main
+	 * screen.
+	 * 
+	 * @param event the {@link ActionEvent} triggered by clicking the "Back" button
+	 */
 	@FXML
 	private void onBackClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {

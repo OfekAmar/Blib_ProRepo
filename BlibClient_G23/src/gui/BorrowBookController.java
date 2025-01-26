@@ -44,20 +44,31 @@ public class BorrowBookController {
 
 	private Stage stage;
 	private Librarian lib;
+	private ClientMain cm;
 
-
+	/**
+	 * Sets the stage for the controller.
+	 *
+	 * @param stage the current stage of the application
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
-
+	/**
+	 * Sets the librarian for the controller.
+	 *
+	 * @param lib the librarian object
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
 
-	private ClientMain cm;
-
-
+	/**
+	 * Sets the client for the controller.
+	 *
+	 * @param cm the {@link ClientMain} instance
+	 */
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}

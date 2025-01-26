@@ -42,30 +42,51 @@ public class ExtendBorrowController {
 	private Stage stage;
 	private Subscriber sub;
 	LocalDate currentDate = LocalDate.now();
+	private ClientMain cm;
 
+	/**
+	 * Sets the stage for the controller.
+	 *
+	 * @param stage the current stage of the application
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the subscriber for the controller.
+	 *
+	 * @param s the current subscriber of the application
+	 */
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 	}
 
-	private ClientMain cm;
-
+	/**
+	 * Sets the client and subscriber for the controller. This also triggers
+	 * fetching the borrowed books for the subscriber.
+	 *
+	 * @param cm the client instance
+	 * @param s  the subscriber whose borrowed books are being managed
+	 */
 	public void setClient(ClientMain cm, Subscriber s) {
 		this.cm = cm;
 		this.sub = s;
 		fetchBorrowedBooksWithDetails();
 	}
 
+	/**
+	 * Initializes the controller. This method is called automatically after the
+	 * FXML file is loaded.
+	 */
 	@FXML
 	public void initialize() {
-
+		// No initialization logic currently
 	}
 
 	/**
 	 * Fetches the list of borrowed books with details for the current subscriber.
+	 * The list is retrieved from the server and displayed in the list view.
 	 */
 	private void fetchBorrowedBooksWithDetails() {
 		try {
@@ -157,6 +178,11 @@ public class ExtendBorrowController {
 		return -1; // Return -1 if parsing fails
 	}
 
+	/**
+	 * Handles the close button click event to close the current window.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onCloseClick(ActionEvent event) {
 		ScreenLoader.closeWindow(closeButton);

@@ -40,10 +40,21 @@ public class LoginController {
 	private Object response;
 	private LoginLogic lg;
 
+	/**
+	 * Sets the current stage (window) of the application.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller and initializes the login logic
+	 * handler.
+	 *
+	 * @param c the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 		lg = new LoginLogic(c);
@@ -100,6 +111,13 @@ public class LoginController {
 
 	}
 
+	/**
+	 * Handles the guest login button click event. Navigates to the search book
+	 * screen for guest users.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the guest login
+	 *              button
+	 */
 	@FXML
 	private void onGuestLoginClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
@@ -111,6 +129,11 @@ public class LoginController {
 		});
 	}
 
+	/**
+	 * Handles the exit button click event. Closes the application.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the exit button
+	 */
 	@FXML
 	private void handleExit(ActionEvent event) {
 		System.exit(0);

@@ -48,14 +48,31 @@ public class NewCopyController {
 
 	private Book book;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller, enabling communication with the
+	 * server.
+	 *
+	 * @param c the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
 
+	/**
+	 * Sets a callback function to be invoked after a new copy is successfully
+	 * added.
+	 *
+	 * @param callback a {@link Consumer} to handle the added copy
+	 */
 	public void setOnCopyAddedCallback(Consumer<CopyOfBook> callback) {
 		this.onCopyAddedCallback = callback;
 	}
@@ -116,6 +133,12 @@ public class NewCopyController {
 		}
 	}
 
+	/**
+	 * Handles the "Cancel" button click event. Closes the window without adding a
+	 * copy.
+	 *
+	 * @param event the event triggered by clicking the "Cancel" button
+	 */
 	@FXML
 	private void onCancelClick(ActionEvent event) {
 		ScreenLoader.closeWindow(cancelButton);

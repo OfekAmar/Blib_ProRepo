@@ -59,6 +59,12 @@ public class LibrarianMainController {
 	private int notifilabel;
 	private Map<String, Integer> notifications;
 
+	/**
+	 * Sets the client for the controller and initializes the notifications
+	 * controller. Also fetches unread notifications for the librarian.
+	 *
+	 * @param c the client instance
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 		nc = new NotificationsController(c);
@@ -72,10 +78,20 @@ public class LibrarianMainController {
 		}
 	}
 
+	/**
+	 * Sets the current stage for the controller.
+	 *
+	 * @param stage the current stage (window)
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the current librarian and updates the welcome message.
+	 *
+	 * @param lib the librarian currently logged in
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 		welcomeLabel.setText("Hello, " + lib.getName() + "!");
@@ -96,6 +112,11 @@ public class LibrarianMainController {
 		}
 	}
 
+	/**
+	 * Handles the click event for navigating to the book management screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onManageBooksClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/ManagmentBooksScreen.fxml", "Books Managemnt", event, controller -> {
@@ -109,6 +130,11 @@ public class LibrarianMainController {
 		});
 	}
 
+	/**
+	 * Handles the click event for navigating to the subscriber management screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onManageSubscriberClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/ManagmentSubscriberScreen.fxml", "Subscriber Managemnt", event, controller -> {
@@ -120,6 +146,11 @@ public class LibrarianMainController {
 		});
 	}
 
+	/**
+	 * Handles the click event for navigating to the borrow screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onBorrowBookClick(ActionEvent event) {
 		ScreenLoader.openScreenWithSize("/gui/BorrowBookScreen.fxml", "Borrow Book", event, controller -> {
@@ -132,6 +163,11 @@ public class LibrarianMainController {
 
 	}
 
+	/**
+	 * Handles the click event for navigating to the return book screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onReturnBookClick(ActionEvent event) {
 		ScreenLoader.openScreenWithSize("/gui/ReturnBookScreen.fxml", "Return Book", event, controller -> {
@@ -143,6 +179,11 @@ public class LibrarianMainController {
 		}, 400, 300);
 	}
 
+	/**
+	 * Handles the click event for navigating to the reports screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onReportsClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/ReportsScreen.fxml", "Reports Screen", event, controller -> {
@@ -154,6 +195,11 @@ public class LibrarianMainController {
 		});
 	}
 
+	/**
+	 * Handles the click event for navigating back to the login screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onLogoutClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LoginScreen.fxml", "Login Screen", event, controller -> {
@@ -164,6 +210,11 @@ public class LibrarianMainController {
 		});
 	}
 
+	/**
+	 * Handles the click event for navigating to the notification screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onNotificationClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreenWithSize("/gui/NotificationShowScreen.fxml", "Notification", event, controller -> {
@@ -175,6 +226,11 @@ public class LibrarianMainController {
 		}, 400, 400);
 	}
 
+	/**
+	 * Handles the click event for exiting the application.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onExitClick(ActionEvent event) {
 		ScreenLoader.closeWindow(exitButton);

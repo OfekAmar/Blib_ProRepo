@@ -23,6 +23,12 @@ import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.SubscriberController;
 
+/**
+ * The `ManagmentSubscriberController` class is responsible for managing the
+ * functionality of the Subscriber Management screen. This screen allows
+ * librarians to view, search, add, edit, and manage subscribers.
+ * 
+ */
 public class ManagmentSubscriberController {
 
 	@FXML
@@ -75,20 +81,41 @@ public class ManagmentSubscriberController {
 	private SubscriberController sc;
 	private Librarian lib;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller and loads the subscribers into
+	 * the table.
+	 *
+	 * @param c the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 		sc = new SubscriberController(c);
 		loadSubscribersToTable();
 	}
 
+	/**
+	 * Sets the librarian currently logged into the system.
+	 *
+	 * @param lib the {@link Librarian} instance
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
 
+	/**
+	 * Loads the list of subscribers into the table view by fetching data from the
+	 * server. Uses {@link SubscriberController} to get the list of all subscribers
+	 * and populate the table.
+	 */
 	@FXML
 	public void loadSubscribersToTable() {
 		System.out.println("initizlize called");
@@ -115,6 +142,13 @@ public class ManagmentSubscriberController {
 		});
 	}
 
+	/**
+	 * Handles the "Reader Card" button click event. Opens the "Reader Card" screen
+	 * to display the selected subscriber's reader card.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Reader Card"
+	 *              button
+	 */
 	@FXML
 	private void onReaderCardClick(ActionEvent event) {
 		Subscriber selectedSub = subscribersTable.getSelectionModel().getSelectedItem();
@@ -135,6 +169,13 @@ public class ManagmentSubscriberController {
 		});
 	}
 
+	/**
+	 * Handles the "Edit Profile" button click event. Opens the "Edit Subscriber
+	 * Profile" pop-up screen to edit the selected subscriber's details.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Edit Profile"
+	 *              button
+	 */
 	@FXML
 	private void onEditProfileClick(ActionEvent event) {
 		Subscriber selectedSub = subscribersTable.getSelectionModel().getSelectedItem();
@@ -175,6 +216,13 @@ public class ManagmentSubscriberController {
 		});
 	}
 
+	/**
+	 * Handles the "Add New Subscriber" button click event. Opens the "Add New
+	 * Subscriber" pop-up screen to allow adding a new subscriber.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Add
+	 *              Subscriber" button
+	 */
 	@FXML
 	private void onAddSubscriberClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/NewSubscriberScreen.fxml", "Add New Subscriber", event, controller -> {
@@ -205,12 +253,25 @@ public class ManagmentSubscriberController {
 		});
 	}
 
+	/**
+	 * Handles the "Scan Subscriber Card" button click event. Displays an alert
+	 * prompting the librarian to scan a subscriber's card.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Scan Card"
+	 *              button
+	 */
 	@FXML
 	private void onScanSubscriberCardClick(ActionEvent event) {
 		// Implement scan card logic here
 		ScreenLoader.showAlert("Scan Card", "Scanning subscriber card.");
 	}
 
+	/**
+	 * Handles the "Back" button click event. Navigates back to the Librarian's main
+	 * screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Back" button
+	 */
 	@FXML
 	private void onBackClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
@@ -222,6 +283,14 @@ public class ManagmentSubscriberController {
 		});
 	}
 
+	/**
+	 * Handles the subscriber search functionality. Searches for a subscriber by ID
+	 * and displays the results in the table.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Search"
+	 *              button
+	 * @throws InterruptedException if the thread is interrupted while fetching data
+	 */
 	@FXML
 	private void onSearchSubscriberClick(ActionEvent event) throws InterruptedException {
 		String subscriberId = searchField.getText();
@@ -250,6 +319,12 @@ public class ManagmentSubscriberController {
 		}
 	}
 
+	/**
+	 * Resets the search results and reloads all subscribers into the table.
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the "Reset Search"
+	 *              button
+	 */
 	@FXML
 	private void onResetSearchClick(ActionEvent event) {
 		try {

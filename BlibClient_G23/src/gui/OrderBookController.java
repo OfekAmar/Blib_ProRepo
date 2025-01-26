@@ -31,14 +31,30 @@ public class OrderBookController {
 	private Subscriber sub;
 	private ClientMain c;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller, enabling communication with the
+	 * server.
+	 *
+	 * @param cm the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain cm) {
 		this.c = cm;
 	}
 
+	/**
+	 * Sets the subscriber who is placing the book order.
+	 *
+	 * @param s the {@link Subscriber} instance for the subscriber placing the order
+	 */
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 	}
@@ -63,6 +79,12 @@ public class OrderBookController {
 		}
 	}
 
+	/**
+	 * Handles the action of closing the order window when the "Back" button is
+	 * clicked.
+	 *
+	 * @param event the triggered event when the "Back" button is clicked
+	 */
 	@FXML
 	private void onBackClick(ActionEvent event) {
 		ScreenLoader.closeWindow(closeButton);

@@ -100,10 +100,10 @@ public class SubscriberController {
 
 		client.setMessageHandler((Object serverResponse) -> {
 			if (serverResponse instanceof Map<?, ?>) {
-				this.response = (Map<Integer, Map<String, String>>) serverResponse; // ישירות ל-ArrayList
+				this.response = (Map<Integer, Map<String, String>>) serverResponse;
 			} else {
 				System.err.println("Unexpected response type from server: " + serverResponse.getClass().getName());
-				this.response = null; // אם זה לא ArrayList
+				this.response = null;
 			}
 			latch.countDown(); // Release the latch
 		});
