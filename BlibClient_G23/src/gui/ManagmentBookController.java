@@ -108,7 +108,6 @@ public class ManagmentBookController {
 	public void setClient(ClientMain c) {
 		this.c = c;
 		bc = new BookController(c);
-		System.out.println("Setclient bookcontoller worked");
 		loadBooksToTable();
 	}
 
@@ -141,10 +140,7 @@ public class ManagmentBookController {
 		Platform.runLater(() -> {
 			try {
 				List<Book> books = bc.getAllBooks();
-				System.out.println("Books fetched for table: " + books);
-				// booksTable.setItems(FXCollections.observableArrayList(books));
 				booksList.setAll(books);
-				System.out.println("books loaded into table");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				ScreenLoader.showAlert("Error", "Failed to load books data.");
@@ -169,7 +165,6 @@ public class ManagmentBookController {
 					if (booksList != null) {
 						booksList.add(newBook);
 						Platform.runLater(() -> booksTable.refresh());
-						System.out.println("New book added to table: " + newBook);
 					} else {
 						System.out.println("bookList is null");
 					}
@@ -212,7 +207,6 @@ public class ManagmentBookController {
 			try {
 				List<CopyOfBook> copies = bc.getAllBookCopies(selectedBook.getId());
 				copiesList.setAll(copies);
-				System.out.println("Copies loaded into table: " + copies);
 			} catch (Exception e) {
 				e.printStackTrace();
 				ScreenLoader.showAlert("Error", "Failed to fetch");
@@ -305,8 +299,6 @@ public class ManagmentBookController {
 					if (copiesList != null) {
 						copiesList.add(newCopy);
 						Platform.runLater(() -> copiesTable.refresh());
-						System.out.println("New copy added to table: " + newCopy);
-
 						try {
 							List<Book> updatedbooks = bc.getAllBooks();
 							booksList.setAll(updatedbooks);
@@ -352,7 +344,6 @@ public class ManagmentBookController {
 					if (copiesList != null) {
 						copiesList.setAll(editedCopy);
 						Platform.runLater(() -> copiesTable.refresh());
-						System.out.println("Edit copy updated in table: " + editedCopy);
 
 						try {
 							List<CopyOfBook> updatedCopies = bc.getAllBookCopies(selectedBook.getId());

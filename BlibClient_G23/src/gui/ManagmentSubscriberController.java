@@ -107,10 +107,7 @@ public class ManagmentSubscriberController {
 		Platform.runLater(() -> {
 			try {
 				List<Subscriber> subscribers = sc.getAllSubscribers();
-				System.out.println("Subscribers fetched for table: " + subscribers);
-				// booksTable.setItems(FXCollections.observableArrayList(books));
 				subscribersList.setAll(subscribers);
-				System.out.println("Subscribers loaded into table");
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				ScreenLoader.showAlert("Error", "Failed to load Subscribers data.");
@@ -159,12 +156,10 @@ public class ManagmentSubscriberController {
 					if (subscribersList != null) {
 						subscribersList.setAll(editedSub);
 						Platform.runLater(() -> subscribersTable.refresh());
-						System.out.println("Edit subscriber updated in table: " + editedSub);
 
 						try {
 							List<Subscriber> updatedSubscribers = sc.getAllSubscribers();
 							subscribersList.setAll(updatedSubscribers);
-							System.out.println("updtaedsubscribers after set all" + subscribersList);
 							Platform.runLater(() -> subscribersTable.refresh());
 						} catch (InterruptedException e) {
 							e.printStackTrace();
@@ -192,7 +187,6 @@ public class ManagmentSubscriberController {
 					if (subscribersList != null) {
 						subscribersList.add(newSub);
 						Platform.runLater(() -> subscribersTable.refresh());
-						System.out.println("New subscriber added to table: " + newSub);
 
 						try {
 							List<Subscriber> updatedSubs = sc.getAllSubscribers();
