@@ -3,6 +3,7 @@ package server;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,7 @@ public class DBconnector {
 
 	private void connectToDatabase() {
 		try {
-			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost/librarydb?serverTimezone=IST", "root",
+			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost/librarydb?serverTimezone=UTC", "root",
 					"Aa123456");
 			System.out.println("Database connected successfully.");
 		} catch (SQLException e) {
@@ -653,11 +654,15 @@ public class DBconnector {
 
 		while (rs.next()) {
 			int borrowId = rs.getInt("borrow_id");
-
 			Map<String, String> record = new HashMap<>();
 			record.put("title", rs.getString("title"));
-			record.put("borrowDate", rs.getDate("borrow_date").toString());
-			record.put("returnDate", rs.getDate("return_max_date").toString());
+			LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
+			LocalDate returnDate = rs.getDate("return_max_date").toLocalDate();
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			System.out.println(borrowDate.format(formatter));
+			System.out.println(returnDate.format(formatter));
+			record.put("borrowDate", borrowDate.format(formatter));
+			record.put("returnDate", returnDate.format(formatter));
 
 			borrowHistory.put(borrowId, record);
 		}
@@ -684,8 +689,9 @@ public class DBconnector {
 		ps.setInt(1, subscriberID);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next()) {
+			LocalDate recordDate = rs.getDate("record_date").toLocalDate();
 			Record r = new Record(rs.getInt("record_id"), rs.getString("record_type"), rs.getInt("sub_id"),
-					rs.getDate("record_date").toString(), rs.getInt("book_code"), rs.getString("description"));
+					recordDate.toString(), rs.getInt("book_code"), rs.getString("description"));
 			records.add(r);
 		}
 		return records;

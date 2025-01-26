@@ -139,9 +139,6 @@ public class ReaderCardController {
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 		recordTypeColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
-		// subscriberIDColumn
-		// .setCellValueFactory(cellData -> new
-		// SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));
 		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
