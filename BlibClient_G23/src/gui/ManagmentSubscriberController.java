@@ -96,7 +96,6 @@ public class ManagmentSubscriberController {
 			System.out.println("sc not initialized. check setClient");
 			return;
 		}
-		//
 		idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 		nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 		phoneColumn.setCellValueFactory(new PropertyValueFactory<>("phone"));
@@ -129,11 +128,11 @@ public class ManagmentSubscriberController {
 
 		ScreenLoader.openPopUpScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
-				ReaderCardController readerCardController=(ReaderCardController) controller;
+				ReaderCardController readerCardController = (ReaderCardController) controller;
 				readerCardController.setStage(stage);
 				readerCardController.setClientAndSubscriber(selectedSub, c);
 				readerCardController.setLibrarian(lib);
-			}else {
+			} else {
 				ScreenLoader.showAlert("Error", "No such subscriber exist or you didnt searched for one ! ");
 			}
 		});
@@ -147,7 +146,7 @@ public class ManagmentSubscriberController {
 			return;
 		}
 
-		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Edit copy screen", event, controller -> {
+		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Edit Profile", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
 				SubscriberDetailsController editSubController = (SubscriberDetailsController) controller;
 				editSubController.setStage(new Stage());

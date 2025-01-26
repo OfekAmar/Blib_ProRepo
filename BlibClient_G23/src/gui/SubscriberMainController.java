@@ -139,10 +139,11 @@ public class SubscriberMainController {
 		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
 				((SubscriberDetailsController) controller).setStage(stage);
-				((SubscriberDetailsController) controller).setSubscriber(sub);
-				((SubscriberDetailsController) controller).setClient(cm);
+				((SubscriberDetailsController) controller).setIDandClient(sub.getId(), cm);
 			}
+
 		});
+
 	}
 
 	@FXML
