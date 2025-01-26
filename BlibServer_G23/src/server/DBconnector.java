@@ -66,6 +66,14 @@ public class DBconnector {
 		}
 	}
 
+	/**
+	 * Retrieves the current database connection. If the connection is not
+	 * initialized, an exception will be thrown.
+	 *
+	 * @return the current {@link Connection} to the database.
+	 * @throws IllegalStateException if the database connection has not been
+	 *                               initialized.
+	 */
 	public Connection getDbConnection() {
 		if (dbConnection == null) {
 			throw new IllegalStateException("Database connection is not initialized.");
@@ -560,13 +568,16 @@ public class DBconnector {
 	}
 
 	/**
-	 * Retrieves a list of all books from the database. The method fetches details
-	 * for each book, including its title, author, subject, description, and the
-	 * number of available copies, and returns a list of {@link Book} objects.
+	 * Retrieves a list of all copies of a specific book from the database. The
+	 * method fetches details for each copy, including its location and status, and
+	 * returns a list of {@link CopyOfBook} objects.
 	 *
-	 * @return a list of {@link Book} objects containing details of all books in the
-	 *         database
-	 * @throws SQLException if a database access error occurs
+	 * @param bookCode the unique identifier of the book for which copies are to be
+	 *                 fetched.
+	 * @return a list of {@link CopyOfBook} objects containing details of all copies
+	 *         of the specified book.
+	 * @throws SQLException if a database access error occurs while retrieving the
+	 *                      data.
 	 */
 	public List<CopyOfBook> getAllBookCopies(int bookCode) throws SQLException {
 		List<CopyOfBook> copiesList = new ArrayList<>();
@@ -704,7 +715,8 @@ public class DBconnector {
 	 * @param phoneNumber the new phone number of the subscriber
 	 * @param email       the new email address of the subscriber
 	 * @param password    the new password of the subscriber
-	 * @throws SQLException if a database access error occurs
+	 * @throws SQLException if a database access error occurs while updating the
+	 *                      subscriber details.
 	 */
 	public void editSubscriber(int id, String phoneNumber, String email, String password) throws SQLException {
 		String query = "UPDATE subscriber SET phone_num = ?, email_address = ?, password = ? WHERE sub_id = ?";
@@ -716,13 +728,28 @@ public class DBconnector {
 		pstmt.executeUpdate();
 	}
 
-	// Execute a general query
+	/**
+	 * Executes a query that retrieves data from the database.
+	 * 
+	 * @param query the SQL query to execute, typically a SELECT statement.
+	 * @return a ResultSet containing the results of the query.
+	 * @throws SQLException if a database access error occurs or the SQL query is
+	 *                      invalid.
+	 */
 	public ResultSet executeQuery(String query) throws SQLException {
 		Statement statement = dbConnection.createStatement();
 		return statement.executeQuery(query);
 	}
 
-	// Execute a general update query
+	/**
+	 * Executes a general update query that modifies data in the database.
+	 * 
+	 * @param query the SQL query to execute, typically an UPDATE, INSERT, or DELETE
+	 *              statement.
+	 * @return the number of rows affected by the query.
+	 * @throws SQLException if a database access error occurs or the SQL query is
+	 *                      invalid.
+	 */
 	public int updateQuery(String query) throws SQLException {
 		Statement statement = dbConnection.createStatement();
 		int rowsAffected = statement.executeUpdate(query);
@@ -1384,15 +1411,14 @@ public class DBconnector {
 	 * subscribers who have overdue items. This method updates the status of borrows
 	 * and subscribers as follows:
 	 * 
-	 * Identifies borrows that are overdue by more than 7 days.
+	 * - Identifies borrows that are overdue by more than 7 days. - Updates the
+	 * status of overdue borrows to "late". - Freezes the accounts of subscribers
+	 * with overdue borrows.
 	 * 
-	 * Updates the status of overdue borrows to "late".
-	 * 
-	 * Freezes the accounts of subscribers with overdue borrows.
-	 *
 	 * Logs messages to indicate the progress and results of the check.
 	 *
-	 * @throws SQLException if a database access error occurs
+	 * @throws SQLException if a database access error occurs while performing the
+	 *                      overdue check.
 	 */
 	public void checkAndFreezeOverdueSubscribers() {
 		System.out.println("Running daily overdue check...");

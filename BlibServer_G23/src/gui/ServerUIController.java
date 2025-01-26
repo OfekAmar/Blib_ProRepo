@@ -8,8 +8,10 @@ import ocsf.server.ConnectionToClient;
 import server.ServerMain;
 
 /**
- * this class is used to manage all the user input to the GUI window, its the
- * connection between the GUI window and the code logic
+ * The `ServerUIController` class is used to manage user input in the GUI window
+ * and serves as the connection between the GUI window and the underlying code
+ * logic. This class handles starting and stopping the server and updating the
+ * list of client connections in the GUI.
  */
 public class ServerUIController {
 	@FXML
@@ -17,13 +19,22 @@ public class ServerUIController {
 	private ObservableList<String> connections;
 	private ServerMain server; // ServerMain instance
 
-	// declaration of the list and connect it to the GUI list
+	/**
+	 * Initializes the ListView and sets up the ObservableList to hold the
+	 * connection details.
+	 */
 	@FXML
 	public void initialize() {
 		connections = FXCollections.observableArrayList();
 		connectionList.setItems(connections);
 	}
 
+	/**
+	 * Starts the server and begins listening for client connections. If the server
+	 * is not already running, it will create a new ServerMain instance and override
+	 * the `clientConnected` and `clientDisconnected` methods to update the
+	 * connection list.
+	 */
 	@FXML
 	public void startServer() {
 		if (server == null) {
@@ -50,7 +61,10 @@ public class ServerUIController {
 		}
 	}
 
-	// the class close the server if it runs and clean the connection list
+	/**
+	 * Stops the server and clears the connection list. If the server is running, it
+	 * will be closed and the connection list will be reset.
+	 */
 	@FXML
 	public void stopServer() {
 		if (server != null) {
