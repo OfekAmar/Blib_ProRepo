@@ -31,6 +31,12 @@ import logic.Record;
 import logic.SubscriberController;
 import logic.ReportController;
 
+/**
+ * The `ReaderCardController` class serves as the controller for the reader card
+ * screen. It provides functionality for viewing a subscriber's borrowing
+ * history, activity records, and allows librarians to manually extend borrowing
+ * periods.
+ */
 public class ReaderCardController {
 
 	@FXML
@@ -104,10 +110,16 @@ public class ReaderCardController {
 		updateBorrowHistoryTable();
 	}
 
+	/**
+	 * Displays the subscriber's details on the screen.
+	 */
 	public void setDetails() {
 		idLabel.setText(Integer.toString(sub.getId()));
 	}
 
+	/**
+	 * Updates the borrow history table with the subscriber's data.
+	 */
 	private void updateBorrowHistoryTable() {
 		borrowIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getKey()));
 		titleColumn.setCellValueFactory(
@@ -135,6 +147,9 @@ public class ReaderCardController {
 		}
 	}
 
+	/**
+	 * Updates the activity records table with the subscriber's activity data.
+	 */
 	private void updateActivityRecordsTable() {
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 		recordTypeColumn
@@ -176,6 +191,11 @@ public class ReaderCardController {
 		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
 	}
 
+	/**
+	 * Handles the click event for manually extending a borrow period.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onEditClick(ActionEvent event) throws InterruptedException {
 		LocalDate dueDate = dueDatePicker.getValue();
@@ -193,6 +213,11 @@ public class ReaderCardController {
 		updateBorrowHistoryTable();
 	}
 
+	/**
+	 * Handles the click event for showing the borrow history.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onBorrowHistoryClick(ActionEvent event) {
 		ScreenLoader.resizeCenterWindow(event, 800, 600);
@@ -207,6 +232,11 @@ public class ReaderCardController {
 		updateBorrowHistoryTable();
 	}
 
+	/**
+	 * Handles the click event for showing the activity records.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onActivityRecordsClick(ActionEvent event) {
 		ScreenLoader.resizeCenterWindow(event, 800, 600);
@@ -219,6 +249,11 @@ public class ReaderCardController {
 		updateActivityRecordsTable();
 	}
 
+	/**
+	 * Handles the click event for navigating back to the previous screen.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onBackClick(ActionEvent event) {
 		if (lib != null) {

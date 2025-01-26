@@ -21,6 +21,12 @@ import logic.LoginLogic;
 import logic.ScreenLoader;
 import logic.Subscriber;
 
+/**
+ * The `LoginController` class is responsible for handling user login
+ * interactions. It processes login attempts for both subscribers and librarians
+ * and navigates to the respective main screens upon successful login. The
+ * controller also provides a guest login option for searching books.
+ */
 public class LoginController {
 
 	@FXML
@@ -43,6 +49,13 @@ public class LoginController {
 		lg = new LoginLogic(c);
 	}
 
+	/**
+	 * Handles the login button click event. Validates the input fields and attempts
+	 * to log in the user. Navigates to the appropriate screen based on the user
+	 * type (subscriber or librarian).
+	 *
+	 * @param event the {@link ActionEvent} triggered by clicking the login button
+	 */
 	@FXML
 	private void onLoginClick(ActionEvent event) {
 		String userName = userNameField.getText();

@@ -893,8 +893,6 @@ public class DBconnector {
 			LocalDate borrowDate = rs.getDate("borrow_date").toLocalDate();
 			LocalDate returnDate = rs.getDate("return_max_date").toLocalDate();
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			System.out.println(borrowDate.format(formatter));
-			System.out.println(returnDate.format(formatter));
 			record.put("borrowDate", borrowDate.format(formatter));
 			record.put("returnDate", returnDate.format(formatter));
 

@@ -18,6 +18,12 @@ import java.util.List;
 
 import client.ClientMain;
 
+/**
+ * The `ExtendBorrowController` class manages the user interface for extending
+ * the borrow period of books borrowed by a subscriber. It interacts with the
+ * server to fetch borrowed books and requests an extension for the selected
+ * book.
+ */
 public class ExtendBorrowController {
 
 	@FXML
@@ -46,97 +52,111 @@ public class ExtendBorrowController {
 	}
 
 	private ClientMain cm;
-	public void setClient(ClientMain cm,Subscriber s) {
+
+	public void setClient(ClientMain cm, Subscriber s) {
 		this.cm = cm;
 		this.sub = s;
 		fetchBorrowedBooksWithDetails();
 	}
+
 	@FXML
 	public void initialize() {
-	    // Fetch active borrowed books with details for the current subscriber
-		
-	
+
 	}
 
+	/**
+	 * Fetches the list of borrowed books with details for the current subscriber.
+	 */
 	private void fetchBorrowedBooksWithDetails() {
-	    try {
-	        BorrowController borrowController = new BorrowController(null,cm);
-	        borrowedBooks = borrowController.showBorrowes(sub.getId());
+		try {
+			BorrowController borrowController = new BorrowController(null, cm);
+			borrowedBooks = borrowController.showBorrowes(sub.getId());
 
-	        
-	        booksListView.getItems().clear();
-	        booksListView.getItems().addAll(borrowedBooks);
-	       
-	    } catch (Exception e) {
-	        Platform.runLater(() -> {
-	            ScreenLoader.showAlert("Error", "Failed to fetch borrowed book details: " + e.getMessage());
-	        });
-	    }
+			booksListView.getItems().clear();
+			booksListView.getItems().addAll(borrowedBooks);
+
+		} catch (Exception e) {
+			Platform.runLater(() -> {
+				ScreenLoader.showAlert("Error", "Failed to fetch borrowed book details: " + e.getMessage());
+			});
+		}
 	}
 
+	/**
+	 * Handles the request to extend the borrow period for the selected book.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onRequestExtendClick(ActionEvent event) {
-	    String selectedBook = booksListView.getSelectionModel().getSelectedItem();
-	    LocalDate selectedDate = datePicker.getValue();
+		String selectedBook = booksListView.getSelectionModel().getSelectedItem();
+		LocalDate selectedDate = datePicker.getValue();
 
-	    // Ensure a book is selected
-	    if (selectedBook == null || selectedBook.isEmpty()) {
-	        ScreenLoader.showAlert("Error", "Please select a book to extend.");
-	        return;
-	    }
+		// Ensure a book is selected
+		if (selectedBook == null || selectedBook.isEmpty()) {
+			ScreenLoader.showAlert("Error", "Please select a book to extend.");
+			return;
+		}
 
-	    // Ensure a date is selected
-	    if (selectedDate == null) {
-	        ScreenLoader.showAlert("Error", "Please select a due date.");
-	        return;
-	    }
+		// Ensure a date is selected
+		if (selectedDate == null) {
+			ScreenLoader.showAlert("Error", "Please select a due date.");
+			return;
+		}
 
-	    // Validate that the selected date is not before the current date
-	    if (selectedDate.isBefore(currentDate)) {
-	        ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
-	        return;
-	    }
+		// Validate that the selected date is not before the current date
+		if (selectedDate.isBefore(currentDate)) {
+			ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
+			return;
+		}
 
-	    try {
-	        // Extract borrow ID from the selected book string
-	        // Assuming `selectedBook` has a format like "Borrow ID: 123 | Title: ..."
-	        int borrowId = extractBorrowIdFromSelectedBook(selectedBook);
-	        if (borrowId == -1) {
-	            ScreenLoader.showAlert("Error", "Invalid selected book format.");
-	            return;
-	        }
+		try {
+			// Extract borrow ID from the selected book string
+			// Assuming `selectedBook` has a format like "Borrow ID: 123 | Title: ..."
+			int borrowId = extractBorrowIdFromSelectedBook(selectedBook);
+			if (borrowId == -1) {
+				ScreenLoader.showAlert("Error", "Invalid selected book format.");
+				return;
+			}
 
-	        // Use BorrowController to send the request to extend the borrow period
-	        BorrowController borrowController = new BorrowController(null,cm);
-	        String response = borrowController.extendBorrow(String.valueOf(borrowId),String.valueOf(selectedDate));
+			// Use BorrowController to send the request to extend the borrow period
+			BorrowController borrowController = new BorrowController(null, cm);
+			String response = borrowController.extendBorrow(String.valueOf(borrowId), String.valueOf(selectedDate));
 
-	        // Handle the server response
-	        
-	         if (response.startsWith("SUCCESS")) {
-	                ScreenLoader.showAlert("Success", "The borrow period for the selected book has been extended.");
-	            } else {
-	                ScreenLoader.showAlert("Error", response);
-	            }
-	        
-	    } catch (Exception e) {
-	        Platform.runLater(() -> {
-	            ScreenLoader.showAlert("Error", "Failed to extend the borrow period: " + e.getMessage());
-	        });
-	    }
+			// Handle the server response
+
+			if (response.startsWith("SUCCESS")) {
+				ScreenLoader.showAlert("Success", "The borrow period for the selected book has been extended.");
+			} else {
+				ScreenLoader.showAlert("Error", response);
+			}
+
+		} catch (Exception e) {
+			Platform.runLater(() -> {
+				ScreenLoader.showAlert("Error", "Failed to extend the borrow period: " + e.getMessage());
+			});
+		}
 	}
-	
-	
+
+	/**
+	 * Extracts the borrow ID from the selected book string.
+	 *
+	 * @param selectedBook the selected book string in the format "Borrow ID: {id} |
+	 *                     Title: ..."
+	 * @return the borrow ID, or -1 if parsing fails
+	 */
 	private int extractBorrowIdFromSelectedBook(String selectedBook) {
-	    try {
-	        String[] parts = selectedBook.split("\\|");
-	        if (parts.length > 0 && parts[0].startsWith("Borrow ID:")) {
-	            return Integer.parseInt(parts[0].replace("Borrow ID:", "").trim());
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return -1; // Return -1 if parsing fails
+		try {
+			String[] parts = selectedBook.split("\\|");
+			if (parts.length > 0 && parts[0].startsWith("Borrow ID:")) {
+				return Integer.parseInt(parts[0].replace("Borrow ID:", "").trim());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // Return -1 if parsing fails
 	}
+
 	@FXML
 	private void onCloseClick(ActionEvent event) {
 		ScreenLoader.closeWindow(closeButton);

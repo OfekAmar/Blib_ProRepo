@@ -18,7 +18,11 @@ import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.SubscriberController;
 
-
+/**
+ * The `SubscriberDetailsController` class manages the subscriber details screen
+ * in the GUI. It allows the user to view and edit a subscriber's details,
+ * including phone number, email, and status.
+ */
 public class SubscriberDetailsController {
 	@FXML
 	private Label idLabel;
@@ -88,8 +92,9 @@ public class SubscriberDetailsController {
 		this.onEditSubscriberCallback = callback;
 	}
 
-	// the method uses the data recived by the server in order to present it in the
-	// GUI so the user can use the data
+	/**
+	 * Populates the fields with the details of the subscriber.
+	 */
 	public void setDetails() {
 		// changed to support the Subscriber Class
 		// String[] parts = details.split(",");
@@ -102,10 +107,10 @@ public class SubscriberDetailsController {
 
 	}
 
-	// the method recive the updated TextField after the client press the edit
-	// button
-	// and send message to the client using key word "UPDATE" and the details that
-	// need update
+	/**
+	 * Handles the save action. Updates the subscriber details and sends them to the
+	 * server.
+	 */
 	@FXML
 	public void onSaveClick() {
 		String phone = phoneField.getText();

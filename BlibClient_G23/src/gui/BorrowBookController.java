@@ -20,14 +20,10 @@ import logic.SubscriberController;
  * Controller for managing the borrowing of books in the library system.
  */
 public class BorrowBookController {
-	/**
-	 * Field for entering subscriber details.
-	 */
+
 	@FXML
 	private TextField subscriberField;
-	/**
-	 * Field for entering book details.
-	 */
+
 	@FXML
 	private TextField bookField;
 
@@ -42,40 +38,26 @@ public class BorrowBookController {
 
 	@FXML
 	private Button backButton;
-	/**
-	 * DatePicker to select the due date for borrowing.
-	 */
+
 	@FXML
 	private DatePicker datePicker;
 
 	private Stage stage;
 	private Librarian lib;
 
-	/**
-	 * Sets the stage for the controller.
-	 * 
-	 * @param stage the current stage
-	 */
+
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
-	/**
-	 * Sets the librarian associated with the current session.
-	 * 
-	 * @param lib the librarian object
-	 */
+
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
 
 	private ClientMain cm;
 
-	/**
-	 * Sets the client for communication with the server.
-	 * 
-	 * @param cm the client object
-	 */
+
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}

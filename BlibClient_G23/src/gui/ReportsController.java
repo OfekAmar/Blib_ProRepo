@@ -29,6 +29,12 @@ import logic.ReportController;
 import logic.ScreenLoader;
 import logic.Record;
 
+/**
+ * The `ReportsController` class is responsible for generating and displaying
+ * various reports related to borrowing activity and subscriber statuses. This
+ * class provides functionality to select a specific month and year, generate
+ * reports, and visualize the data using charts.
+ */
 public class ReportsController {
 
 	@FXML
@@ -93,6 +99,9 @@ public class ReportsController {
 		this.lib = lib;
 	}
 
+	/**
+	 * Initializes the combo boxes for selecting a month and year.
+	 */
 	private void initializeComboBox() {
 		monthComboBox.getItems().addAll("January", "February", "March", "April", "May", "June", "July", "August",
 				"September", "October", "November", "December");
@@ -100,6 +109,12 @@ public class ReportsController {
 
 	}
 
+	/**
+	 * Initializes the report data based on the selected month and year.
+	 *
+	 * @param month the selected month
+	 * @param year  the selected year
+	 */
 	private void initializeReportData(int month, int year) {
 		try {
 			monthleyBorrowReport = r.getMonthlyBorrowReport(month, year);
@@ -110,6 +125,11 @@ public class ReportsController {
 		}
 	}
 
+	/**
+	 * Handles the action of generating reports when the "Make Reports" button is
+	 * clicked. Validates the selected month and year and initializes the report
+	 * data.
+	 */
 	@FXML
 	private void onMakeReportsClick() {
 		int selectedMonth = monthComboBox.getSelectionModel().getSelectedIndex();
@@ -124,6 +144,12 @@ public class ReportsController {
 		initializeReportData(selectedMonth + 1, selectedYear);
 	}
 
+	/**
+	 * Handles the action of displaying borrowing duration reports when the
+	 * corresponding button is clicked.
+	 *
+	 * @param event the triggered event
+	 */
 	@FXML
 	private void onBorrowingDurationClick(ActionEvent event) {
 
@@ -171,6 +197,12 @@ public class ReportsController {
 		subscriberBarChart.setTitle("Monthly Amount Of Borrowing Per Subscriber");
 	}
 
+	/**
+	 * Handles the action of displaying subscriber status reports when the
+	 * corresponding button is clicked.
+	 *
+	 * @param event the triggered event
+	 */
 	@FXML
 	private void onSubscribersStatusClick(ActionEvent event) {
 

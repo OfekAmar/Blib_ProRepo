@@ -126,7 +126,7 @@ public class ManagmentSubscriberController {
 			return;
 		}
 
-		ScreenLoader.openPopUpScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
+		ScreenLoader.openScreen("/gui/ReaderCardScreen.fxml", "Reader Card", event, controller -> {
 			if (controller instanceof ReaderCardController) {
 				ReaderCardController readerCardController = (ReaderCardController) controller;
 				readerCardController.setStage(stage);
