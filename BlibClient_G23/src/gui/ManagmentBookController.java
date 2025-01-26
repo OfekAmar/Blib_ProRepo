@@ -125,6 +125,8 @@ public class ManagmentBookController {
 	/**
 	 * Loads the list of books into the table view by fetching data from the server.
 	 * Uses {@link Librarian} to get the list of all books and populate the table.
+	 * 
+	 * @param lib the {@link Librarian} object representing the logged-in librarian.
 	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;

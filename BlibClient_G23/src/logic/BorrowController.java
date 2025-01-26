@@ -106,8 +106,8 @@ public class BorrowController {
 	/**
 	 * Extends a borrowing period for a specific borrow ID.
 	 * 
-	 * @param borrowId     the borrow ID
-	 * @param selectedDate the new return date
+	 * @param borrowId    the borrow ID
+	 * @param selecteDate the new return date
 	 * @return the response from the server
 	 * @throws InterruptedException if interrupted while waiting for the server
 	 *                              response
