@@ -63,7 +63,7 @@ public class ReaderCardController {
 
 	@FXML
 	private TableColumn<Record, String> recordTypeColumn, recordDateColumn, descriptionColumn;
-	
+
 	@FXML
 	private Label idLabel;
 
@@ -103,7 +103,7 @@ public class ReaderCardController {
 		bc = new BorrowController(sc, c);
 		updateBorrowHistoryTable();
 	}
-	
+
 	public void setDetails() {
 		idLabel.setText(Integer.toString(sub.getId()));
 	}
@@ -139,8 +139,9 @@ public class ReaderCardController {
 		recordIdColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordID()));
 		recordTypeColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
-		//subscriberIDColumn
-		//		.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
+		// subscriberIDColumn
+		// .setCellValueFactory(cellData -> new
+		// SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));
 		bookCodeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getBookCode()));
@@ -171,9 +172,6 @@ public class ReaderCardController {
 
 		recordTypeColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordType()));
-
-		//subscriberIDColumn
-				//.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSubscriberID()));
 
 		recordDateColumn
 				.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getRecordDate()));

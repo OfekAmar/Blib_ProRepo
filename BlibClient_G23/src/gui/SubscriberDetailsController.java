@@ -49,6 +49,7 @@ public class SubscriberDetailsController {
 	private Subscriber sub;
 	private String subscriberId;
 	private SubscriberController sc;
+	SubscriberMainController smc;
 
 	private Consumer<Subscriber> onEditSubscriberCallback;
 
@@ -65,6 +66,22 @@ public class SubscriberDetailsController {
 		sub = s;
 		subscriberId = String.valueOf(sub.getId());
 		setDetails();
+	}
+
+	public void setIDandClient(int id, ClientMain c) {
+		this.c = c;
+		sc = new SubscriberController(c);
+		try {
+			this.sub = sc.searchSubscriberById(String.valueOf(id));
+			setDetails();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setSubscriberMainController(SubscriberMainController controller) {
+		smc = controller;
+
 	}
 
 	public void setOnEditSubscriberCallback(Consumer<Subscriber> callback) {
@@ -123,4 +140,5 @@ public class SubscriberDetailsController {
 	private void onCancelClick() {
 		ScreenLoader.closeWindow(cancelButton);
 	}
+
 }
