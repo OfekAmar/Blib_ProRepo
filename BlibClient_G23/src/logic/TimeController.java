@@ -8,11 +8,10 @@ import java.time.temporal.ChronoUnit;
  */
 public class TimeController {
 
-    // Method to get the current date
-    public LocalDate getCurrentDate() {
-        return LocalDate.now();
-    }
-
+	// Method to get the current date
+	public LocalDate getCurrentDate() {
+		return LocalDate.now();
+	}
     /**
      * Calculates the number of days between a borrowing date and a return date.
      *
@@ -50,6 +49,4 @@ public class TimeController {
         return orderDate.plusDays(expiryPeriodInDays);
     }
 
-
-   
 }
