@@ -9,13 +9,17 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * the class creat the GUI window for the server while she extands Application
- * (JavaFX)
+ * The `ServerUI` class creates the GUI window for the server. It extends
+ * `Application` (JavaFX) and serves as the entry point for initializing and
+ * launching the server's user interface.
  */
 public class ServerUI extends Application {
 	/**
-	 * this method called automaticly when using launch(in the main method)
-	 * primaryStage - presents the main "stage" (GUI window) of the application
+	 * This method is called automatically when using `launch()` (in the `main`
+	 * method). It sets up the primary stage, which represents the main "window" of
+	 * the application.
+	 *
+	 * @param primaryStage the main stage of the JavaFX application.
 	 */
 	@Override
 	public void start(Stage primaryStage) {
@@ -31,6 +35,12 @@ public class ServerUI extends Application {
 		}
 	}
 
+	/**
+	 * The main method that launches the JavaFX application. It calls the `launch()`
+	 * method to start the application, which in turn triggers the `start()` method.
+	 *
+	 * @param args command-line arguments (not used in this case).
+	 */
 	public static void main(String[] args) {
 		launch(args); // call start method
 	}
