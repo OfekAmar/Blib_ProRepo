@@ -1,7 +1,9 @@
 package logic;
 
 import java.io.Serializable;
-
+/**
+ * Represents a book in the library system.
+ */
 public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -11,7 +13,16 @@ public class Book implements Serializable {
 	private String subject;
 	private String description;
 	private int totalCopies;
-
+	 /**
+     * Constructs a Book object with the specified details.
+     * 
+     * @param title the title of the book
+     * @param id the unique identifier of the book
+     * @param author the author of the book
+     * @param subject the subject of the book
+     * @param description the description of the book
+     * @param totalCopies the total number of copies available
+     */
 	public Book(String title, int id, String author, String subject, String description, int totalCopies) {
 		this.title = title;
 		this.id = id;
@@ -68,7 +79,11 @@ public class Book implements Serializable {
 	public void setTotalCopies(int totalCopies) {
 		this.totalCopies = totalCopies;
 	}
-
+	 /**
+     * Returns a string representation of the book.
+     * 
+     * @return a string containing the book details
+     */
 	@Override
 	public String toString() {
 		return "Book title=" + title + ", id=" + id + ", author=" + author + ", subject=" + subject

@@ -1,7 +1,9 @@
 package logic;
 
 import java.io.Serializable;
-
+/**
+ * Represents a subscriber in the library system.
+ */
 public class Subscriber implements Serializable {
 	private static final long serialVersionUID=3L;
 	private int id;
@@ -14,7 +16,17 @@ public class Subscriber implements Serializable {
 
 
 	private String userName;
-
+	/**
+     * Constructs a Subscriber object with the specified details.
+     * 
+     * @param id the unique identifier of the subscriber
+     * @param name the name of the subscriber
+     * @param phone the phone number of the subscriber
+     * @param status the status of the subscriber (e.g., active, frozen)
+     * @param email the email address of the subscriber
+     * @param password the password of the subscriber
+     * @param userName the username of the subscriber
+     */
 	public Subscriber(int id, String name, String phone, String status, String email, String password,String userName) {
 		super();
 		this.id = id;
@@ -82,7 +94,11 @@ public class Subscriber implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
+	/**
+     * Returns a string representation of the subscriber.
+     * 
+     * @return a string containing the subscriber details
+     */
 	@Override
 	public String toString() {
 		return "\nid: " + id + "\nname: " + name + "\nphone: " + phone + "\nstatus: " + status + "\nemail: "+email+"\npassword: "+password+ "\nuserName: "+userName;
