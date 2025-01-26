@@ -28,6 +28,11 @@ import logic.ScreenLoader;
 import logic.SearchBookLogic;
 import logic.CopyOfBook;
 
+/**
+ * The `SearchBookController` class handles the book search functionality in the
+ * application. It provides a user interface for searching books by title,
+ * subject, or free text, and displays the results to the user.
+ */
 public class SearchBookController {
 
 	@FXML
@@ -72,6 +77,9 @@ public class SearchBookController {
 		this.c = c;
 	}
 
+	/**
+	 * Updates the visibility of the buttons based on the user's logged-in status.
+	 */
 	private void updateButtonsVisibility() {
 		if (loggedIn) {
 			closeButton.setVisible(true);
@@ -83,6 +91,11 @@ public class SearchBookController {
 		}
 	}
 
+	/**
+	 * Updates the visibility of the search results list.
+	 *
+	 * @param isVisible true to show the list, false to hide it
+	 */
 	private void updateListVisibility(boolean b) {
 		if (b) {
 			searchResultList.setVisible(true);
@@ -93,6 +106,9 @@ public class SearchBookController {
 		}
 	}
 
+	/**
+	 * Initializes the screen, setting up the search options and button visibility.
+	 */
 	@FXML
 	public void initialize() {
 		updateButtonsVisibility();
@@ -102,6 +118,12 @@ public class SearchBookController {
 		searchByComboBox.setValue("Title"); // Set default value
 	}
 
+	/**
+	 * Handles the search functionality based on the selected criteria and search
+	 * term.
+	 *
+	 * @param event the triggered event
+	 */
 	@FXML
 	private void onSearchBookClick(ActionEvent event) {
 		String searchBy = searchByComboBox.getValue();

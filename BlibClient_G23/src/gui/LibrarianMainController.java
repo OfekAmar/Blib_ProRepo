@@ -14,6 +14,12 @@ import logic.Librarian;
 import logic.NotificationsController;
 import logic.ScreenLoader;
 
+/**
+ * The `LibrarianMainController` class is responsible for handling the main
+ * screen functionality for librarians. It provides navigation to various
+ * management screens, notification handling, and interaction with the server
+ * through the client.
+ */
 public class LibrarianMainController {
 	@FXML
 	private Label welcomeLabel;
@@ -75,6 +81,12 @@ public class LibrarianMainController {
 		welcomeLabel.setText("Hello, " + lib.getName() + "!");
 	}
 
+	/**
+	 * Updates the notification bubble with the current count of unread
+	 * notifications.
+	 *
+	 * @param count the count of unread notifications
+	 */
 	public void updateNotificationBubble(int count) {
 		if (count > 0) {
 			notificationBubble.setText(String.valueOf(count));

@@ -11,6 +11,11 @@ import logic.BorrowController;
 import logic.ScreenLoader;
 import logic.Subscriber;
 
+/**
+ * The `OrderBookController` class handles the process of ordering a book for a
+ * subscriber. It provides a user interface for entering a book ID and placing
+ * an order for the book.
+ */
 public class OrderBookController {
 
 	@FXML
@@ -38,6 +43,13 @@ public class OrderBookController {
 		this.sub = s;
 	}
 
+	/**
+	 * Handles the action of ordering a book. Reads the book ID from the text field
+	 * and sends an order request to the server. Displays an alert with the result
+	 * of the operation.
+	 *
+	 * @param event the triggered event when the "Order" button is clicked
+	 */
 	@FXML
 	private void onOrderBookClick(ActionEvent event) {
 		int bookId = Integer.valueOf(bookIdField.getText());

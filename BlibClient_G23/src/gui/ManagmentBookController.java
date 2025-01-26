@@ -27,6 +27,11 @@ import logic.Book;
 import logic.BookController;
 import logic.CopyOfBook;
 
+/**
+ * The `ManagmentBookController` class manages the functionality of the Book
+ * Management screen. This screen allows librarians to view, add, edit, and
+ * search for books and their copies.
+ */
 public class ManagmentBookController {
 	@FXML
 	private TableView<Book> booksTable;
@@ -112,6 +117,10 @@ public class ManagmentBookController {
 		// welcomeLabel.setText("Hello, " + lib.getName() + "!");
 	}
 
+	/**
+	 * Loads the list of books into the table view. Fetches data from the server
+	 * using the BookController.
+	 */
 	@FXML
 	public void loadBooksToTable() {
 		System.out.println("initizlize called");
@@ -143,7 +152,11 @@ public class ManagmentBookController {
 		});
 	}
 
-
+	/**
+	 * Handles adding a new book. Opens the "Add New Book" pop-up screen.
+	 *
+	 * @param event the event triggered by clicking the "Add New Book" button
+	 */
 	@FXML
 	private void onAddBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/NewBookScreen.fxml", "Add new book", event, controller -> {
@@ -166,6 +179,12 @@ public class ManagmentBookController {
 		});
 	}
 
+	/**
+	 * Handles viewing copies of the selected book. Loads the list of copies into
+	 * the copies table.
+	 *
+	 * @param event the event triggered by clicking the "View Copies" button
+	 */
 	@FXML
 	private void onViewCopiesClick(ActionEvent event) {
 		copyIDColumn.setCellValueFactory(new PropertyValueFactory<>("copyID"));
@@ -203,9 +222,15 @@ public class ManagmentBookController {
 
 	@FXML
 	private void onScanBookBarcodeClick(ActionEvent event) {
-
+		ScreenLoader.showAlert("Scan Book", "Scan book please");
+		// not able to implement scan
 	}
 
+	/**
+	 * Handles the search functionality. Searches for a book by its ID.
+	 *
+	 * @param event the event triggered by clicking the "Search" button
+	 */
 	@FXML
 	private void onSearchBookClick(ActionEvent event) throws InterruptedException {
 		String bookId = searchField.getText();
@@ -234,6 +259,11 @@ public class ManagmentBookController {
 		}
 	}
 
+	/**
+	 * Resets the search results and reloads all books.
+	 *
+	 * @param event the event triggered by clicking the "Reset Search" button
+	 */
 	@FXML
 	private void onResetSearchClick(ActionEvent event) {
 		try {
@@ -249,6 +279,12 @@ public class ManagmentBookController {
 		}
 	}
 
+	/**
+	 * Handles adding a new copy of the selected book. Opens the "Add New Copy"
+	 * pop-up screen.
+	 *
+	 * @param event the event triggered by clicking the "Add Copy" button
+	 */
 	@FXML
 	private void onAddCopyClick(ActionEvent event) {
 		Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
@@ -289,6 +325,12 @@ public class ManagmentBookController {
 		});
 	}
 
+	/**
+	 * Handles editing a selected copy of a book. Opens the "Edit Copy" pop-up
+	 * screen.
+	 *
+	 * @param event the event triggered by clicking the "Edit Copy" button
+	 */
 	@FXML
 	private void onEditCopyClick(ActionEvent event) {
 		Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
@@ -303,16 +345,15 @@ public class ManagmentBookController {
 				EditCopyController editCopyController = (EditCopyController) controller;
 				((EditCopyController) controller).setStage(new Stage());
 				((EditCopyController) controller).setClient(c);
-		
 
-				editCopyController.setBook(selectedCopy,selectedBook);
+				editCopyController.setBook(selectedCopy, selectedBook);
 
 				editCopyController.setOnCopyEditedCallback(editedCopy -> {
 					if (copiesList != null) {
 						copiesList.setAll(editedCopy);
 						Platform.runLater(() -> copiesTable.refresh());
 						System.out.println("Edit copy updated in table: " + editedCopy);
-						
+
 						try {
 							List<CopyOfBook> updatedCopies = bc.getAllBookCopies(selectedBook.getId());
 							copiesList.setAll(updatedCopies);

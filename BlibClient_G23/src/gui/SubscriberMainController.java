@@ -15,6 +15,12 @@ import client.ClientMain;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 
+/**
+ * The `SubscriberMainController` class manages the main screen for subscribers
+ * in the GUI. It provides options for subscribers to perform various actions
+ * such as ordering books, searching for books, extending borrows, viewing
+ * notifications, and managing their profiles.
+ */
 public class SubscriberMainController {
 
 	@FXML
@@ -82,6 +88,12 @@ public class SubscriberMainController {
 		}
 	}
 
+	/**
+	 * Updates the notification bubble to display the number of unread
+	 * notifications.
+	 *
+	 * @param count the number of unread notifications
+	 */
 	public void updateNotificationBubble(int count) {
 		if (count > 0) {
 			notificationBubble.setText(String.valueOf(count));

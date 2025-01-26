@@ -14,32 +14,36 @@ import logic.ScreenLoader;
 import logic.Book;
 import logic.BookController;
 
-
+/**
+ * The `NewBookController` class manages the functionality for adding a new book
+ * to the system. This controller is responsible for handling user input and
+ * interacting with the backend to create a new book entry in the database.
+ */
 public class NewBookController {
 	@FXML
 	private TextField titleField;
-	
+
 	@FXML
 	private TextField authorField;
 
 	@FXML
 	private TextField subjectField;
-	
+
 	@FXML
 	private TextField descriptionField;
-	
+
 	@FXML
 	private Button addButton;
-	
+
 	@FXML
 	private Button cancelButton;
-	
+
 	private Stage stage;
-	
+
 	private ClientMain c;
-	
+
 	private Consumer<Book> onBookAddesCallback;
-	
+
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
@@ -47,42 +51,57 @@ public class NewBookController {
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
-	
+
+	/**
+	 * Sets a callback function to be invoked after a new book is successfully
+	 * added.
+	 *
+	 * @param callback a {@link Consumer} to handle the added book
+	 */
 	public void setOnBookAddedCallback(Consumer<Book> callback) {
-		this.onBookAddesCallback=callback;
+		this.onBookAddesCallback = callback;
 	}
-	
+
+	/**
+	 * Handles the "Add" button click event. Validates the input fields and attempts
+	 * to add the new book to the system.
+	 *
+	 * @param event the event triggered by clicking the "Add" button
+	 */
 	@FXML
 	private void onAddClick(ActionEvent event) {
-		String title=titleField.getText();
-		String author=authorField.getText();
-		String subject=subjectField.getText();
-		String description=descriptionField.getText();
-		
-		if(title.isEmpty() || author.isEmpty() || subject.isEmpty() || description.isEmpty()) {
+		String title = titleField.getText();
+		String author = authorField.getText();
+		String subject = subjectField.getText();
+		String description = descriptionField.getText();
+
+		// Validate that all fields are filled
+		if (title.isEmpty() || author.isEmpty() || subject.isEmpty() || description.isEmpty()) {
 			ScreenLoader.showAlert("Error", "All fields are required.");
 			return;
-		}else {
+		} else {
 			ScreenLoader.closeWindow(cancelButton);
 		}
-		
-		BookController b=new BookController(c);
+
+		// Attempt to add the book using the BookController
+		BookController b = new BookController(c);
 		try {
-			String result=b.addBook(author, title, subject, description);
-			ScreenLoader.showAlert("book added",result);
-			
-			Book newBook=new Book(title,0,author,subject,description,0);
-			if(onBookAddesCallback!=null) {
+			String result = b.addBook(author, title, subject, description);
+			ScreenLoader.showAlert("book added", result);
+
+			// Create a new Book object to represent the added book
+			Book newBook = new Book(title, 0, author, subject, description, 0);
+			if (onBookAddesCallback != null) {
 				onBookAddesCallback.accept(newBook);
 			}
 			Stage currentStage = (Stage) addButton.getScene().getWindow();
-	        currentStage.close();
-		}catch(InterruptedException e) {
+			currentStage.close();
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 			ScreenLoader.showAlert("Error", "Failed to add book.");
 		}
 	}
-	
+
 	@FXML
 	private void onCancelClick(ActionEvent event) {
 		ScreenLoader.closeWindow(cancelButton);

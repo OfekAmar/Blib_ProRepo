@@ -12,6 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import logic.ScreenLoader;
 
+/**
+ * The `ClientConnectController` class is the controller for the server
+ * connection screen. It allows the user to input the server's host and port
+ * details, and establishes a connection to the server.
+ */
 public class ClientConnectController {
 
 	private ClientMain client;
@@ -25,14 +30,16 @@ public class ClientConnectController {
 	@FXML
 	private javafx.scene.control.Button loginButton;
 
+	/**
+	 * Handles the "Connect" button click event to establish a connection to the
+	 * server. If the connection is successful, it navigates to the login screen.
+	 *
+	 * @param event the `ActionEvent` triggered by clicking the "Connect" button
+	 */
 	@FXML
 	public void connectToServer(ActionEvent event) {
-		// auto connect for testing purposes
-		// String port = portField.getText();
-		// String host = hostField.getText();
-
-		String port = "5555";
-		String host = "localhost";
+		String port = portField.getText();
+		String host = hostField.getText();
 
 		if (port == null || port.isEmpty() || host == null || host.isEmpty()) {
 			System.out.println("IP or Port is empty. Please enter valid details.");

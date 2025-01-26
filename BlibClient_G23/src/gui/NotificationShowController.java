@@ -15,6 +15,12 @@ import java.util.Map;
 
 import client.ClientMain;
 
+/**
+ * The `NotificationShowController` class handles the display and interaction
+ * with notifications for both subscribers and librarians. The controller
+ * provides functionality to mark notifications as read, show all notifications,
+ * and manage the notification list view.
+ */
 public class NotificationShowController {
 
 	@FXML
@@ -59,6 +65,17 @@ public class NotificationShowController {
 		this.c = c;
 	}
 
+	public void setSubscriberMainController(SubscriberMainController controller) {
+		this.smc = controller;
+	}
+
+	public void setLibrarianMainController(LibrarianMainController controller) {
+		this.lmc = controller;
+	}
+
+	/**
+	 * Updates the notification list view with the current notifications.
+	 */
 	public void setNotifications() {
 		try {
 			if (this.sub != null) {
@@ -73,14 +90,10 @@ public class NotificationShowController {
 		notificationListView.getItems().addAll(notifications.keySet());
 	}
 
-	public void setSubscriberMainController(SubscriberMainController controller) {
-		this.smc = controller;
-	}
-
-	public void setLibrarianMainController(LibrarianMainController controller) {
-		this.lmc = controller;
-	}
-
+	/**
+	 * Handles marking a selected notification as read. Updates the notification
+	 * list and unread count.
+	 */
 	@FXML
 	private void onMarkAsReadClick() {
 		String selectedNotification = notificationListView.getSelectionModel().getSelectedItem();
@@ -112,6 +125,10 @@ public class NotificationShowController {
 		}
 	}
 
+	/**
+	 * Displays all notifications, including read and unread, in the notification
+	 * list view.
+	 */
 	@FXML
 	private void onShowAllClick() {
 		try {
