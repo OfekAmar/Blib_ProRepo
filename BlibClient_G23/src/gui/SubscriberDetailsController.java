@@ -21,7 +21,8 @@ import logic.SubscriberController;
 /**
  * The `SubscriberDetailsController` class manages the subscriber details screen
  * in the GUI. It allows the user to view and edit a subscriber's details,
- * including phone number, email, and status.
+ * including phone number, email, and status. This controller interacts with the
+ * backend to fetch and update subscriber data.
  */
 public class SubscriberDetailsController {
 	@FXML
@@ -57,21 +58,42 @@ public class SubscriberDetailsController {
 
 	private Consumer<Subscriber> onEditSubscriberCallback;
 
-	// initialize stage to further operations
+	/**
+	 * Initializes the stage for further operations.
+	 *
+	 * @param stage the current stage of the application.
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance to communicate with the server.
+	 *
+	 * @param c the client instance of type {@link ClientMain}.
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
 
+	/**
+	 * Sets the subscriber whose details are to be displayed and edited.
+	 *
+	 * @param s the {@link Subscriber} object whose details are to be displayed.
+	 */
 	public void setSubscriber(Subscriber s) {
 		sub = s;
 		subscriberId = String.valueOf(sub.getId());
 		setDetails();
 	}
 
+	/**
+	 * Sets the subscriber by ID and client, and fetches subscriber data from the
+	 * server.
+	 *
+	 * @param id the ID of the subscriber to be fetched.
+	 * @param c  the client instance of type {@link ClientMain}.
+	 */
 	public void setIDandClient(int id, ClientMain c) {
 		this.c = c;
 		sc = new SubscriberController(c);
@@ -83,11 +105,21 @@ public class SubscriberDetailsController {
 		}
 	}
 
+	/**
+	 * Sets the SubscriberMainController to update the main screen if needed.
+	 *
+	 * @param controller the {@link SubscriberMainController} to set.
+	 */
 	public void setSubscriberMainController(SubscriberMainController controller) {
 		smc = controller;
 
 	}
 
+	/**
+	 * Sets a callback function to handle changes to subscriber details.
+	 *
+	 * @param callback a {@link Consumer} that handles the edited subscriber.
+	 */
 	public void setOnEditSubscriberCallback(Consumer<Subscriber> callback) {
 		this.onEditSubscriberCallback = callback;
 	}
@@ -141,6 +173,10 @@ public class SubscriberDetailsController {
 		}
 	}
 
+	/**
+	 * Handles the cancel action when the user clicks the cancel button. Closes the
+	 * current window without saving changes.
+	 */
 	@FXML
 	private void onCancelClick() {
 		ScreenLoader.closeWindow(cancelButton);

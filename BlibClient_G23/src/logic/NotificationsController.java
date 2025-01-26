@@ -20,7 +20,7 @@ public class NotificationsController {
 	/**
 	 * Constructs a NotificationsController with the specified client.
 	 * 
-	 * @param client the client object
+	 * @param c the client object
 	 */
 	public NotificationsController(ClientMain c) {
 		this.client = c;

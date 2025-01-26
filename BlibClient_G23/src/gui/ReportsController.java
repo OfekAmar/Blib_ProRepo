@@ -84,6 +84,11 @@ public class ReportsController {
 	private Map<String, Integer> statusStatistics;
 	private boolean selected = false;
 
+	/**
+	 * Sets the client for the ReportsController and initializes the combo boxes.
+	 * 
+	 * @param c the client object to communicate with the server
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 		this.r = new ReportController(c);
@@ -91,10 +96,20 @@ public class ReportsController {
 
 	}
 
+	/**
+	 * Sets the stage for the ReportsController.
+	 * 
+	 * @param stage the current stage of the application
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the librarian associated with the ReportsController.
+	 * 
+	 * @param lib the librarian object
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
@@ -263,6 +278,14 @@ public class ReportsController {
 		statusLineChart.setTitle("Monthly Freeze and Unfreeze Actions");
 	}
 
+	/**
+	 * Handles the click event for the "Back to Main" button. This method navigates
+	 * back to the librarian's main screen by opening the corresponding FXML screen
+	 * and passing necessary data, including the client and librarian details.
+	 * 
+	 * @param event the {@link ActionEvent} triggered by the "Back to Main" button
+	 *              click
+	 */
 	@FXML
 	private void onBackToMainClick(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {

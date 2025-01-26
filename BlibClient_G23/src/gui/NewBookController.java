@@ -53,6 +53,11 @@ public class NewBookController {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the current client for the controller.
+	 *
+	 * @param c the current stage
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}

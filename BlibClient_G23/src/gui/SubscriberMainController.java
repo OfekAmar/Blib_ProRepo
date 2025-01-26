@@ -66,15 +66,30 @@ public class SubscriberMainController {
 	private ClientMain cm;
 	private int notifilabel;
 
+	/**
+	 * Sets the stage for the current screen.
+	 * 
+	 * @param stage the current {@link Stage}.
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the subscriber and updates the welcome message.
+	 * 
+	 * @param s the {@link Subscriber} object for the current user.
+	 */
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 		welcomeLabel.setText("Hello, " + s.getName() + "!");
 	}
 
+	/**
+	 * Sets the client instance used for communication with the backend.
+	 * 
+	 * @param cm the client instance of type {@link ClientMain}.
+	 */
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 		nc = new NotificationsController(cm);
@@ -103,6 +118,11 @@ public class SubscriberMainController {
 		}
 	}
 
+	/**
+	 * Handles the "Order Book" button click event. Opens the book order screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onOrderBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/OrderBookScreen.fxml", "Book Order", event, controller -> {
@@ -114,6 +134,11 @@ public class SubscriberMainController {
 		});
 	}
 
+	/**
+	 * Handles the "Search Book" button click event. Opens the search book screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onSearchBookClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/SearchBookScreen.fxml", "Search Book", event, controller -> {
@@ -125,6 +150,11 @@ public class SubscriberMainController {
 		});
 	}
 
+	/**
+	 * Handles the "Reader Card" button click event. Opens the reader card screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onReaderCardClick(ActionEvent event) {
 
@@ -136,6 +166,12 @@ public class SubscriberMainController {
 		}, 450, 300);
 	}
 
+	/**
+	 * Handles the "Extend Borrow" button click event. Opens the extend borrow
+	 * screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onExtendBorrowClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/ExtendBorrowScreen.fxml", "Extend Borrow", event, controller -> {
@@ -146,6 +182,12 @@ public class SubscriberMainController {
 		});
 	}
 
+	/**
+	 * Handles the "View Profile" button click event. Opens the subscriber details
+	 * screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onViewProfileClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
@@ -158,6 +200,12 @@ public class SubscriberMainController {
 
 	}
 
+	/**
+	 * Handles the "Notifications" button click event. Opens the notifications
+	 * screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void onNotificationClick(ActionEvent event) {
 		ScreenLoader.openPopUpScreenWithSize("/gui/NotificationShowScreen.fxml", "Notification", event, controller -> {
@@ -169,6 +217,12 @@ public class SubscriberMainController {
 		}, 400, 400);
 	}
 
+	/**
+	 * Handles the "Logout" button click event. Logs the user out and redirects to
+	 * the login screen.
+	 * 
+	 * @param event the triggered event when the button is clicked.
+	 */
 	@FXML
 	private void handleLogout(ActionEvent event) {
 		this.sub = null;
@@ -180,6 +234,9 @@ public class SubscriberMainController {
 		});
 	}
 
+	/**
+	 * Handles the "Exit" button click event. Closes the application window.
+	 */
 	@FXML
 	private void handleExit() {
 		ScreenLoader.closeWindow(exitButton);
