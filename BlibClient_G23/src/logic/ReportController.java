@@ -16,7 +16,7 @@ public class ReportController {
 	/**
 	 * Constructs a ReportController object with the specified client.
 	 * 
-	 * @param client the client object for server communication
+	 * @param c the client object for server communication
 	 */
 	public ReportController(ClientMain c) {
 		this.client = c;

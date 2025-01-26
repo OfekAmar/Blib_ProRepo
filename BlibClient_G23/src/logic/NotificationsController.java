@@ -5,9 +5,11 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import client.ClientMain;
+
 /**
- * The NotificationsController class manages notifications for both subscribers and librarians.
- * It provides functionality to fetch notifications and mark them as read.
+ * The NotificationsController class manages notifications for both subscribers
+ * and librarians. It provides functionality to fetch notifications and mark
+ * them as read.
  */
 public class NotificationsController {
 
@@ -15,17 +17,25 @@ public class NotificationsController {
 	private Object response;
 	private CountDownLatch latch;
 
+	/**
+	 * Constructs a NotificationsController with the specified client.
+	 * 
+	 * @param client the client object
+	 */
 	public NotificationsController(ClientMain c) {
 		this.client = c;
 	}
+
 	/**
-     * Fetches notifications for a specific subscriber based on their ID and the notification status.
-     *
-     * @param subID  the ID of the subscriber.
-     * @param status the notification status to filter (e.g., unread).
-     * @return a map of notification IDs and their corresponding statuses.
-     * @throws InterruptedException if the thread is interrupted while waiting for the server response.
-     */
+	 * Fetches notifications for a specific subscriber based on their ID and the
+	 * notification status.
+	 *
+	 * @param subID  the ID of the subscriber.
+	 * @param status the notification status to filter (e.g., unread).
+	 * @return a map of notification IDs and their corresponding statuses.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server response.
+	 */
 
 	public synchronized Map<String, Integer> getNotificationsSub(int subID, int status) throws InterruptedException {
 		String msg = "GET_NOTIFICATIONS_SUB," + subID + "," + status;
@@ -58,13 +68,15 @@ public class NotificationsController {
 			return null;
 		}
 	}
-	  /**
-     * Fetches notifications for librarians based on the notification status.
-     *
-     * @param status the notification status to filter (e.g., unread).
-     * @return a map of notification IDs and their corresponding statuses.
-     * @throws InterruptedException if the thread is interrupted while waiting for the server response.
-     */
+
+	/**
+	 * Fetches notifications for librarians based on the notification status.
+	 *
+	 * @param status the notification status to filter (e.g., unread).
+	 * @return a map of notification IDs and their corresponding statuses.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server response.
+	 */
 	public synchronized Map<String, Integer> getNotificationsLib(int status) throws InterruptedException {
 		String msg = "GET_NOTIFICATIONS_LIB," + status;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
@@ -96,12 +108,14 @@ public class NotificationsController {
 			return null;
 		}
 	}
+
 	/**
-     * Marks a subscriber's notification as read.
-     *
-     * @param notificationId the ID of the notification to mark as read.
-     * @throws InterruptedException if the thread is interrupted while waiting for the server response.
-     */
+	 * Marks a subscriber's notification as read.
+	 *
+	 * @param notificationId the ID of the notification to mark as read.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server response.
+	 */
 
 	public void markAsReadSubs(Integer notificationId) throws InterruptedException {
 		String msg = "MARK_AS_READ_SUB," + notificationId;
@@ -116,12 +130,14 @@ public class NotificationsController {
 
 		latch.await();// Wait for the server response
 	}
+
 	/**
-     * Marks a librarian's notification as read.
-     *
-     * @param notificationId the ID of the notification to mark as read.
-     * @throws InterruptedException if the thread is interrupted while waiting for the server response.
-     */
+	 * Marks a librarian's notification as read.
+	 *
+	 * @param notificationId the ID of the notification to mark as read.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server response.
+	 */
 
 	public void markAsReadLib(Integer notificationId) throws InterruptedException {
 		String msg = "MARK_AS_READ_LIB," + notificationId;

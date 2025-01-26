@@ -16,20 +16,24 @@ import gui.*;
 import javafx.geometry.Rectangle2D;
 import java.util.function.Consumer;
 import javafx.scene.control.Alert;
+
 /**
- * The ScreenLoader class provides utility methods for managing and loading JavaFX screens.
- * It includes methods for opening new stages, resizing windows, showing alerts, and managing pop-ups.
+ * The ScreenLoader class provides utility methods for managing and loading
+ * JavaFX screens. It includes methods for opening new stages, resizing windows,
+ * showing alerts, and managing pop-ups.
  */
 public class ScreenLoader {
 	/**
-     * Opens a new screen with the specified FXML file and stage title, and closes the current stage.
-     *
-     * @param <T>               the type of the controller for the FXML.
-     * @param fxmlFileName      the name of the FXML file to load.
-     * @param stageTitle        the title of the new stage.
-     * @param event             the ActionEvent that triggered the screen change.
-     * @param controllerConsumer a consumer to set up the controller for the new screen.
-     */
+	 * Opens a new screen with the specified FXML file and stage title, and closes
+	 * the current stage.
+	 *
+	 * @param <T>                the type of the controller for the FXML.
+	 * @param fxmlFileName       the name of the FXML file to load.
+	 * @param stageTitle         the title of the new stage.
+	 * @param event              the ActionEvent that triggered the screen change.
+	 * @param controllerConsumer a consumer to set up the controller for the new
+	 *                           screen.
+	 */
 	public static <T> void openScreen(String fxmlFileName, String stageTitle, ActionEvent event,
 			Consumer<T> controllerConsumer) {
 		Platform.runLater(() -> {
@@ -60,17 +64,20 @@ public class ScreenLoader {
 			}
 		});
 	}
-	 /**
-     * Opens a new screen with the specified size, FXML file, and stage title, then closes the current stage.
-     *
-     * @param <T>               the type of the controller for the FXML.
-     * @param fxmlFileName      the name of the FXML file to load.
-     * @param stageTitle        the title of the new stage.
-     * @param event             the ActionEvent that triggered the screen change.
-     * @param controllerConsumer a consumer to set up the controller for the new screen.
-     * @param width             the width of the new stage.
-     * @param height            the height of the new stage.
-     */
+
+	/**
+	 * Opens a new screen with the specified size, FXML file, and stage title, then
+	 * closes the current stage.
+	 *
+	 * @param <T>                the type of the controller for the FXML.
+	 * @param fxmlFileName       the name of the FXML file to load.
+	 * @param stageTitle         the title of the new stage.
+	 * @param event              the ActionEvent that triggered the screen change.
+	 * @param controllerConsumer a consumer to set up the controller for the new
+	 *                           screen.
+	 * @param Width              the width of the new stage.
+	 * @param Hight              the height of the new stage.
+	 */
 
 	public static <T> void openScreenWithSize(String fxmlFileName, String stageTitle, ActionEvent event,
 			Consumer<T> controllerConsumer, int Width, int Hight) {
@@ -102,15 +109,17 @@ public class ScreenLoader {
 			}
 		});
 	}
+
 	/**
-     * Opens a pop-up screen with the specified FXML file and stage title.
-     *
-     * @param <T>               the type of the controller for the FXML.
-     * @param fxmlFileName      the name of the FXML file to load.
-     * @param stageTitle        the title of the pop-up stage.
-     * @param event             the ActionEvent that triggered the pop-up.
-     * @param controllerConsumer a consumer to set up the controller for the new screen.
-     */
+	 * Opens a pop-up screen with the specified FXML file and stage title.
+	 *
+	 * @param <T>                the type of the controller for the FXML.
+	 * @param fxmlFileName       the name of the FXML file to load.
+	 * @param stageTitle         the title of the pop-up stage.
+	 * @param event              the ActionEvent that triggered the pop-up.
+	 * @param controllerConsumer a consumer to set up the controller for the new
+	 *                           screen.
+	 */
 	public static <T> void openPopUpScreen(String fxmlFileName, String stageTitle, ActionEvent event,
 			Consumer<T> controllerConsumer) {
 		Platform.runLater(() -> {
@@ -137,17 +146,20 @@ public class ScreenLoader {
 			}
 		});
 	}
+
 	/**
-     * Opens a pop-up screen with the specified FXML file, stage title, and dimensions.
-     *
-     * @param <T>               the type of the controller for the FXML.
-     * @param fxmlFileName      the name of the FXML file to load.
-     * @param stageTitle        the title of the pop-up stage.
-     * @param event             the ActionEvent that triggered the pop-up.
-     * @param controllerConsumer a consumer to set up the controller for the new screen.
-     * @param Width             the width of the pop-up stage.
-     * @param Hight             the height of the pop-up stage.
-     */
+	 * Opens a pop-up screen with the specified FXML file, stage title, and
+	 * dimensions.
+	 *
+	 * @param <T>                the type of the controller for the FXML.
+	 * @param fxmlFileName       the name of the FXML file to load.
+	 * @param stageTitle         the title of the pop-up stage.
+	 * @param event              the ActionEvent that triggered the pop-up.
+	 * @param controllerConsumer a consumer to set up the controller for the new
+	 *                           screen.
+	 * @param Width              the width of the pop-up stage.
+	 * @param Hight              the height of the pop-up stage.
+	 */
 	public static <T> void openPopUpScreenWithSize(String fxmlFileName, String stageTitle, ActionEvent event,
 			Consumer<T> controllerConsumer, int Width, int Hight) {
 		Platform.runLater(() -> {
@@ -174,13 +186,14 @@ public class ScreenLoader {
 			}
 		});
 	}
+
 	/**
-     * Resizes the current window and centers it on the screen.
-     *
-     * @param event  the ActionEvent that triggered the resize.
-     * @param width  the new width of the window.
-     * @param height the new height of the window.
-     */
+	 * Resizes the current window and centers it on the screen.
+	 *
+	 * @param event  the ActionEvent that triggered the resize.
+	 * @param width  the new width of the window.
+	 * @param height the new height of the window.
+	 */
 	public static void resizeCenterWindow(ActionEvent event, int width, int height) {
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setWidth(width);
@@ -193,12 +206,13 @@ public class ScreenLoader {
 		stage.setX(centerX);
 		stage.setY(centerY);
 	}
+
 	/**
-     * Displays an alert dialog with the specified title and content.
-     *
-     * @param title   the title of the alert dialog.
-     * @param content the content of the alert dialog.
-     */
+	 * Displays an alert dialog with the specified title and content.
+	 *
+	 * @param title   the title of the alert dialog.
+	 * @param content the content of the alert dialog.
+	 */
 
 	public static void showAlert(String title, String content) {
 		Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -207,11 +221,12 @@ public class ScreenLoader {
 		alert.setContentText(content);
 		alert.showAndWait();
 	}
+
 	/**
-     * Closes the current window associated with the given button.
-     *
-     * @param button the button whose window is to be closed.
-     */
+	 * Closes the current window associated with the given button.
+	 *
+	 * @param button the button whose window is to be closed.
+	 */
 
 	public static void closeWindow(Button b) {
 		Stage stage = (Stage) b.getScene().getWindow();

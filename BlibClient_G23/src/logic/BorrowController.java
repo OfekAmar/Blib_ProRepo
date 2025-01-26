@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import client.ClientMain;
+
 /**
  * Logic controller for handling borrowing operations in the library system.
  */
@@ -16,24 +17,28 @@ public class BorrowController {
 	private final ClientMain client;
 	private Object response;
 	private CountDownLatch latch;
+
 	/**
-     * Constructs a BorrowController with the specified subscriber controller and client.
-     * 
-     * @param subscriberController the subscriber controller
-     * @param client the client object
-     */
+	 * Constructs a BorrowController with the specified subscriber controller and
+	 * client.
+	 * 
+	 * @param subscriberController the subscriber controller
+	 * @param client               the client object
+	 */
 	public BorrowController(SubscriberController subscriberController, ClientMain client) {
 
 		this.subscriberController = subscriberController;
 		this.client = client;
 	}
+
 	/**
-     * Retrieves a list of active borrows for a subscriber.
-     * 
-     * @param subID the subscriber ID
-     * @return a list of active borrows
-     * @throws InterruptedException if interrupted while waiting for the server response
-     */
+	 * Retrieves a list of active borrows for a subscriber.
+	 * 
+	 * @param subID the subscriber ID
+	 * @return a list of active borrows
+	 * @throws InterruptedException if interrupted while waiting for the server
+	 *                              response
+	 */
 	public synchronized List<String> showBorrowes(int subID) throws InterruptedException {
 		String msg = "GET_ACTIVE_BORROWED," + subID;
 		latch = new CountDownLatch(1);
@@ -56,13 +61,18 @@ public class BorrowController {
 			throw new IllegalStateException("Invalid server response for GET_ACTIVE_BORROWED");
 		}
 	}
+
 	/**
-     * Retrieves a list of active borrows for a subscriber.
-     * 
-     * @param subID the subscriber ID
-     * @return a list of active borrows
-     * @throws InterruptedException if interrupted while waiting for the server response
-     */
+	 * Processes a borrowing request for a book.
+	 * 
+	 * @param bookId       the book ID
+	 * @param copyId       the specific copy ID of the book
+	 * @param subscriberId the subscriber ID
+	 * @param returnDate   the due date for returning the book
+	 * @return the response from the server
+	 * @throws InterruptedException if interrupted while waiting for the server
+	 *                              response
+	 */
 	public synchronized String processBorrow(String bookId, String copyId, String subscriberId, LocalDate returnDate)
 			throws InterruptedException {
 		// Send the request to ServerMain
@@ -92,14 +102,16 @@ public class BorrowController {
 		}
 
 	}
+
 	/**
-     * Extends a borrowing period for a specific borrow ID.
-     * 
-     * @param borrowId the borrow ID
-     * @param selecteDate the new return date
-     * @return the response from the server
-     * @throws InterruptedException if interrupted while waiting for the server response
-     */
+	 * Extends a borrowing period for a specific borrow ID.
+	 * 
+	 * @param borrowId     the borrow ID
+	 * @param selectedDate the new return date
+	 * @return the response from the server
+	 * @throws InterruptedException if interrupted while waiting for the server
+	 *                              response
+	 */
 	public synchronized String extendBorrow(String borrowId, String selecteDate) throws InterruptedException {
 		// Send the request to ServerMain
 		String msg = "EXTEND_BORROW," + borrowId + "," + selecteDate;
@@ -113,16 +125,18 @@ public class BorrowController {
 		System.out.println(response);
 		return (String) (response);
 	}
+
 	/**
-     * Manually extends a borrowing period.
-     * 
-     * @param subscriberID the subscriber ID
-     * @param borrowID the borrow ID
-     * @param date the new return date
-     * @param description the reason for the extension
-     * @return the response from the server
-     * @throws InterruptedException if interrupted while waiting for the server response
-     */
+	 * Manually extends a borrowing period.
+	 * 
+	 * @param subscriberID the subscriber ID
+	 * @param borrowID     the borrow ID
+	 * @param date         the new return date
+	 * @param description  the reason for the extension
+	 * @return the response from the server
+	 * @throws InterruptedException if interrupted while waiting for the server
+	 *                              response
+	 */
 	public synchronized String extendBorrowManualy(int subscriberID, int borrowID, LocalDate date, String description)
 			throws InterruptedException {
 		String msg = "UPDATE_BORROW_RETURN," + subscriberID + "," + borrowID + "," + date + "," + description;
@@ -137,14 +151,16 @@ public class BorrowController {
 		latch.await();
 		return (String) (response);
 	}
-	 /**
-     * Places a book order for a subscriber.
-     * 
-     * @param subscriberID the subscriber ID
-     * @param bookID the book ID
-     * @return the response from the server
-     * @throws InterruptedException if interrupted while waiting for the server response
-     */
+
+	/**
+	 * Places a book order for a subscriber.
+	 * 
+	 * @param subscriberID the subscriber ID
+	 * @param bookID       the book ID
+	 * @return the response from the server
+	 * @throws InterruptedException if interrupted while waiting for the server
+	 *                              response
+	 */
 	public synchronized String orderBook(int subscriberID, int bookID) throws InterruptedException {
 		String msg = "ORDER_BOOK," + subscriberID + "," + bookID;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response

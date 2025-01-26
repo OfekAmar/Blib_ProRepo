@@ -51,14 +51,31 @@ public class NewSubscriberController {
 
 	private Consumer<Subscriber> onSubscriberAddedCallback;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client instance for the controller, enabling communication with the
+	 * server.
+	 *
+	 * @param c the {@link ClientMain} instance used for server communication
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
 
+	/**
+	 * Sets a callback function to be invoked after a new subscriber is successfully
+	 * added.
+	 *
+	 * @param callback a {@link Consumer} to handle the added subscriber
+	 */
 	public void setOnSubscriberAddedCallback(Consumer<Subscriber> callback) {
 		this.onSubscriberAddedCallback = callback;
 	}
@@ -105,6 +122,12 @@ public class NewSubscriberController {
 
 	}
 
+	/**
+	 * Handles the "Cancel" button click event. Closes the window without adding a
+	 * subscriber.
+	 *
+	 * @param event the event triggered by clicking the "Cancel" button
+	 */
 	@FXML
 	private void onCancelClick(ActionEvent event) {
 		ScreenLoader.closeWindow(cancelButton);

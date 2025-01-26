@@ -49,10 +49,20 @@ public class EditCopyController {
 	private CopyOfBook copy;
 	private Book book;
 
+	/**
+	 * Sets the stage for the controller.
+	 *
+	 * @param stage the current {@link Stage} of the application
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the client for the controller to communicate with the server.
+	 *
+	 * @param c the {@link ClientMain} instance
+	 */
 	public void setClient(ClientMain c) {
 		this.c = c;
 	}
@@ -66,6 +76,12 @@ public class EditCopyController {
 		this.onCopyEditedCallback = callback;
 	}
 
+	/**
+	 * Sets the book and copy details to be edited.
+	 *
+	 * @param bookCopy the {@link CopyOfBook} to be edited
+	 * @param b        the parent {@link Book} of the copy
+	 */
 	public void setBook(CopyOfBook bookCopy, Book b) {
 		copy = bookCopy;
 		book = b;
@@ -115,6 +131,12 @@ public class EditCopyController {
 		}
 	}
 
+	/**
+	 * Handles the cancel button click event to close the current window without
+	 * saving changes.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the button click
+	 */
 	@FXML
 	private void onCancelClick(ActionEvent event) {
 		ScreenLoader.closeWindow(cancelButton);

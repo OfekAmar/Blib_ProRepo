@@ -84,23 +84,50 @@ public class ReaderCardController {
 	ReportController rc;
 	BorrowController bc;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
 
+	/**
+	 * Sets the librarian who is currently logged in.
+	 *
+	 * @param lib the {@link Librarian} instance
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 		backButton.setText("Back");
 	}
 
+	/**
+	 * Sets the subscriber whose details are being viewed.
+	 *
+	 * @param s the {@link Subscriber} instance
+	 */
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
 	}
 
+	/**
+	 * Sets the subscriber whose details are being viewed.
+	 *
+	 * @param s the {@link ClientMain} instance
+	 */
 	public void setClientMain(ClientMain c) {
 		this.c = c;
 	}
 
+	/**
+	 * Initializes the client and subscriber for this controller and loads the
+	 * borrow history.
+	 *
+	 * @param s the {@link Subscriber} instance
+	 * @param c the {@link ClientMain} instance
+	 */
 	public void setClientAndSubscriber(Subscriber s, ClientMain c) {
 		this.sub = s;
 		this.c = c;
@@ -174,6 +201,9 @@ public class ReaderCardController {
 		}
 	}
 
+	/**
+	 * Initialize the tables visibility
+	 */
 	@FXML
 	public void initialize() {
 		borrowHistoryTableView.setVisible(false);

@@ -44,6 +44,11 @@ public class NewBookController {
 
 	private Consumer<Book> onBookAddesCallback;
 
+	/**
+	 * Sets the current stage (window) for the controller.
+	 *
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
@@ -102,6 +107,12 @@ public class NewBookController {
 		}
 	}
 
+	/**
+	 * Handles the "Cancel" button click event. Closes the window without adding a
+	 * book.
+	 *
+	 * @param event the event triggered by clicking the "Cancel" button
+	 */
 	@FXML
 	private void onCancelClick(ActionEvent event) {
 		ScreenLoader.closeWindow(cancelButton);
