@@ -18,7 +18,7 @@ import logic.ScreenLoader;
 import logic.Subscriber;
 import logic.SubscriberController;
 
-////the class is the controller for the SubscriberDetails.fxml and make the connection between the logic and the UI
+
 public class SubscriberDetailsController {
 	@FXML
 	private Label idLabel;

@@ -20,20 +20,20 @@ import logic.SubscriberController;
  * Controller for managing the borrowing of books in the library system.
  */
 public class BorrowBookController {
-	 /**
-     * Field for entering subscriber details.
-     */
+	/**
+	 * Field for entering subscriber details.
+	 */
 	@FXML
 	private TextField subscriberField;
-	 /**
-     * Field for entering book details.
-     */
+	/**
+	 * Field for entering book details.
+	 */
 	@FXML
 	private TextField bookField;
-	 
+
 	@FXML
 	private Button scanSubscriberButton;
-	
+
 	@FXML
 	private Button scanBookButton;
 
@@ -43,59 +43,61 @@ public class BorrowBookController {
 	@FXML
 	private Button backButton;
 	/**
-     * DatePicker to select the due date for borrowing.
-     */
+	 * DatePicker to select the due date for borrowing.
+	 */
 	@FXML
 	private DatePicker datePicker;
 
 	private Stage stage;
 	private Librarian lib;
+
 	/**
-     * Sets the stage for the controller.
-     * 
-     * @param stage the current stage
-     */
+	 * Sets the stage for the controller.
+	 * 
+	 * @param stage the current stage
+	 */
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
+
 	/**
-     * Sets the librarian associated with the current session.
-     * 
-     * @param lib the librarian object
-     */
+	 * Sets the librarian associated with the current session.
+	 * 
+	 * @param lib the librarian object
+	 */
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
 
-
 	private ClientMain cm;
-	 /**
-     * Sets the client for communication with the server.
-     * 
-     * @param cm the client object
-     */
+
+	/**
+	 * Sets the client for communication with the server.
+	 * 
+	 * @param cm the client object
+	 */
 	public void setClient(ClientMain cm) {
 		this.cm = cm;
 	}
-	  /**
-     * Handles the acceptance of a borrowing request.
-     * 
-     * @param event the action event
-     */
+
+	/**
+	 * Handles the acceptance of a borrowing request.
+	 * 
+	 * @param event the action event
+	 */
 	@FXML
 	private void onAcceptClick(ActionEvent event) {
 		String subscriberInfo = subscriberField.getText();
 		if (subscriberInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a subscriber name or ID.");
 			return;
-		} 
-		
+		}
+
 		String bookInfo = bookField.getText();
 		if (bookInfo.isEmpty()) {
 			ScreenLoader.showAlert("Error", "Please enter a book name or code.");
 			return;
-		} 
-		
+		}
 
 		// Check for date selection
 		LocalDate selectedDate = datePicker.getValue();
@@ -110,11 +112,12 @@ public class BorrowBookController {
 			ScreenLoader.showAlert("Error", "The selected due date cannot be in the past.");
 			return;
 		}
-		 // Validate the bookInfo format (book_code/copy_id)
-	    if (!bookInfo.matches("^\\d+/\\d+$")) {
-	        ScreenLoader.showAlert("Error", "Invalid book information format. Please use the format: book_code/copy_id (e.g., 123/1).");
-	        return;
-	    }
+		// Validate the bookInfo format (book_code/copy_id)
+		if (!bookInfo.matches("^\\d+/\\d+$")) {
+			ScreenLoader.showAlert("Error",
+					"Invalid book information format. Please use the format: book_code/copy_id (e.g., 123/1).");
+			return;
+		}
 
 		// Validate that the selected date is not more than 14 days from the current
 		// date
@@ -122,11 +125,6 @@ public class BorrowBookController {
 			ScreenLoader.showAlert("Error", "The selected due date cannot be more than 14 days from today.");
 			return;
 		}
-		// implement the logic of borrow book
-		// remove copy from database add borrow record and goes on....
-		// the details of book name and subscriber are in the variables subscriberInfo
-		// variables subscriberInfo and bookInfo
-		// the due date to borrow is in the variable selectedDate
 		String[] parts = bookInfo.split("/");
 
 		// Extract the book code and copy ID
@@ -145,32 +143,35 @@ public class BorrowBookController {
 		}
 
 	}
+
 	/**
-     * Action event handler for scanning subscriber information.
-     * 
-     * @param event the action event
-     */
+	 * Action event handler for scanning subscriber information.
+	 * 
+	 * @param event the action event
+	 */
 
 	@FXML
 	private void onScanSubscriber(ActionEvent event) {
 		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Subscriber", "Scanning subscriber card...");
 	}
+
 	/**
-     * Action event handler for scanning book information.
-     * 
-     * @param event the action event
-     */
+	 * Action event handler for scanning book information.
+	 * 
+	 * @param event the action event
+	 */
 	@FXML
 	private void onScanBook(ActionEvent event) {
 		// there is no implementation for scan we dont have access to scanner :(
 		ScreenLoader.showAlert("Scan Book", "Scanning book...");
 	}
+
 	/**
-     * Navigates back to the librarian main screen.
-     * 
-     * @param event the action event
-     */
+	 * Navigates back to the librarian main screen.
+	 * 
+	 * @param event the action event
+	 */
 	@FXML
 	private void onBackToMain(ActionEvent event) {
 		ScreenLoader.openScreen("/gui/LibrarianMainScreen.fxml", "Librarian Main Screen", event, controller -> {
