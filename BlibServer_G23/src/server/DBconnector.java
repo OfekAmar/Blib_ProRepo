@@ -18,9 +18,9 @@ import logic.Record;
 import logic.Subscriber;
 
 /**
- * Singleton class that manages the connection to the MySQL database. This class
- * ensures only a single instance of the database connection is created, and
- * provides a global access point to that connection.
+ * The 'DBconnector' class is a singleton class that manages the connection to
+ * the MySQL database. This class ensures only a single instance of the database
+ * connection is created, and provides a global access point to that connection.
  */
 public class DBconnector {
 	private static volatile DBconnector instance;
