@@ -5,17 +5,29 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import client.ClientMain;
-
+/**
+ * Logic class for handling book search operations in the library system.
+ */
 public class SearchBookLogic {
 
 	private ClientMain client;
 	private Object response;
 	private CountDownLatch latch;
-
+	  /**
+     * Constructs a SearchBookLogic object with the specified client.
+     * 
+     * @param client the client object for server communication
+     */
 	public SearchBookLogic(ClientMain client) {
 		this.client = client;
 	}
-
+	/**
+     * Searches for a book by its title.
+     * 
+     * @param bookTitle the title of the book
+     * @return the server's response to the search operation
+     * @throws InterruptedException if interrupted while waiting for the server response
+     */
 	public synchronized String searchBookByTitle(String bookTitle) throws InterruptedException {
 		String msg = "SEARCH_BOOK_BY_TITLE," + bookTitle;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
@@ -31,7 +43,13 @@ public class SearchBookLogic {
 		return (String) (response);// Wait for the server response
 		// Thread.sleep(1000);
 	}
-
+	 /**
+     * Searches for books by a specific subject.
+     * 
+     * @param subject the subject to search for
+     * @return a list of books matching the subject
+     * @throws InterruptedException if interrupted while waiting for the server response
+     */
 	public synchronized List<Book> searchBookBySubject(String subject) throws InterruptedException {
 		String msg = "SEARCH_BOOK_BY_SUBJECT," + subject;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
@@ -65,7 +83,13 @@ public class SearchBookLogic {
 			return null;
 		}
 	}
-
+	/**
+     * Searches for books using free text input.
+     * 
+     * @param freeText the free text to search with
+     * @return a list of books matching the free text
+     * @throws InterruptedException if interrupted while waiting for the server response
+     */
 	public synchronized List<Book> searchBookByFreeText(String freeText) throws InterruptedException {
 		String msg = "SEARCH_BOOK_BY_FREE_TEXT," + freeText;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
