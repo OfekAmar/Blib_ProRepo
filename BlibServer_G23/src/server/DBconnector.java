@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import logic.Book;
 import logic.CopyOfBook;
@@ -31,6 +32,7 @@ public class DBconnector {
 	 * is called only once when the singleton instance is created.
 	 */
 	private DBconnector() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		connectToDatabase();
 	}
 
@@ -241,7 +243,7 @@ public class DBconnector {
 	 */
 	public String processReturnBook(int bookId, int copyId) {
 		String borrowQuery = "SELECT * FROM Borrow WHERE book_code = ? AND copy_id = ? AND status = 'borrowed'";
-		String updateBorrowQuery = "UPDATE Borrow SET status = 'returned' WHERE book_code = ? AND copy_id = ?";
+		String updateBorrowQuery = "UPDATE Borrow SET status = ? WHERE borrow_id = ?";
 		String reservationQuery = "SELECT * FROM Reserved WHERE book_code = ? AND order_status = 'waiting' AND copy_id IS NULL ORDER BY res_date ASC, res_time ASC LIMIT 1";
 		String updateReservationQuery = "UPDATE Reserved SET copy_id = ?, res_max_date = ?, order_status = 'waiting' WHERE order_id = ?";
 		String updateCopyToReservedQuery = "UPDATE CopyOfBook SET status = 'reserved' WHERE book_code = ? AND copy_id = ?";
@@ -257,15 +259,24 @@ public class DBconnector {
 				ResultSet rsBorrow = borrowPs.executeQuery();
 
 				if (rsBorrow.next()) {
+					int borrow_id = rsBorrow.getInt("borrow_id");
 					int subscriberId = rsBorrow.getInt("sub_id");
+					
 					LocalDate maxReturnDate = rsBorrow.getDate("return_max_date").toLocalDate();
-
-					// Mark the borrow record as returned
-					try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-						updateBorrowPs.setInt(1, bookId);
-						updateBorrowPs.setInt(2, copyId);
-						updateBorrowPs.executeUpdate();
-					}
+					System.out.println("Max return date: " + maxReturnDate);
+					System.out.println("Current date: " + LocalDate.now());
+	                boolean isLate = LocalDate.now().isAfter(maxReturnDate);
+	                System.out.println("Is late: " + isLate);
+	                try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+	                	
+	                	if (isLate) {
+	                        updateBorrowPs.setString(1, "late");
+	                    } else {
+	                        updateBorrowPs.setString(1, "returned");
+	                    }
+	                	updateBorrowPs.setInt(2, borrow_id);
+	                    updateBorrowPs.executeUpdate();
+	                }
 
 					boolean reserved = false;
 
@@ -328,19 +339,17 @@ public class DBconnector {
 					}
 
 					// Always record the return action in the Records table
-					try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-						if(maxReturnDate.isAfter(LocalDate.now())) {
-							recordPs.setString(1, "late");
-						}
-						else {
-							recordPs.setString(1, "returned");
-						}
-						
-						recordPs.setInt(2, subscriberId);
-						recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-						recordPs.setInt(4, bookId);
-						recordPs.executeUpdate();
-					}
+	                try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+	                    if (isLate) {
+	                        recordPs.setString(1, "late");
+	                    } else {
+	                        recordPs.setString(1, "returned");
+	                    }
+	                    recordPs.setInt(2, subscriberId);
+	                    recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+	                    recordPs.setInt(4, bookId);
+	                    recordPs.executeUpdate();
+	                }
 
 					return "Book returned successfully.";
 				} else {
@@ -1431,40 +1440,46 @@ public class DBconnector {
 	 *                      overdue check.
 	 */
 	public void checkAndFreezeOverdueSubscribers() {
-		System.out.println("Running daily overdue check...");
-
-		String overdueQuery = "SELECT sub_id, borrow_id FROM Borrow WHERE status = 'borrowed' AND return_max_date < ?";
-		String updateBorrowQuery = "UPDATE Borrow SET status = 'late' WHERE borrow_id = ?";
+		String overdueQuery = "SELECT sub_id, borrow_id, return_max_date FROM Borrow WHERE status = 'borrowed'";
 		String freezeSubscriberQuery = "UPDATE Subscriber SET status = 'frozen' WHERE sub_id = ?";
+		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code, description) VALUES (?, ?, ?, ?, ?)";
 
 		try (PreparedStatement overduePs = dbConnection.prepareStatement(overdueQuery)) {
-			overduePs.setDate(1, java.sql.Date.valueOf(LocalDate.now().minusDays(7)));
-			ResultSet rs = overduePs.executeQuery();
+		    ResultSet rs = overduePs.executeQuery();
 
-			while (rs.next()) {
-				int subscriberId = rs.getInt("sub_id");
-				int borrowId = rs.getInt("borrow_id");
+		    // Calculate the cutoff date for overdue checks
+		    LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
 
-				// Update the Borrow status to 'late'
-				try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-					updateBorrowPs.setInt(1, borrowId);
-					int rowsAffected = updateBorrowPs.executeUpdate();
-					if (rowsAffected > 0) {
-						System.out.println("Borrow ID " + borrowId + " status updated to 'late'.");
-					}
-				}
+		    while (rs.next()) {
+		        int subscriberId = rs.getInt("sub_id");
+		        int borrowId = rs.getInt("borrow_id");
+		        LocalDate returnMaxDate = rs.getDate("return_max_date").toLocalDate();
 
-				// Freeze the subscriber
-				try (PreparedStatement freezeSubscriberPs = dbConnection.prepareStatement(freezeSubscriberQuery)) {
-					freezeSubscriberPs.setInt(1, subscriberId);
-					int rowsAffected = freezeSubscriberPs.executeUpdate();
-					if (rowsAffected > 0) {
-						System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
-					}
-				}
-			}
+		        // Perform the overdue check in Java
+		        if (returnMaxDate.isBefore(oneWeekAgo)) {
+		            // Freeze the subscriber
+		            try (PreparedStatement freezeSubscriberPs = dbConnection.prepareStatement(freezeSubscriberQuery)) {
+		                freezeSubscriberPs.setInt(1, subscriberId);
+		                int rowsAffected = freezeSubscriberPs.executeUpdate();
+
+		                if (rowsAffected > 0) {
+		                    System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
+
+		                    // Record the freeze activity
+		                    try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+		                        recordPs.setString(1, "freeze");
+		                        recordPs.setInt(2, subscriberId);
+		                        recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+		                        recordPs.setNull(4, java.sql.Types.INTEGER); // book_code is null
+		                        recordPs.setString(5, "Froze due to daily overdue check.");
+		                        recordPs.executeUpdate();
+		                    }
+		                }
+		            }
+		        }
+		    }
 		} catch (SQLException e) {
-			System.err.println("Error during overdue check: " + e.getMessage());
+		    System.err.println("Error during overdue check: " + e.getMessage());
 		}
 	}
 
