@@ -792,6 +792,16 @@ public class DBconnector {
 		return null;
 	}
 
+	/**
+	 * Retrieves the location of a book by its code. If the book is available for
+	 * borrowing, the method returns its location. Otherwise, it returns the
+	 * earliest return date and an option to order the book.
+	 *
+	 * @param BookCode the unique code of the book to search for.
+	 * @return a message indicating the book's availability, location, or earliest
+	 *         return date.
+	 * @throws SQLException if a database access error occurs.
+	 */
 	public String getLocationByCode(int BookCode) throws SQLException {
 		String query = "SELECT location FROM copyofbook WHERE book_code=? AND status=?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
@@ -807,6 +817,15 @@ public class DBconnector {
 		}
 	}
 
+	/**
+	 * Searches for books by their title in the database. Returns a list of books
+	 * that match the given title.
+	 *
+	 * @param title the title of the book to search for.
+	 * @return a list of {@link Book} objects that match the given title. If no
+	 *         books are found, the list will be empty.
+	 * @throws SQLException if a database access error occurs.
+	 */
 	public List<Book> searchBookByTitle(String title) throws SQLException {
 		List<Book> bookList = new ArrayList<>();
 		Book b;
