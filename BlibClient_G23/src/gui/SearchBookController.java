@@ -122,12 +122,6 @@ public class SearchBookController {
 	}
 
 	/**
-	 * Updates the visibility of the search results list.
-	 *
-	 * @param isVisible true to show the list, false to hide it
-	 */
-
-	/**
 	 * Initializes the screen, setting up the search options and button visibility.
 	 */
 	@FXML
@@ -230,6 +224,13 @@ public class SearchBookController {
 		}
 	}
 
+	/**
+	 * Handles the "Get Location" action triggered by the user. This method
+	 * retrieves the location of the selected book in the table and displays it
+	 * using an alert. If no book is selected, it triggers a search action.
+	 *
+	 * @param event the {@link ActionEvent} triggered by the user's interaction.
+	 */
 	@FXML
 	private void onGetLocation(ActionEvent event) {
 		SearchBookLogic searchLogic = new SearchBookLogic(c);

@@ -24,6 +24,17 @@ public class SearchBookLogic {
 		this.client = client;
 	}
 
+	/**
+	 * Retrieves the location of a book by its ID by communicating with a server.
+	 * This method is synchronized to ensure thread safety. It sends a request to
+	 * the server and waits for the response using a {@link CountDownLatch}.
+	 *
+	 * @param bookID the unique identifier of the book to locate.
+	 * @return the location of the book as a {@link String}, as received from the
+	 *         server.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server's response.
+	 */
 	public synchronized String getLocation(int bookID) throws InterruptedException {
 		String msg = "GET_LOCATION," + bookID;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
@@ -40,6 +51,19 @@ public class SearchBookLogic {
 		// Thread.sleep(1000);
 	}
 
+	/**
+	 * Searches for books by their title by communicating with a server. This method
+	 * is synchronized to ensure thread safety. It sends a request to the server and
+	 * waits for the response using a {@link CountDownLatch}. The server is expected
+	 * to return a list of books that match the given title.
+	 *
+	 * @param title the title of the books to search for.
+	 * @return a {@link List} of {@link Book} objects that match the given title, as
+	 *         received from the server. If the response cannot be cast to the
+	 *         expected type or an error occurs, the method returns {@code null}.
+	 * @throws InterruptedException if the thread is interrupted while waiting for
+	 *                              the server's response.
+	 */
 	public synchronized List<Book> searchBookByTitle(String title) throws InterruptedException {
 		String msg = "SEARCH_BOOK_BY_Title," + title;
 		latch = new CountDownLatch(1); // Create a latch to wait for the response
