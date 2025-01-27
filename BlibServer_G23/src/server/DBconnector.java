@@ -261,22 +261,22 @@ public class DBconnector {
 				if (rsBorrow.next()) {
 					int borrow_id = rsBorrow.getInt("borrow_id");
 					int subscriberId = rsBorrow.getInt("sub_id");
-					
+
 					LocalDate maxReturnDate = rsBorrow.getDate("return_max_date").toLocalDate();
-					System.out.println("Max return date: " + maxReturnDate);
-					System.out.println("Current date: " + LocalDate.now());
-	                boolean isLate = LocalDate.now().isAfter(maxReturnDate);
-	                System.out.println("Is late: " + isLate);
-	                try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
-	                	
-	                	if (isLate) {
-	                        updateBorrowPs.setString(1, "late");
-	                    } else {
-	                        updateBorrowPs.setString(1, "returned");
-	                    }
-	                	updateBorrowPs.setInt(2, borrow_id);
-	                    updateBorrowPs.executeUpdate();
-	                }
+					// System.out.println("Max return date: " + maxReturnDate);
+					// System.out.println("Current date: " + LocalDate.now());
+					boolean isLate = LocalDate.now().isAfter(maxReturnDate);
+					System.out.println("Is late: " + isLate);
+					try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
+
+						if (isLate) {
+							updateBorrowPs.setString(1, "late");
+						} else {
+							updateBorrowPs.setString(1, "returned");
+						}
+						updateBorrowPs.setInt(2, borrow_id);
+						updateBorrowPs.executeUpdate();
+					}
 
 					boolean reserved = false;
 
@@ -339,17 +339,17 @@ public class DBconnector {
 					}
 
 					// Always record the return action in the Records table
-	                try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-	                    if (isLate) {
-	                        recordPs.setString(1, "late");
-	                    } else {
-	                        recordPs.setString(1, "returned");
-	                    }
-	                    recordPs.setInt(2, subscriberId);
-	                    recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-	                    recordPs.setInt(4, bookId);
-	                    recordPs.executeUpdate();
-	                }
+					try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+						if (isLate) {
+							recordPs.setString(1, "late");
+						} else {
+							recordPs.setString(1, "returned");
+						}
+						recordPs.setInt(2, subscriberId);
+						recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+						recordPs.setInt(4, bookId);
+						recordPs.executeUpdate();
+					}
 
 					return "Book returned successfully.";
 				} else {
@@ -1445,41 +1445,41 @@ public class DBconnector {
 		String insertRecordQuery = "INSERT INTO Records (record_type, sub_id, record_date, book_code, description) VALUES (?, ?, ?, ?, ?)";
 
 		try (PreparedStatement overduePs = dbConnection.prepareStatement(overdueQuery)) {
-		    ResultSet rs = overduePs.executeQuery();
+			ResultSet rs = overduePs.executeQuery();
 
-		    // Calculate the cutoff date for overdue checks
-		    LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
+			// Calculate the cutoff date for overdue checks
+			LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
 
-		    while (rs.next()) {
-		        int subscriberId = rs.getInt("sub_id");
-		        int borrowId = rs.getInt("borrow_id");
-		        LocalDate returnMaxDate = rs.getDate("return_max_date").toLocalDate();
+			while (rs.next()) {
+				int subscriberId = rs.getInt("sub_id");
+				int borrowId = rs.getInt("borrow_id");
+				LocalDate returnMaxDate = rs.getDate("return_max_date").toLocalDate();
 
-		        // Perform the overdue check in Java
-		        if (returnMaxDate.isBefore(oneWeekAgo)) {
-		            // Freeze the subscriber
-		            try (PreparedStatement freezeSubscriberPs = dbConnection.prepareStatement(freezeSubscriberQuery)) {
-		                freezeSubscriberPs.setInt(1, subscriberId);
-		                int rowsAffected = freezeSubscriberPs.executeUpdate();
+				// Perform the overdue check in Java
+				if (returnMaxDate.isBefore(oneWeekAgo)) {
+					// Freeze the subscriber
+					try (PreparedStatement freezeSubscriberPs = dbConnection.prepareStatement(freezeSubscriberQuery)) {
+						freezeSubscriberPs.setInt(1, subscriberId);
+						int rowsAffected = freezeSubscriberPs.executeUpdate();
 
-		                if (rowsAffected > 0) {
-		                    System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
+						if (rowsAffected > 0) {
+							System.out.println("Subscriber ID " + subscriberId + " has been frozen.");
 
-		                    // Record the freeze activity
-		                    try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-		                        recordPs.setString(1, "freeze");
-		                        recordPs.setInt(2, subscriberId);
-		                        recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
-		                        recordPs.setNull(4, java.sql.Types.INTEGER); // book_code is null
-		                        recordPs.setString(5, "Froze due to daily overdue check.");
-		                        recordPs.executeUpdate();
-		                    }
-		                }
-		            }
-		        }
-		    }
+							// Record the freeze activity
+							try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
+								recordPs.setString(1, "freeze");
+								recordPs.setInt(2, subscriberId);
+								recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
+								recordPs.setNull(4, java.sql.Types.INTEGER); // book_code is null
+								recordPs.setString(5, "Froze due to daily overdue check.");
+								recordPs.executeUpdate();
+							}
+						}
+					}
+				}
+			}
 		} catch (SQLException e) {
-		    System.err.println("Error during overdue check: " + e.getMessage());
+			System.err.println("Error during overdue check: " + e.getMessage());
 		}
 	}
 
