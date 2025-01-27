@@ -18,7 +18,7 @@
 
 	<top>
 		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
-			<Label text="Reader Card Screen"
+			<Label text="Reader Card"
 				style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 			<Label text="Subscriber id: " fx:id="idLabel"
 				GridPane.rowIndex="0" GridPane.columnIndex="0" />

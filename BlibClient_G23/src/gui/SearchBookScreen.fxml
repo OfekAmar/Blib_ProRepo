@@ -8,6 +8,9 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1"
 	xmlns="http://javafx.com/javafx/8.0.171"
@@ -20,32 +23,44 @@
 	</top>
 
 	<center>
-		<GridPane alignment="CENTER" hgap="10" vgap="10">
-			<padding>
-				<Insets top="20" right="20" bottom="20" left="20" />
-			</padding>
+		<VBox alignment="CENTER" spacing="20">
+			<GridPane alignment="CENTER" hgap="10" vgap="10">
+				<padding>
+					<Insets top="20" right="20" bottom="20" left="20" />
+				</padding>
 
-			<!-- Drop-down and Search Bar -->
-			<Label text="Search by:" GridPane.columnIndex="0"
-				GridPane.rowIndex="0" />
-			<ComboBox fx:id="searchByComboBox" GridPane.columnIndex="1"
-				GridPane.rowIndex="0" />
-			<TextField fx:id="searchField"
-				promptText="Enter search term" GridPane.columnIndex="2"
-				GridPane.rowIndex="0" />
+				<!-- Drop-down and Search Bar -->
+				<Label text="Search by:" GridPane.columnIndex="0"
+					GridPane.rowIndex="0" />
+				<ComboBox fx:id="searchByComboBox" GridPane.columnIndex="1"
+					GridPane.rowIndex="0" />
+				<TextField fx:id="searchField"
+					promptText="Enter search term" GridPane.columnIndex="2"
+					GridPane.rowIndex="0" />
+				<Button text="Search" fx:id="searchButton"
+					GridPane.columnIndex="3" GridPane.rowIndex="0"
+					onAction="#onSearchBookClick" />
 
-			<!-- ListView positioned between Search Button and TextField/ComboBox -->
-			<ListView fx:id="searchResultList" prefHeight="200"
-				prefWidth="300" GridPane.columnIndex="0" GridPane.rowIndex="1"
-				GridPane.columnSpan="3" />
+				<TableView fx:id="booksTable" visible="false"
+					managed="false" GridPane.columnIndex="0" GridPane.rowIndex="1"
+					GridPane.columnSpan="4">
+					<columns>
+						<TableColumn fx:id="titleColumn" prefWidth="194.0"
+							text="title" />
+						<TableColumn fx:id="authorColumn" prefWidth="117.0"
+							text="author" />
+						<TableColumn fx:id="descColumn" prefWidth="51.0"
+							text="description" />
+					</columns>
+				</TableView>
 
-			<!-- Search Button -->
-			<Button text="Search" fx:id="searchButton"
-				GridPane.columnIndex="1" GridPane.rowIndex="2"
-				GridPane.columnSpan="3" GridPane.halignment="CENTER"
-				onAction="#onSearchBookClick" />
-		</GridPane>
-
+				<!-- Get Location Button -->
+				<Button text="Get Location" fx:id="getLocationButton"
+					GridPane.columnIndex="0" GridPane.rowIndex="2"
+					GridPane.columnSpan="4" GridPane.halignment="CENTER"
+					onAction="#onGetLocation" visible="false" managed="false" />
+			</GridPane>
+		</VBox>
 	</center>
 
 	<bottom>

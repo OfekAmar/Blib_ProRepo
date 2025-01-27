@@ -8,40 +8,63 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.NewBookController">
+<BorderPane style="-fx-background-color: #f4f4f4;"
+	xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="gui.NewBookController">
+
+	<top>
+		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
+			<Label text="New Book"
+				style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+		</VBox>
+	</top>
+
 	<center>
-		<GridPane alignment="CENTER" hgap="10" style="-fx-padding: 20;" vgap="10">
-			<Label text="Title:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-			<TextField fx:id="titleField" promptText="Enter title" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+		<GridPane alignment="CENTER" hgap="10"
+			style="-fx-padding: 20;" vgap="10">
+			<Label text="Title:" GridPane.columnIndex="0"
+				GridPane.rowIndex="0" />
+			<TextField fx:id="titleField" promptText="Enter title"
+				GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-			<Label text="Author:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-			<TextField fx:id="authorField" promptText="Enter author" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+			<Label text="Author:" GridPane.columnIndex="0"
+				GridPane.rowIndex="1" />
+			<TextField fx:id="authorField" promptText="Enter author"
+				GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-			<Label text="Subject:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-			<TextField fx:id="subjectField" promptText="Enter subject" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+			<Label text="Subject:" GridPane.columnIndex="0"
+				GridPane.rowIndex="2" />
+			<TextField fx:id="subjectField" promptText="Enter subject"
+				GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-			<Label text="Description:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-			<TextField fx:id="descriptionField" promptText="Enter description" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-         <columnConstraints>
-            <ColumnConstraints />
-            <ColumnConstraints />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-         </rowConstraints>
+			<Label text="Description:" GridPane.columnIndex="0"
+				GridPane.rowIndex="3" />
+			<TextField fx:id="descriptionField"
+				promptText="Enter description" GridPane.columnIndex="1"
+				GridPane.rowIndex="3" />
+			<columnConstraints>
+				<ColumnConstraints />
+				<ColumnConstraints />
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints />
+				<RowConstraints />
+				<RowConstraints />
+				<RowConstraints />
+				<RowConstraints />
+				<RowConstraints />
+			</rowConstraints>
 		</GridPane>
 	</center>
 
 	<bottom>
-		<HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10;">
-			<Button fx:id="cancelButton" onAction="#onCancelClick" text="Cancel" />
+		<HBox alignment="CENTER_LEFT" spacing="10"
+			style="-fx-padding: 10;">
+			<Button fx:id="cancelButton" onAction="#onCancelClick"
+				text="Cancel" />
 
 			<Button fx:id="addButton" onAction="#onAddClick" text="add" />
 		</HBox>
