@@ -38,6 +38,9 @@ public class SubscriberDetailsController {
 	private Label passwordLabel;
 
 	@FXML
+	private Label welcomeLabel;
+
+	@FXML
 	private TextField phoneField;
 
 	@FXML
@@ -86,7 +89,7 @@ public class SubscriberDetailsController {
 	 * @param s the {@link Subscriber} object whose details are to be displayed.
 	 */
 	public void setSubscriber(Subscriber s) {
-		sub = s;
+		this.sub = s;
 		subscriberId = String.valueOf(sub.getId());
 		setDetails();
 	}
@@ -139,6 +142,7 @@ public class SubscriberDetailsController {
 	public void setDetails() {
 		// changed to support the Subscriber Class
 		// String[] parts = details.split(",");
+		welcomeLabel.setText(sub.getName() + " Profile");
 		idLabel.setText(Integer.toString(sub.getId()));
 		statusLabel.setText(sub.getStatus());
 		nameLabel.setText(sub.getName());

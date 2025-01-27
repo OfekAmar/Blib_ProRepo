@@ -190,13 +190,13 @@ public class SubscriberMainController {
 	 */
 	@FXML
 	private void onViewProfileClick(ActionEvent event) {
-		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
+		ScreenLoader.openPopUpScreenWithSize("/gui/SubscriberDetails.fxml", "Subcriber Details", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
 				((SubscriberDetailsController) controller).setStage(stage);
 				((SubscriberDetailsController) controller).setIDandClient(sub.getId(), cm);
 			}
 
-		});
+		}, 400, 450);
 
 	}
 
