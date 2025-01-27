@@ -35,6 +35,9 @@ public class SubscriberDetailsController {
 	private Label nameLabel;
 
 	@FXML
+	private Label passwordLabel;
+
+	@FXML
 	private TextField phoneField;
 
 	@FXML
@@ -55,6 +58,7 @@ public class SubscriberDetailsController {
 	private String subscriberId;
 	private SubscriberController sc;
 	SubscriberMainController smc;
+	boolean passFlag = false;
 
 	private Consumer<Subscriber> onEditSubscriberCallback;
 
@@ -99,6 +103,11 @@ public class SubscriberDetailsController {
 		sc = new SubscriberController(c);
 		try {
 			this.sub = sc.searchSubscriberById(String.valueOf(id));
+			passFlag = true;
+			passwordField.setVisible(true);
+			passwordField.setManaged(true);
+			passwordLabel.setVisible(true);
+			passwordLabel.setManaged(true);
 			setDetails();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -147,8 +156,14 @@ public class SubscriberDetailsController {
 	public void onSaveClick() {
 		String phone = phoneField.getText();
 		String email = emailField.getText();
+		String password;
+		if (passFlag) {
+			password = passwordField.getText();
+		} else {
+			password = sub.getPassword();
+		}
 
-		if (phone.isEmpty() || email.isEmpty()) {
+		if (phone.isEmpty() || email.isEmpty() || password.isEmpty()) {
 			ScreenLoader.showAlert("Error", "All fields are required");
 			return;
 		} else {
@@ -157,11 +172,14 @@ public class SubscriberDetailsController {
 
 		SubscriberController sc = new SubscriberController(c);
 		try {
-			String result = sc.editSubscriber(String.valueOf(sub.getId()), phone, email, sub.getPassword());
-			ScreenLoader.showAlert("subscriber edited", result);
-
+			String result = sc.editSubscriber(String.valueOf(sub.getId()), phone, email, password);
+			if (passFlag) {
+				ScreenLoader.showAlert("subscriber edited", result);
+			} else {
+				ScreenLoader.showAlert("Subscriber edited", "Phone: " + phone + "\nEmail: " + email);
+			}
 			Subscriber editedSub = new Subscriber(sub.getId(), sub.getName(), sub.getPhone(), sub.getStatus(),
-					sub.getEmail(), sub.getPassword(), sub.getUserName());
+					sub.getEmail(), password, sub.getUserName());
 			if (onEditSubscriberCallback != null) {
 				onEditSubscriberCallback.accept(editedSub);
 			}

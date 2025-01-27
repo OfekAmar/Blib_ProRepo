@@ -110,6 +110,7 @@ public class ReaderCardController {
 	 */
 	public void setSubscriber(Subscriber s) {
 		this.sub = s;
+		setDetails();
 	}
 
 	/**
@@ -134,6 +135,7 @@ public class ReaderCardController {
 		sc = new SubscriberController(c);
 		rc = new ReportController(c);
 		bc = new BorrowController(sc, c);
+		setDetails();
 		updateBorrowHistoryTable();
 	}
 
@@ -141,7 +143,7 @@ public class ReaderCardController {
 	 * Displays the subscriber's details on the screen.
 	 */
 	public void setDetails() {
-		idLabel.setText(Integer.toString(sub.getId()));
+		idLabel.setText("Subscriber ID:" + Integer.toString(sub.getId()));
 	}
 
 	/**
