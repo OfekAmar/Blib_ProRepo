@@ -1058,6 +1058,7 @@ public class DBconnector {
 		ps.setDate(3, Date.valueOf(today));
 		ps.setTime(4, Time.valueOf(now));
 		ps.executeUpdate();
+		encreaseAmountOfReservation(bookCode);
 		recordActivity("reserved", subID, bookCode, null);
 	}
 
@@ -1330,7 +1331,7 @@ public class DBconnector {
 			Thread.sleep(1000);
 			changeStatusOfCopyOfBook(bookID, copyID, "reserved");
 			Thread.sleep(1000);
-			encreaseAmountOfReservation(bookID);
+			decreaseAmountOfReservation(bookID);
 			Thread.sleep(1000);
 			String bookName = searchBookByID(bookID);
 			LocalDate resMaxDate = LocalDate.now().plusDays(2);
@@ -1340,6 +1341,8 @@ public class DBconnector {
 			Thread.sleep(1000);
 		} else {
 			changeStatusOfCopyOfBook(bookID, copyID, "exists");
+			Thread.sleep(1000);
+			decreaseAmountOfReservation(bookID);
 		}
 	}
 
@@ -1388,16 +1391,6 @@ public class DBconnector {
 			Thread.sleep(1000);
 			allocateReturnedCopyToReserved(bookCode, copyId);
 			Thread.sleep(1000);
-			String q = "SELECT status FROM copyofbook WHERE book_code = ? AND copy_id =?";
-			try (PreparedStatement statment = dbConnection.prepareStatement(q)) {
-				statment.setInt(1, bookCode);
-				statment.setInt(2, copyId);
-				ResultSet r = statment.executeQuery();
-				if (r.next()) {
-					decreaseAmountOfReservation(bookCode);
-				}
-			}
-
 		}
 
 	}
