@@ -258,6 +258,7 @@ public class DBconnector {
 
 				if (rsBorrow.next()) {
 					int subscriberId = rsBorrow.getInt("sub_id");
+					LocalDate maxReturnDate = rsBorrow.getDate("return_max_date").toLocalDate();
 
 					// Mark the borrow record as returned
 					try (PreparedStatement updateBorrowPs = dbConnection.prepareStatement(updateBorrowQuery)) {
@@ -328,7 +329,13 @@ public class DBconnector {
 
 					// Always record the return action in the Records table
 					try (PreparedStatement recordPs = dbConnection.prepareStatement(insertRecordQuery)) {
-						recordPs.setString(1, "returned");
+						if(maxReturnDate.isAfter(LocalDate.now())) {
+							recordPs.setString(1, "late");
+						}
+						else {
+							recordPs.setString(1, "returned");
+						}
+						
 						recordPs.setInt(2, subscriberId);
 						recordPs.setDate(3, java.sql.Date.valueOf(LocalDate.now()));
 						recordPs.setInt(4, bookId);
