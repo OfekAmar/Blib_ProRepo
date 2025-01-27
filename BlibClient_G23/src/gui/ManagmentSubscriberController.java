@@ -213,7 +213,7 @@ public class ManagmentSubscriberController {
 				});
 
 			}
-		}, 500, 350);
+		}, 400, 450);
 	}
 
 	/**
