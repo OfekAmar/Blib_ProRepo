@@ -163,8 +163,8 @@ public class SearchBookController {
 			if (!searchbuttonflag) {
 				int selectedIndex = searchResultList.getSelectionModel().getSelectedIndex();
 				if (selectedIndex != -1) {
-					String titlesearch = books.get(selectedIndex).getTitle();
-					ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(titlesearch));
+					int titlesearch = books.get(selectedIndex).getId();
+					ScreenLoader.showAlert("Book Result", searchLogic.getLocation(titlesearch));
 					searchbuttonflag = true;
 				} else {
 					searchbuttonflag = true;
@@ -176,7 +176,21 @@ public class SearchBookController {
 			} else {
 				switch (searchBy) {
 				case "Title":
-					ScreenLoader.showAlert("Book Result", searchLogic.searchBookByTitle(searchTerm));
+					books = searchLogic.searchBookByTitle(searchTerm);
+					if (books == null || books.isEmpty()) {
+						ScreenLoader.showAlert("Info", "No books found for the search criteria");
+					} else {
+						searchbuttonflag = false;
+						obslist = FXCollections.observableArrayList();
+						searchResultList.setItems(obslist);
+						for (Book b : books) {
+							obslist.add(b.getTitle() + " By: " + b.getAuthor() + " Description: " + b.getDescription());
+						}
+						updateListVisibility(true);
+						ScreenLoader.resizeCenterWindow(event, 600, 400);
+						searchResultList.setPrefWidth(500);
+
+					}
 					break;
 
 				case "Subject":
@@ -188,11 +202,12 @@ public class SearchBookController {
 						obslist = FXCollections.observableArrayList();
 						searchResultList.setItems(obslist);
 						for (Book b : books) {
-							obslist.add(b.getTitle() + " By: " + b.getAuthor());
+							obslist.add(b.getTitle() + " By: " + b.getAuthor() + " Description: " + b.getDescription());
 						}
 						updateListVisibility(true);
-						Stage stage2 = (Stage) ((Node) event.getSource()).getScene().getWindow();
-						stage2.setHeight(400);
+						ScreenLoader.resizeCenterWindow(event, 600, 400);
+						searchResultList.setPrefWidth(500);
+
 					}
 					break;
 				case "Free Text":
@@ -204,11 +219,11 @@ public class SearchBookController {
 						obslist = FXCollections.observableArrayList();
 						searchResultList.setItems(obslist);
 						for (Book b : books) {
-							obslist.add(b.getTitle() + " By: " + b.getAuthor());
+							obslist.add(b.getTitle() + " By: " + b.getAuthor() + " Description: " + b.getDescription());
 						}
 						updateListVisibility(true);
-						Stage stage2 = (Stage) ((Node) event.getSource()).getScene().getWindow();
-						stage2.setHeight(400);
+						ScreenLoader.resizeCenterWindow(event, 600, 400);
+						searchResultList.setPrefWidth(500);
 					}
 					break;
 
