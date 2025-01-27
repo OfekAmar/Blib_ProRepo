@@ -350,15 +350,16 @@ public class ServerMain extends AbstractServer {
 						int bookCode = Integer.valueOf(parts[2]);
 						boolean available = dbConnector.findCopyToOrder(bookCode);
 						String checkforexistcopy = dbConnector.findExistCopy(bookCode);
-						if (checkforexistcopy != null) {
-							client.sendToClient(checkforexistcopy);
-						} else if (dbConnector.checkFrozenSubscriber(subID)) {
+						if (dbConnector.checkFrozenSubscriber(subID)) {
 							client.sendToClient("Subscriber is frozen unable to order");
+						} else if (checkforexistcopy != null) {
+							client.sendToClient(checkforexistcopy);
 						} else if (!available) {
 							client.sendToClient("All book copies are reserved try again in a few days");
 						} else {
 							dbConnector.orderBook(subID, bookCode);
-							client.sendToClient("The book is ordered for you !");
+							client.sendToClient(
+									"The book is ordered for you\nWe will let you know when you can come borrow the book");
 						}
 
 					} else {

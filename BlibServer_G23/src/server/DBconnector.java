@@ -1022,7 +1022,7 @@ public class DBconnector {
 		ps.setInt(1, bookID);
 		ResultSet rs = ps.executeQuery();
 		if (rs.next()) {
-			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservations") == 0) {
+			if (rs.getInt("amount_of_copies") - rs.getInt("amount_of_reservations") < 1) {
 				return "All copies are reserved, unable to make extend";
 			} else {
 				query = "UPDATE borrow SET return_max_date = ? WHERE borrow_id = ?";
@@ -1388,6 +1388,16 @@ public class DBconnector {
 			Thread.sleep(1000);
 			allocateReturnedCopyToReserved(bookCode, copyId);
 			Thread.sleep(1000);
+			String q = "SELECT status FROM copyofbook WHERE book_code = ? AND copy_id =?";
+			try (PreparedStatement statment = dbConnection.prepareStatement(q)) {
+				statment.setInt(1, bookCode);
+				statment.setInt(2, copyId);
+				ResultSet r = statment.executeQuery();
+				if (r.next()) {
+					decreaseAmountOfReservation(bookCode);
+				}
+			}
+
 		}
 
 	}
