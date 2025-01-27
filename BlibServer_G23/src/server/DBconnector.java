@@ -1151,7 +1151,7 @@ public class DBconnector {
 				+ "CASE WHEN r2.record_id IS NOT NULL THEN 'Returned' "
 				+ "WHEN r3.record_id IS NOT NULL THEN 'Late Returned' " + "ELSE 'Not Returned' END AS return_status "
 				+ "FROM records r1 "
-				+ "LEFT JOIN records r2 ON r1.book_code = r2.book_code AND r1.sub_id = r2.sub_id AND r2.record_type = 'return' "
+				+ "LEFT JOIN records r2 ON r1.book_code = r2.book_code AND r1.sub_id = r2.sub_id AND r2.record_type = 'returned' "
 				+ "LEFT JOIN records r3 ON r1.book_code = r3.book_code AND r1.sub_id = r3.sub_id AND r3.record_type = 'late' "
 				+ "WHERE r1.record_type = 'borrowed' AND MONTH(r1.record_date) = ? AND YEAR(r1.record_date) = ?";
 
