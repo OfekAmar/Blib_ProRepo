@@ -792,43 +792,34 @@ public class DBconnector {
 		return null;
 	}
 
-	/**
-	 * Searches for a book in the database by its title. The method retrieves the
-	 * book's code and checks its availability.
-	 * 
-	 * If the book is available, its location is returned. If the book is not
-	 * available, the earliest return date is provided, along with an option to
-	 * order the book.
-	 * 
-	 *
-	 * @param title the title of the book to search for
-	 * @return a message indicating whether the book is available, its location if
-	 *         available, or the earliest return date and order option if it is not
-	 *         available
-	 * @throws SQLException if a database access error occurs
-	 */
-	public String searchBookByTitle(String title) throws SQLException {
-		String query = "SELECT book_code FROM book WHERE title = ?";
+	public String getLocationByCode(int BookCode) throws SQLException {
+		String query = "SELECT location FROM copyofbook WHERE book_code=? AND status=?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
-		ps.setString(1, title);
-		ResultSet rs = ps.executeQuery();
-		int bookCodeResult = 0;
-		if (rs.next()) {
-			bookCodeResult = rs.getInt(1);
-		} else {
-			return "No book found with the given title";
-		}
-		query = "SELECT location FROM copyofbook WHERE book_code=? AND status=?";
-		ps = dbConnection.prepareStatement(query);
-		ps.setInt(1, bookCodeResult);
+		ps.setInt(1, BookCode);
 		ps.setString(2, "exists");
+		ResultSet rs = ps.executeQuery();
 		rs = ps.executeQuery();
 		if (rs.next()) {
 			return "The book is available for borrowing\nThe book location is: " + rs.getString(1);
 		} else {
-			return "The book is not available for borrowing\nEarliest return date is: "
-					+ earliestReturnDate(bookCodeResult) + "\nYou can order the book by its book ID: " + bookCodeResult;
+			return "The book is not available for borrowing\nEarliest return date is: " + earliestReturnDate(BookCode)
+					+ "\nYou can order the book by its book ID: " + BookCode;
 		}
+	}
+
+	public List<Book> searchBookByTitle(String title) throws SQLException {
+		List<Book> bookList = new ArrayList<>();
+		Book b;
+		String query = "SELECT * FROM book WHERE title = ?";
+		PreparedStatement ps = dbConnection.prepareStatement(query);
+		ps.setString(1, title);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			b = new Book(rs.getString("title"), rs.getInt("book_code"), rs.getString("author"), rs.getString("subject"),
+					rs.getString("description"), rs.getInt("amount_of_copies"));
+			bookList.add(b);
+		}
+		return bookList;
 	}
 
 	/**

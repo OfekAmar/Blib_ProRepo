@@ -297,12 +297,23 @@ public class ServerMain extends AbstractServer {
 						client.sendToClient("ERROR: Invalid DELETE_BOOK format.");
 					}
 					break;
+				case "GET_LOCATION":
+					if (parts.length == 2) {
+						int bookID = Integer.valueOf(parts[1]);
+						String result = dbConnector.getLocationByCode(bookID);
+						client.sendToClient(result);
+
+					} else {
+						client.sendToClient("ERROR: GET_LOCATION format.");
+					}
+
+					break;
 				case "SEARCH_BOOK_BY_TITLE":
 					if (parts.length == 2) {
 						String title = parts[1];
-						String result = dbConnector.searchBookByTitle(title);
+						List<Book> result = dbConnector.searchBookByTitle(title);
 
-						client.sendToClient(result);
+						client.sendToClient(new ArrayList<>(result));
 
 					} else {
 						client.sendToClient("ERROR: Invalid SEARCH_BOOK_BY_TITLE format.");
