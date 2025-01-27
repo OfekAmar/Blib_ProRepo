@@ -184,7 +184,7 @@ public class ManagmentSubscriberController {
 			return;
 		}
 
-		ScreenLoader.openPopUpScreen("/gui/SubscriberDetails.fxml", "Edit Profile", event, controller -> {
+		ScreenLoader.openPopUpScreenWithSize("/gui/SubscriberDetails.fxml", "Edit Profile", event, controller -> {
 			if (controller instanceof SubscriberDetailsController) {
 				SubscriberDetailsController editSubController = (SubscriberDetailsController) controller;
 				editSubController.setStage(new Stage());
@@ -213,7 +213,7 @@ public class ManagmentSubscriberController {
 				});
 
 			}
-		});
+		}, 500, 350);
 	}
 
 	/**
