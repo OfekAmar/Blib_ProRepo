@@ -171,7 +171,7 @@ public class ReportsController {
 		if (!selected)
 			return;
 
-		ScreenLoader.resizeCenterWindow(event, 800, 1200);
+		ScreenLoader.resizeCenterWindow(event, 800, 1000);
 
 		statusLineChart.setVisible(false);
 		statusLineChart.setManaged(false);
@@ -224,7 +224,7 @@ public class ReportsController {
 		if (!selected)
 			return;
 
-		ScreenLoader.resizeCenterWindow(event, 800, 1200);
+		ScreenLoader.resizeCenterWindow(event, 800, 1000);
 
 		statusLineChart.setVisible(true);
 		statusLineChart.setManaged(true);
