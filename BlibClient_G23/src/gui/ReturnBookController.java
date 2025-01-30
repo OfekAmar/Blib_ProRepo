@@ -4,10 +4,12 @@ import java.time.LocalDate;
 
 import client.ClientMain;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-
+import javafx.scene.layout.Region;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import logic.Book;
@@ -68,7 +70,7 @@ public class ReturnBookController {
 	public void setLibrarian(Librarian lib) {
 		this.lib = lib;
 	}
-
+	
 	/**
 	 * Handles the event when the user presses Enter in the book field. Validates
 	 * that the field is not empty.

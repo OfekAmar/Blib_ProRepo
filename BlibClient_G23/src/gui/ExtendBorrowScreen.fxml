@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
-	xmlns="http://javafx.com/javafx/8.0.171"
-	fx:controller="gui.ExtendBorrowController"
-	style="-fx-background-color: #f4f4f4;">
-	<top>
-		<VBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
-			<Label
-				text="Choose the book you would like to extend his borrow period"
-				style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-		</VBox>
-	</top>
+<BorderPane prefHeight="600" prefWidth="800" style="-fx-background-color: #f4f4f4;" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ExtendBorrowController">
 
-	<center>
-		<VBox alignment="CENTER" spacing="20" style="-fx-padding: 20;">
-			<ListView fx:id="booksListView" prefWidth="70"
-				prefHeight="150" />
+    <!-- חלק עליון -->
+    <top>
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: #f4f4f4;">
+            <ImageView fitHeight="120.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../../../../../Downloads/bliblogo-removebg-preview.png" />
+                </image>
+            </ImageView>
+            <Label styleClass="title-label" text="📖 Extend Borrowing Period" textFill="#f21212">
+                <font>
+                    <Font size="28.0" />
+                </font>
+            </Label>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Choose the book you would like to extend" />
+        </VBox>
+    </top>
 
-			<HBox alignment="CENTER" spacing="10">
-				<Label text="Due to:" />
-				<DatePicker fx:id="datePicker" />
-			</HBox>
+    <!-- חלק מרכזי -->
+    <center>
+        <VBox alignment="CENTER" spacing="25" style="-fx-padding: 30;">
+            <!-- ListView עם מסגרת -->
+            <ListView fx:id="booksListView" prefHeight="200" prefWidth="400" style="-fx-font-size: 16px; -fx-background-color: #ffffff;                        -fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;" />
 
-			<Button text="Request Extend" fx:id="extendButton"
-				onAction="#onRequestExtendClick" />
-		</VBox>
-	</center>
+            <HBox alignment="CENTER" spacing="15">
+                <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="📅 Due to:" />
+                <DatePicker fx:id="datePicker" />
+            </HBox>
 
-	<bottom>
-		<HBox alignment="CENTER_LEFT" spacing="10"
-			style="-fx-padding: 10;">
-			<Button text="Close" fx:id="closeButton"
-				onAction="#onCloseClick" />
-		</HBox>
-	</bottom>
+            <Button fx:id="extendButton" onAction="#onRequestExtendClick" styleClass="custom-button" text="📩 Request Extend">
+            <font>
+               <Font size="14.0" />
+            </font></Button>
+           <HBox alignment="BOTTOM_LEFT" prefHeight="0.0" prefWidth="737.0" spacing="20" style="-fx-padding: 20; -fx-padding: #f4f4f4;">
+               <Button fx:id="closeButton" onAction="#onCloseClick" styleClass="exit-button" text="⬅ Back to Main">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+           </HBox>
+        </VBox>
+    </center>
+
 </BorderPane>

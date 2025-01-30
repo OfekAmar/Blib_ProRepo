@@ -87,7 +87,7 @@ public class LoginController {
 								((SubscriberMainController) controller).setSubscriber(sub);
 								((SubscriberMainController) controller).setClient(c);
 							}
-						}, 400, 250);
+						}, 550, 600);
 
 			} else if (response instanceof Librarian) {
 				Librarian lib = (Librarian) response;
@@ -99,7 +99,7 @@ public class LoginController {
 								((LibrarianMainController) controller).setClient(c);
 
 							}
-						}, 250, 500);
+						}, 650, 750);
 
 			} else if (response instanceof String) {
 				ScreenLoader.showAlert("Error: ", (String) response);
