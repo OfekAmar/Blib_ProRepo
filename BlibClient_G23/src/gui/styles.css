@@ -1,0 +1,32 @@
+BorderPane {
+	 -fx-background-color: linear-gradient(to bottom, #FAF0E6, #FAF0E6);
+}
+/* עיצוב כללי של ה- VBox */
+VBox {
+    -fx-background-color: linear-gradient(to bottom, #FAF0E6, #FAF0E6);
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+HBox {
+    -fx-background-color: linear-gradient(to bottom, #FAF0E6, #FAF0E6);
+}
+/* כותרת ראשית */
+.title-label {
+    -fx-font-size: 27px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-padding: 10;
+}
+
+/* עיצוב לשדות טקסט */
+TextField, PasswordField {
+    -fx-pref-width: 200px;
+    -fx-padding: 8;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-border-color: lightgray;
+    -fx-background-color: white;
+}
+
+
+

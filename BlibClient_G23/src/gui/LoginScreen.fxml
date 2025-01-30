@@ -1,47 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-	xmlns="http://javafx.com/javafx/8.0.171" alignment="CENTER"
-	style="-fx-background-color: #f4f4f4;"
-	fx:controller="gui.LoginController" prefWidth="350" prefHeight="300">
-	<Label text="Welcome to Blib System!  :)"
-		style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+<VBox alignment="CENTER" prefHeight="392.0" prefWidth="380" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.LoginController">
+   <ImageView fitHeight="200.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@../../../../../../Downloads/bliblogo-removebg-preview.png" />
+      </image>
+   </ImageView>
+
+	<!-- כותרת עם ברוך הבא -->
+	<Label prefHeight="73.0" prefWidth="399.0" styleClass="title-label" text="Welcome to Blib System!" textFill="#f21212">
+      <font>
+         <Font size="36.0" />
+      </font></Label>
+
 	<GridPane alignment="CENTER" hgap="10" vgap="10">
 		<padding>
-			<Insets top="20" right="20" bottom="20" left="20" />
+			<Insets bottom="20" left="20" right="20" top="20" />
 		</padding>
 
-		<!-- Username Label and TextField -->
-		<Label text="Username:" GridPane.columnIndex="0"
-			GridPane.rowIndex="0" />
-		<TextField fx:id="userNameField" promptText="Enter username"
-			GridPane.columnIndex="1" GridPane.rowIndex="0" />
+		<!-- תווית ושדה הזנת שם משתמש -->
+		<Label prefHeight="27.0" prefWidth="132.0" text="👤 Username:">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+		<TextField fx:id="userNameField" prefHeight="35.0" prefWidth="178.0" promptText="Enter username" GridPane.columnIndex="1" />
 
-		<!-- Password Label and PasswordField -->
-		<Label text="Password:" GridPane.columnIndex="0"
-			GridPane.rowIndex="1" />
-		<PasswordField fx:id="passwordField"
-			promptText="Enter password" GridPane.columnIndex="1"
-			GridPane.rowIndex="1" />
-
-		<!-- Buttons -->
-		<Button text="Login" fx:id="loginButton"
-			onAction="#onLoginClick" GridPane.columnIndex="0"
-			GridPane.rowIndex="2" GridPane.columnSpan="2"
-			GridPane.halignment="CENTER" />
-		<Button text="Continue as Guest" fx:id="guestButton"
-			onAction="#onGuestLoginClick" GridPane.columnIndex="0"
-			GridPane.rowIndex="3" GridPane.columnSpan="2"
-			GridPane.halignment="CENTER" />
-		<Button text="Exit" fx:id="exitButton" onAction="#handleExit"
-			GridPane.columnIndex="0" GridPane.rowIndex="4"
-			GridPane.columnSpan="2" GridPane.halignment="CENTER" />
+		<!-- תווית ושדה הזנת סיסמה -->
+		<Label text="🔒 Password:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+		<PasswordField fx:id="passwordField" prefHeight="35.0" prefWidth="214.0" promptText="Enter password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+   
+   		<!-- כפתורים -->
+   		<Button fx:id="loginButton" onAction="#onLoginClick" styleClass="custom-button" text="🔑 Login" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+   		<Button fx:id="guestButton" onAction="#onGuestLoginClick" styleClass="custom-button" text="👥 Continue as Guest" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+   		<Button fx:id="exitButton" onAction="#handleExit" styleClass="exit-button" text="Exit" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
 	</GridPane>
 </VBox>

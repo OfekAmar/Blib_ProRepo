@@ -9,16 +9,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="689.0" prefWidth="794.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ManagmentBookController">
+<BorderPane prefHeight="689.0" prefWidth="794.0" style="-fx-background-color: #f4f4f4;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.ManagmentBookController">
 	<top>
 		<VBox alignment="CENTER" prefHeight="112.0" prefWidth="98.0" spacing="10" style="-fx-padding: 10;">
-			<Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Books Managment " />
+			<Label fx:id="welcomeLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="📚 Books Managment " />
 
 			<HBox alignment="CENTER" spacing="10" style="-fx-padding: 10;">
 				<TextField fx:id="searchField" promptText="Enter book id" />
-				<Button fx:id="searchButton" onAction="#onSearchBookClick" text="Search Book" />
+				<Button fx:id="searchButton" onAction="#onSearchBookClick" text="🔍 Search Book" />
 				<Button fx:id="scanBookBarcodeButton" onAction="#onScanBookBarcodeClick" text="Scan Book Barcode" />
-            <Button fx:id="resetSearchButton" layoutX="372.0" layoutY="20.0" onAction="#onResetSearchClick" text="reset search" />
+            <Button fx:id="resetSearchButton" layoutX="372.0" layoutY="20.0" onAction="#onResetSearchClick" text="🔄 reset search" />
 			</HBox>
 		</VBox>
 	</top>
@@ -34,8 +34,8 @@
 							<TableColumn fx:id="idColumn" prefWidth="51.0" text="id" />
 							<TableColumn fx:id="authorColumn" prefWidth="117.0" text="author" />
 							<TableColumn fx:id="subjectColumn" prefWidth="110.0" text="subject" />
-							<TableColumn fx:id="descriptionColumn" prefWidth="209.0" text="description" />
-							<TableColumn fx:id="totalCopiesColumn" minWidth="4.0" prefWidth="72.0" text="totalCopies" />
+							<TableColumn fx:id="descriptionColumn" prefWidth="167.0" text="description" />
+							<TableColumn fx:id="totalCopiesColumn" minWidth="4.0" prefWidth="114.0" text="totalCopies" />
 						</columns>
 					</TableView>
 				</children>

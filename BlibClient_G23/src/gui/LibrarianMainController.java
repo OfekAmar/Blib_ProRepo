@@ -176,7 +176,7 @@ public class LibrarianMainController {
 				((ReturnBookController) controller).setClient(c);
 				((ReturnBookController) controller).setLibrarian(lib);
 			}
-		}, 400, 300);
+		}, 550, 600);
 	}
 
 	/**
