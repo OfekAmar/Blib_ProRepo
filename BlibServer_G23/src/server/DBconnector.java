@@ -177,7 +177,7 @@ public class DBconnector {
 
 								return "Borrow process completed successfully.";
 							} else {
-								return "ERROR: No matching reservation found for this subscriber.";
+								return "This book is reserved for specifec subscriber \n there for this book cannot be borrowed.";
 							}
 						}
 					} else if ("exists".equals(copyStatus)) {
@@ -213,10 +213,10 @@ public class DBconnector {
 
 						return "Borrow process completed successfully.";
 					} else {
-						return "ERROR: Copy is not available for borrowing.";
+						return "This copy is not available for borrowing.";
 					}
 				} else {
-					return "ERROR: Copy does not exist.";
+					return "There is no such copy exists in the database please try again !";
 				}
 			}
 		} catch (SQLException e) {
@@ -353,7 +353,7 @@ public class DBconnector {
 
 					return "Book returned successfully.";
 				} else {
-					return "ERROR: No active borrow record found for this copy.";
+					return "There is no active borrow record found for this copy.";
 				}
 			}
 		} catch (SQLException e) {
@@ -403,22 +403,22 @@ public class DBconnector {
 					bookCode = rs.getInt("book_code");
 					subId = rs.getInt("sub_id");
 				} else {
-					return "ERROR: Borrow record not found.";
+					return "There is no borrow record found in the databse.";
 				}
 			}
 
 			// Check if there is more than 7 days remaining to the return_max_date from
 			// today
 			if (maxReturnDate.isAfter(LocalDate.now().plusDays(7))) {
-				return "ERROR: Cannot extend borrow period. There are more than 7 days remaining to the current return date ("
+				return "You cannot extend the borrow period.\nThere are more than 7 days remaining to the current return date ("
 						+ maxReturnDate + ").";
 			}
 
 			// Validate that the requested date is not more than 7 days from the
 			// max_return_date
 			if (requestedDate.isAfter(maxReturnDate.plusDays(7))) {
-				return "ERROR: The selected due date cannot be more than 7 days from the current max return date ("
-						+ maxReturnDate + ").";
+				return "The selected due date cannot be more than 7 days from the current max return date ("
+						+ maxReturnDate + ").\nPlease choose valid date";
 			}
 
 			// Check if there are reservations for the book
@@ -430,7 +430,7 @@ public class DBconnector {
 					int reservations = rs.getInt("amount_of_reservations");
 
 					if (reservations > 0) {
-						return "ERROR: Cannot extend borrow period. There are reservations for this book.";
+						return "Sorry you cannot extend the borrow period. There are active reservations for this book.";
 					}
 				}
 			}
@@ -490,10 +490,10 @@ public class DBconnector {
 					int amountOfReservations = rs.getInt("amount_of_reservations");
 
 					if (amountOfReservations > 0) {
-						return "ERROR: Cannot extend borrow. The book has active reservations.";
+						return "Sorry you cannot extend the borrow period. There are active reservations for this book.";
 					}
 				} else {
-					return "ERROR: Borrow record not found.";
+					return "There is no borrow record found in the databse.";
 				}
 			}
 
@@ -1785,7 +1785,7 @@ public class DBconnector {
 	 */
 	public Object login(String userName, String password) throws SQLException {
 		if (!isUserExists(userName)) {
-			return "user does not exists";
+			return "User does not exists or the user name is incorrect.\nPlease try again !";
 		}
 		String query = "SELECT * FROM subscriber WHERE user_name = ? AND password = ?";
 		PreparedStatement ps = dbConnection.prepareStatement(query);
@@ -1807,7 +1807,7 @@ public class DBconnector {
 						rs.getString("password"), rs.getString("user_name"));
 			}
 		}
-		return "wrong password";
+		return "Wrong password\nPlease try again !";
 	}
 
 	/**
